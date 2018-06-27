@@ -1,0 +1,3 @@
+# LiST
+
+Lithuanian Speech Transcription
