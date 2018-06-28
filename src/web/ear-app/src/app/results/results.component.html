@@ -1,0 +1,17 @@
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>Transkripcijos rezultatas</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field class="result-full-width">
+        <input matInput placeholder="Transkripcijos ID" [(ngModel)]="transcriptionId" (keyup.enter)="refresh()"
+            (keyup)="transcriptionIdUpdated()" >
+      </mat-form-field>
+      <div *ngIf="result?.status">Statusas: <strong>{{result?.status | statusHuman}}</strong></div>
+      <div *ngIf="result?.recognizedText">Atpažinta: <strong>{{result?.recognizedText}}</strong></div>
+      <div *ngIf="result?.error">Klaida: <strong><span style="color:red">{{result?.error}}</span></strong></div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="!transcriptionId" (click)="refresh()">Atnaujinti</button>
+    </mat-card-actions>
+  </mat-card>
