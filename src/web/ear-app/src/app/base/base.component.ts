@@ -7,9 +7,9 @@ import { MatSnackBar } from '@angular/material';
 export abstract class BaseComponent {
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar) { }
 
-  showError(error: any) {
+  showError(msg: string, error: any) {
     console.error('Error sending file', error);
-    this.snackBar.open(error, null, { duration: 3000 });
+    this.snackBar.open(msg, null, { duration: 3000 });
   }
 
   showInfo(info: any) {

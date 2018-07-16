@@ -1,3 +1,3 @@
 export interface SendFileResult {
-    id: string
+    id: string;
 }

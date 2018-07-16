@@ -1,4 +1,4 @@
 export class FileData {
-    file: File
-    fileName: string
+    file: File;
+    fileName: string;
 }

@@ -3,10 +3,11 @@ import { Config } from './../config';
 import { Injectable } from '@angular/core';
 import { FileData } from './file-data';
 import { SendFileResult } from './../api/send-file-result';
-import { Http, RequestOptions, Headers } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { map } from 'rxjs/operators';
-
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export abstract class TranscriptionService {
@@ -21,7 +22,7 @@ export class HttpTranscriptionService implements TranscriptionService {
   resultUrl: string;
   private socket;
 
-  constructor(public _http: Http, _config: Config) {
+  constructor(public _http: HttpClient, _config: Config) {
     this.sendFileUrl = _config.sendFileUrl;
     this.resultUrl = _config.resultUrl;
   }
@@ -29,12 +30,15 @@ export class HttpTranscriptionService implements TranscriptionService {
   sendFile(fileData: FileData): Observable<SendFileResult> {
     const formData = new FormData();
     formData.append('file', fileData.file, fileData.fileName);
-    const headers = new Headers();
-    headers.append('Accept', 'application/json');
-    const options = new RequestOptions({ headers: headers });
-    return this._http.post(this.sendFileUrl, formData, options)
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Accept': 'application/json'
+      })
+    };
+
+    return this._http.post(this.sendFileUrl, formData, httpOptions)
       .map(res => {
-        return <SendFileResult>res.json();
+        return <SendFileResult>res;
       })
       .catch(this.handleError);
   }
@@ -42,17 +46,21 @@ export class HttpTranscriptionService implements TranscriptionService {
   getResult(id: string): Observable<TranscriptionResult> {
     const headers = new Headers();
     headers.append('Accept', 'application/json');
-    const options = new RequestOptions({ headers: headers });
-    return this._http.get(this.resultUrl + id, options)
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Accept': 'application/json'
+      })
+    };
+    return this._http.get(this.resultUrl + id, httpOptions)
       .map(res => {
-        return <TranscriptionResult>res.json();
+        return <TranscriptionResult>res;
       })
       .catch(this.handleError);
   }
 
   protected handleError(error: Response) {
     console.error(error);
-    return Observable.throw('Serviso klaida: ' + error.text() || 'Serviso klaida');
+    return throwError(new Error('Serviso klaida: ' + error.text() || 'Serviso klaida'));
   }
 
   protected getHeader() {

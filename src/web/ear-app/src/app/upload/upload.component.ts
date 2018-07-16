@@ -14,40 +14,40 @@ import { ParamsProviderService } from '../service/params-provider.service';
 export class UploadComponent extends BaseComponent implements OnInit {
   constructor(protected transcriptionService: TranscriptionService,
     private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService) {
-      super(transcriptionService, snackBar)
-     }
-
-  ngOnInit() {
-    this.fileChange(this.paramsProviderService.lastSelectedFile)
+    super(transcriptionService, snackBar);
   }
 
   selectedFile: File; // hold our file
   selectedFileName: string; // hold our file
+
+  ngOnInit() {
+    this.fileChange(this.paramsProviderService.lastSelectedFile);
+  }
+
 
   /**
    * this is used to trigger the input
    */
   openInput() {
     // your can use ElementRef for this later
-    document.getElementById("fileInput").click();
+    document.getElementById('fileInput').click();
   }
 
   filesChange(files: File[]) {
     if (files.length > 0) {
       this.fileChange(files[0]);
-    }
-    else{
+    } else {
       this.fileChange(null);
     }
   }
 
   fileChange(file: File) {
-    this.selectedFile = null
-    this.selectedFileName = null
-    this.paramsProviderService.lastSelectedFile = file
+    this.selectedFile = null;
+    this.selectedFileName = null;
+    this.paramsProviderService.lastSelectedFile = file;
     if (file) {
       this.selectedFile = file;
-      this.selectedFileName = this.selectedFile.name
+      this.selectedFileName = this.selectedFile.name;
     }
   }
 
@@ -59,14 +59,14 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName })
       .subscribe(
         result => this.onResult(result),
-        error => this.showError(<any>error)
+        error => this.showError('Nepavyko nusiųsti failo', <any>error)
       );
 
   }
 
   onResult(result: SendFileResult) {
     this.fileChange(null);
-    this.showInfo("Failas nusiųstas. Transkripcijos ID: " + result.id);
+    this.showInfo('Failas nusiųstas. Transkripcijos ID: ' + result.id);
     this.router.navigateByUrl('/results/' + result.id);
   }
 }

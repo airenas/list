@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { FileSizeModule } from 'ngx-filesize';
 import { Config } from './config';
-import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { StatusHumanPipe } from './pipes/status-human.pipe';
 import { ParamsProviderService } from './service/params-provider.service';
 
@@ -27,7 +27,7 @@ import { ParamsProviderService } from './service/params-provider.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpModule,
+    HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule,
@@ -36,7 +36,7 @@ import { ParamsProviderService } from './service/params-provider.service';
   providers: [Config,
     ParamsProviderService,
     { provide: ResultSubscriptionService, useClass: ResultSubscriptionService },
-    { provide: TranscriptionService, useClass: HttpTranscriptionService },  
+    { provide: TranscriptionService, useClass: HttpTranscriptionService },
   ],
   bootstrap: [AppComponent]
 })

@@ -4,6 +4,7 @@ import websocketConnect from 'rxjs-websockets';
 import { QueueingSubject } from 'queueing-subject';
 import { Observable } from 'rxjs/Observable';
 import { Config } from '../config';
+import 'rxjs/add/operator/share';
 
 @Injectable()
 export class ResultSubscriptionService {
