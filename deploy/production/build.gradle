@@ -45,6 +45,15 @@ task copy_remote(group: group, description: "Copies all data to server") {
     }
 }
 
+task docker_push_mouth(type: Exec, group: group, description: "Push mouth docker image to cloud") {
+    commandLine 'docker', 'push', 'airenas/mouth'
+     dependsOn 'mouth:docker_build'
+}
+
+task docker_push_membrane(type: Exec, group: group, description: "Push membrane docker image to cloud") {
+    commandLine 'docker', 'push', 'airenas/membrane'
+}
+
 task docker_push_web(type: Exec, group: group, description: "Push web docker image to cloud") {
     commandLine 'docker', 'push', 'airenas/ear-app:' + earAppVersion
     dependsOn 'web:docker_build'
@@ -70,3 +79,34 @@ task build_deploy_all(group: group, description: "Builds images and deploys serv
     dependsOn('docker_push')
     dependsOn('deploy')
 }
+
+task copy_kaldi(group: group, description: "Copies kaldi init data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: '/home/airenas/projects/kaldi_test/configure.kaldi.sh', into: '/home/airenas/list'
+            }
+        }
+    }
+}
+
+task copy_kolt(group: group, description: "Copies kolt data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: '/home/airenas/projects/kaldi_test/kolt', into: '/home/airenas/list'
+            }
+        }
+    }
+}
+
+task copy_brain(group: group, description: "Copies brain data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: '/home/airenas/projects/spetra/src/go/brain', into: '/home/airenas/list'
+            }
+        }
+    }
+}
+

@@ -1,0 +1,28 @@
+/*
+ */
+def main_dir = "/home/airenas/projects/spetra/src/go/membrane/"
+def dist_dir = "deploy/"
+
+def group = "membrane.production"
+
+task clean(type: Delete, group: group, description: "Deletes copied resources") {
+    delete dist_dir
+}
+
+task build(type: Exec, group: group, description: "Compiles service") {
+    commandLine 'go', 'build', 'membrane.service.go'
+    workingDir main_dir
+}
+
+task copy_forbuild(type: Copy, group: group, description: "Copies service") {
+    from main_dir
+    into dist_dir
+    include 'membrane.service'
+    dependsOn 'build'
+}
+
+task docker_build(type: Exec, group: group, description: "Compiles docker image") {
+    commandLine 'docker', 'build', '-t', 'airenas/membrane', './'
+    workingDir projectDir
+    dependsOn 'copy_forbuild'
+}

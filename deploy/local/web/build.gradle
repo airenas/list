@@ -1,0 +1,21 @@
+/*
+ */
+def main_dir = "../../../src/web/ear-app/"
+def dist_dir = "deploy/"
+
+def group = "Web.production"
+
+task clean(type: Delete, group: group, description: "Deletes copied resources") {
+    delete dist_dir
+}
+
+task build(type: Exec, group: group, description: "Compiles angular site") {
+    commandLine 'ng', 'build', '--base-href', '/ausis/', '--prod'
+    workingDir main_dir
+}
+
+task copy(type: Copy, group: group, description: "Copies htmls") {
+    from main_dir + 'dist/ear-app/'
+    into dist_dir + 'html/'
+    dependsOn 'build'
+}

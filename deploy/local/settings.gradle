@@ -7,6 +7,6 @@
  * in the user guide at https://docs.gradle.org/4.6/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'deploy'
+rootProject.name = 'local'
 
 include 'web'
