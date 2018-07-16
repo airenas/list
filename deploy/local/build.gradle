@@ -22,7 +22,9 @@ task deploy_all(group: group, description: "Redeploys docker") {
     exec {
         commandLine 'docker-compose', 'rm', '-f'
     }
-
+    exec {
+        commandLine 'docker-compose', 'build'
+    }
     exec {
         commandLine 'docker-compose', 'up', '-d'
     }
