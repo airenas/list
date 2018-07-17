@@ -1,7 +1,4 @@
-import { SendFileResult } from './../api/send-file-result';
-import { Component, OnInit } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
-import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material';
 
 export abstract class BaseComponent {

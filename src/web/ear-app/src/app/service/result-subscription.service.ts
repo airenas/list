@@ -7,7 +7,13 @@ import { Config } from '../config';
 import 'rxjs/add/operator/share';
 
 @Injectable()
-export class ResultSubscriptionService {
+export abstract class ResultSubscriptionService {
+  abstract connect(): Observable<TranscriptionResult>;
+  abstract send(id: string): void;
+}
+
+@Injectable()
+export class WSResultSubscriptionService implements ResultSubscriptionService {
   private inputStream: QueueingSubject<string>;
 
   constructor(private config: Config) {

@@ -6,7 +6,6 @@ import { TranscriptionService } from '../service/transcription.service';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
-import { Observable } from 'rxjs';
 import { Subscription } from 'rxjs/Subscription';
 
 @Component({

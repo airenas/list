@@ -18,19 +18,14 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   selectedFile: File; // hold our file
-  selectedFileName: string; // hold our file
+  selectedFileName: string; // hold our file name
 
   ngOnInit() {
     this.fileChange(this.paramsProviderService.lastSelectedFile);
   }
 
-
-  /**
-   * this is used to trigger the input
-   */
   openInput() {
-    // your can use ElementRef for this later
-    document.getElementById('fileInput').click();
+    document.getElementById('hiddenFileInput').click();
   }
 
   filesChange(files: File[]) {
@@ -51,9 +46,6 @@ export class UploadComponent extends BaseComponent implements OnInit {
     }
   }
 
-  /**
-  * this is used to perform the actual upload
-  */
   upload() {
     console.log('sending this to server', this.selectedFile);
     this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName })

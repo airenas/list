@@ -1,4 +1,4 @@
-import { ResultSubscriptionService } from './service/result-subscription.service';
+import { ResultSubscriptionService, WSResultSubscriptionService } from './service/result-subscription.service';
 import { HttpTranscriptionService, TranscriptionService } from './service/transcription.service';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -35,7 +35,7 @@ import { ParamsProviderService } from './service/params-provider.service';
   ],
   providers: [Config,
     ParamsProviderService,
-    { provide: ResultSubscriptionService, useClass: ResultSubscriptionService },
+    { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
   ],
   bootstrap: [AppComponent]
