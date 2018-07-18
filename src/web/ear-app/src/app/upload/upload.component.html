@@ -10,9 +10,9 @@
     <div id ="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size  | filesize}}</div>
   </mat-card-content>
   <mat-card-actions>
-    <button mat-button (click)="openInput()">
+    <button id="selectFileButton" mat-button (click)="openInput()">
       <i class="material-icons">attachment</i>
     </button>
-    <button id="loginButton" mat-raised-button color="primary" [disabled]="!selectedFile" (click)="upload()">Siųsti failą transkripcijai</button>
+    <button id="uploadButton" mat-raised-button color="primary" [disabled]="!selectedFile" (click)="upload()">Siųsti failą transkripcijai</button>
   </mat-card-actions>
 </mat-card>

@@ -17,8 +17,7 @@ import { ParamsProviderService } from '../service/params-provider.service';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
 import { EMPTY } from 'rxjs';
 
-
-class MockTestService implements TranscriptionService {
+export class MockTestService implements TranscriptionService {
   sendFile(fileData: FileData): Observable<SendFileResult> {
     return EMPTY;
   }
@@ -28,7 +27,7 @@ class MockTestService implements TranscriptionService {
   }
 }
 
-class MockSubscriptionService implements ResultSubscriptionService {
+export class MockSubscriptionService implements ResultSubscriptionService {
   connect(): Observable<TranscriptionResult> {
     return EMPTY;
   }
@@ -36,7 +35,7 @@ class MockSubscriptionService implements ResultSubscriptionService {
   }
 }
 
-class MockActivatedRoute {
+export class MockActivatedRoute {
   snapshot = { paramMap: new Map() };
 }
 
