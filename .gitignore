@@ -1,3 +1,4 @@
 .idea/**/*
 src/web/ear-app/.editorconfig
 deploy/local/upload/deploy/**
+volumes/**
