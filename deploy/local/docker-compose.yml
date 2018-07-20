@@ -25,17 +25,19 @@ services:
     restart: unless-stopped
     volumes:
       - fileStorage:/data
+    depends_on: 
+      - redis  
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
      - "traefik.port=8000"   
 
-  # redis:
-  #   image: redis
-  #   ports:
-  #    - "6379:6379"
-  #   volumes:
-  #    - /home/airenas/list/test.volume/redis:/data
-  #   restart: unless-stopped    
+  redis:
+    image: redis
+    ports:
+     - "6379:6379"
+    volumes:
+     - redis:/data
+    restart: unless-stopped    
 
   # membrane:
   #   image: airenas/membrane
@@ -62,4 +64,9 @@ volumes:
       type: none
       device: /home/airenas/projects/list/volumes/fileStorage
       o: bind
-      
+
+  redis:
+    driver_opts:
+      type: none
+      device: /home/airenas/projects/list/volumes/redis
+      o: bind    
