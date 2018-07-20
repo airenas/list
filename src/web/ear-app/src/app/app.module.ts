@@ -8,8 +8,9 @@ import { AppComponent } from './app.component';
 import { UploadComponent } from './upload/upload.component';
 import { ResultsComponent } from './results/results.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, } from '@angular/material';
-import { FormsModule } from '@angular/forms';
+import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatTooltipModule } from '@angular/material';
+import { ShowOnDirtyErrorStateMatcher, ErrorStateMatcher } from '@angular/material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { FileSizeModule } from 'ngx-filesize';
 import { Config } from './config';
@@ -31,12 +32,14 @@ import { ParamsProviderService } from './service/params-provider.service';
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule,
-    MatCardModule, FileSizeModule
+    MatCardModule, FileSizeModule,
+    ReactiveFormsModule, MatTooltipModule
   ],
   providers: [Config,
     ParamsProviderService,
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
+    { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
   ],
   bootstrap: [AppComponent]
 })

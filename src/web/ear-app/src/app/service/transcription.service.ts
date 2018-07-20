@@ -30,6 +30,7 @@ export class HttpTranscriptionService implements TranscriptionService {
   sendFile(fileData: FileData): Observable<SendFileResult> {
     const formData = new FormData();
     formData.append('file', fileData.file, fileData.fileName);
+    formData.append('email', fileData.email);
     const httpOptions = {
       headers: new HttpHeaders({
         'Accept': 'application/json'

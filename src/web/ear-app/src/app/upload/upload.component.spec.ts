@@ -41,6 +41,11 @@ describe('UploadComponent', () => {
       .nativeElement.getAttribute('placeholder')).toBe('Failas');
   }));
 
+  it('should have El Pastas placeholder', async(() => {
+    expect(fixture.debugElement.query(By.css('#emailInput'))
+      .nativeElement.getAttribute('placeholder')).toBe('El. paštas');
+  }));
+
   it('should have file data when file selected', async(() => {
     component.fileChange(new FileHelper().createFakeFile());
     fixture.debugElement.query(By.css('#hiddenFileInput')).nativeElement.dispatchEvent(new Event('input'));
@@ -56,9 +61,10 @@ describe('UploadComponent', () => {
     expect(fixture.debugElement.query(By.css('#uploadButton')).nativeElement.disabled).toBe(true);
   }));
 
-  it('should have enabled button on File selected', async(() => {
+  it('should have enabled button on valid Input', async(() => {
     expect(fixture.debugElement.query(By.css('#uploadButton')).nativeElement.disabled).toBe(true);
     component.fileChange(new FileHelper().createFakeFile());
+    component.email = 'olia';
     fixture.debugElement.query(By.css('#hiddenFileInput')).nativeElement.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -68,6 +74,7 @@ describe('UploadComponent', () => {
 
   it('should invoke upload on click', async(() => {
     component.fileChange(new FileHelper().createFakeFile());
+    component.email = 'olia';
     fixture.debugElement.query(By.css('#hiddenFileInput')).nativeElement.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -95,19 +102,19 @@ describe('UploadComponent Own Mock', () => {
   let component: UploadComponent;
   let fixture: ComponentFixture<UploadComponent>;
 
-  it('should read value from provider', async(() => {
+  it('should read File value from provider', async(() => {
     const params = new ParamsProviderService();
     params.lastSelectedFile = new FileHelper().createFakeFile();
     TestBed.configureTestingModule({
-      declarations: [ UploadComponent ],
+      declarations: [UploadComponent],
       imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{provide: ParamsProviderService, useValue: params},
+      providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
-    .compileComponents();
+      .compileComponents();
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -115,6 +122,30 @@ describe('UploadComponent Own Mock', () => {
       const input = fixture.debugElement.query(By.css('#fileInput'));
       const el = input.nativeElement;
       expect(el.value).toBe('file.wav');
+    });
+  }));
+
+  it('should read email value from provider', async(() => {
+    const params = new ParamsProviderService();
+    params.email = 'olia';
+
+    TestBed.configureTestingModule({
+      declarations: [UploadComponent],
+      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      providers: [{ provide: ParamsProviderService, useValue: params },
+      { provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
+    })
+      .compileComponents();
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      const input = fixture.debugElement.query(By.css('#emailInput'));
+      const el = input.nativeElement;
+      expect(el.value).toBe('olia');
     });
   }));
 });

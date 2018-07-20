@@ -1,18 +1,29 @@
-<mat-card>
+<mat-card class="upload-form">
   <mat-card-header>
     <mat-card-title>Transkripcijos servisas</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3" (change)="filesChange($event.target.files)">
-    <mat-form-field>
-      <input id ="fileInput" matInput placeholder="Failas" readonly="true" [(ngModel)]="selectedFileName" (click)="openInput()" >
-    </mat-form-field>
-    <div id ="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size  | filesize}}</div>
+    <div>
+
+      <mat-form-field class="full-width" class="upload-input-width">
+        <input id="emailInput" name="email" matInput [(ngModel)]="email" placeholder="El. paštas" type="email" matTooltip="Įveskite el. paštą">
+      </mat-form-field>
+
+      <div class="upload-input-width">
+        <mat-form-field class="upload-input-width">
+          <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3" (change)="filesChange($event.target.files)">
+          <input id="fileInput" matInput placeholder="Failas" readonly="true" [(ngModel)]="selectedFileName" (click)="openInput()"
+            matTooltip="Pasirinkite failą">
+        </mat-form-field>
+      </div>
+      <div id="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size | filesize}}</div>
+    </div>
   </mat-card-content>
   <mat-card-actions>
-    <button id="selectFileButton" mat-button (click)="openInput()">
+    <button class="upload-select-button" id="selectFileButton" mat-button (click)="openInput()">
       <i class="material-icons">attachment</i>
     </button>
-    <button id="uploadButton" mat-raised-button color="primary" [disabled]="!selectedFile" (click)="upload()">Siųsti failą transkripcijai</button>
+
+    <button id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()" (click)="upload()">Siųsti failą transkripcijai</button>
   </mat-card-actions>
 </mat-card>

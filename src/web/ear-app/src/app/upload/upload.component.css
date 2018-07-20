@@ -1,0 +1,15 @@
+.upload-form {
+    min-width: 250px;
+    max-width: 300px;
+    width: 100%;
+  }
+  
+  .upload-input-width {
+    min-width: 250px;
+    max-width: 250px;
+    display: inline-block;
+  }
+
+  .upload-select-button {
+    display: inline-block;
+  }

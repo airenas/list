@@ -2,9 +2,17 @@ import { SendFileResult } from './../api/send-file-result';
 import { Component, OnInit } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, ErrorStateMatcher } from '@angular/material';
 import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
+import { Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+
+export class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-upload',
@@ -19,9 +27,11 @@ export class UploadComponent extends BaseComponent implements OnInit {
 
   selectedFile: File; // hold our file
   selectedFileName: string; // hold our file name
+  private _email: string;
 
   ngOnInit() {
     this.fileChange(this.paramsProviderService.lastSelectedFile);
+    this._email = this.paramsProviderService.email;
   }
 
   openInput() {
@@ -48,7 +58,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
 
   upload() {
     console.log('sending this to server', this.selectedFile);
-    this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName })
+    this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName, email: this.email })
       .subscribe(
         result => this.onResult(result),
         error => this.showError('Nepavyko nusiųsti failo', <any>error)
@@ -60,5 +70,17 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.fileChange(null);
     this.showInfo('Failas nusiųstas. Transkripcijos ID: ' + result.id);
     this.router.navigateByUrl('/results/' + result.id);
+  }
+
+  get email(): string {
+    return this._email;
+  }
+  set email(email: string) {
+    this._email = email;
+    this.paramsProviderService.email = email;
+  }
+
+  isValid() {
+    return this.selectedFile && this._email;
   }
 }

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule } from '@angular/material';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileSizeModule } from 'ngx-filesize';
 import { TranscriptionService } from '../service/transcription.service';
 import { Observable } from 'rxjs/Observable';
@@ -55,7 +55,8 @@ export class FileHelper {
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule,
-    MatCardModule, FileSizeModule
+    MatCardModule, FileSizeModule,
+    ReactiveFormsModule
   ],
   providers: [ParamsProviderService, { provide: APP_BASE_HREF, useValue: '/' },
     { provide: TranscriptionService, useClass: MockTestService },
