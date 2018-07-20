@@ -23,6 +23,8 @@ services:
     ports:
       - "8000:8081"
     restart: unless-stopped
+    volumes:
+      - fileStorage:/data
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
      - "traefik.port=8000"   
@@ -53,3 +55,11 @@ services:
   #   restart: unless-stopped 
   #   labels:
   #    - "traefik.service.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
+
+volumes:
+  fileStorage:
+    driver_opts:
+      type: none
+      device: /home/airenas/projects/list/volumes/fileStorage
+      o: bind
+      

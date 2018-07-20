@@ -19,3 +19,25 @@ task copy(type: Copy, group: group, description: "Copies htmls") {
     into dist_dir + 'html/'
     dependsOn 'build'
 }
+
+task deploy(group: group, description: "Deploys web service") {
+    doLast {
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'stop', 'web'
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'rm', '-f', 'web'
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'build', 'web' 
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'up', '-d', 'web'
+    }
+    }
+    mustRunAfter('copy')
+}
