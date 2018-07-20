@@ -18,6 +18,15 @@ services:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/"
      - "traefik.port=8000"
 
+  upload-service:
+    build: upload
+    ports:
+      - "8000:8081"
+    restart: unless-stopped
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+     - "traefik.port=8000"   
+
   # redis:
   #   image: redis
   #   ports:
