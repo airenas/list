@@ -27,6 +27,7 @@ services:
       - fileStorage:/data
     depends_on: 
       - redis  
+      - mongo
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
      - "traefik.port=8000"   
@@ -38,6 +39,21 @@ services:
     volumes:
      - redis:/data
     restart: unless-stopped    
+
+  mongo:
+    image: mongo:4.1.1
+    environment:
+     - MONGO_DATA_DIR=/data/db
+     - MONGO_LOG_DIR=/dev/null
+    #  - MONGODB_USER="list" 
+    #  - MONGODB_PASS="list2018"
+    volumes:
+     - mongo:/data/db
+    ports:
+     - 27018:27017
+    restart: unless-stopped     
+    command: mongod --logpath=/dev/null # --quiet
+
 
   # membrane:
   #   image: airenas/membrane
@@ -70,3 +86,9 @@ volumes:
       type: none
       device: /home/airenas/projects/list/volumes/redis
       o: bind    
+
+  mongo:
+    driver_opts:
+      type: none
+      device: /home/airenas/projects/list/volumes/mongo
+      o: bind

@@ -13,7 +13,7 @@ task clean_all(type: Delete, group: group, description: "Deletes copied resource
 
 task copy_all(group: group, description: "Copies all resourses") {
     dependsOn('web:copy')
-    dependsOn('us:copy')
+    dependsOn('upload:copy')
 }
 
 task deploy_all(group: group, description: "Redeploys docker") {
@@ -37,23 +37,5 @@ task deploy_all(group: group, description: "Redeploys docker") {
 task build_deploy_all(group: group, description: "Builds souce and deploys services to docker") {
     dependsOn('copy_all')
     dependsOn('deploy_all')
-}
-
-task upload_deploy(group: group, description: "Deploys upload service") {
-    doLast {
-    exec {
-        commandLine 'docker-compose', 'stop', 'uploadService'
-    }
-    exec {
-        commandLine 'docker-compose', 'rm', '-f'
-    }
-    exec {
-        commandLine 'docker-compose', 'build', 'uploadService' 
-    }
-    exec {
-        commandLine 'docker-compose', 'up', '-d'
-    }
-    }
-    mustRunAfter('upload:copy')
 }
 
