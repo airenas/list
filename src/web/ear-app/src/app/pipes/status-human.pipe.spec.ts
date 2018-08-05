@@ -6,10 +6,10 @@ describe('StatusHumanPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-  it('transforms ADDED', () => {
+  it('transforms RECEIVED', () => {
     const pipe = new StatusHumanPipe();
-    const transformed = pipe.transform('ADDED');
-    expect(transformed).not.toEqual('ADDED');
+    const transformed = pipe.transform('RECEIVED');
+    expect(transformed).not.toEqual('RECEIVED');
   });
 
   it('returns the same', () => {

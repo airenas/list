@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class StatusHumanPipe implements PipeTransform {
 
   transform(value: string): string {
-    if (value === 'ADDED') {
+    if (value === 'RECEIVED') {
       return 'Įkeltas. Laukia';
     }
     return value;
