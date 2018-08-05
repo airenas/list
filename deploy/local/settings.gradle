@@ -11,3 +11,4 @@ rootProject.name = 'local'
 
 include 'web'
 include 'upload'
+include 'status'

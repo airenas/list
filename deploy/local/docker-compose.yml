@@ -20,8 +20,6 @@ services:
 
   upload-service:
     build: upload
-    ports:
-      - "8000:8081"
     restart: unless-stopped
     volumes:
       - fileStorage:/data
@@ -30,7 +28,16 @@ services:
       - mongo
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
-     - "traefik.port=8000"   
+     - "traefik.port=8000"  
+
+  status-service:
+    build: status
+    restart: unless-stopped
+    depends_on: 
+      - mongo
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
+     - "traefik.port=8000"     
 
   redis:
     image: redis
@@ -85,7 +92,7 @@ volumes:
     driver_opts:
       type: none
       device: /home/airenas/projects/list/volumes/redis
-      o: bind    
+      o: bind   
 
   mongo:
     driver_opts:

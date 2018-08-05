@@ -1,0 +1,45 @@
+/*
+ */
+def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/statusProviderService/"
+def dist_dir = "deploy/"
+
+def group = "statusProviderService"
+
+task clean(type: Delete, group: group, description: "Deletes copied resources") {
+    delete dist_dir
+}
+
+task build(type: Exec, group: group, description: "Compiles servise") {
+    commandLine 'go', 'build', '-installsuffix', 'cgo' 
+    workingDir main_dir
+    environment CGO_ENABLED:0
+}
+
+task copy(type: Copy, group: group, description: "Copies service") {
+    from main_dir
+    into dist_dir
+    include "statusProviderService"
+    dependsOn 'build'
+}
+
+task deploy(group: group, description: "Deploys status provider service") {
+    doLast {
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'stop', 'status-service'
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'rm', '-f', 'status-service'
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'build', 'status-service' 
+    }
+    exec {
+        workingDir './..'
+        commandLine 'docker-compose', 'up', '-d', 'status-service'
+    }
+    }
+    mustRunAfter('copy')
+}

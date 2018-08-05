@@ -9,11 +9,13 @@ def group="local"
 task clean_all(type: Delete, group: group, description: "Deletes copied resources") {
     dependsOn 'web:clean'
     dependsOn 'upload:clean'
+    dependsOn 'status:clean'
 }
 
 task copy_all(group: group, description: "Copies all resourses") {
     dependsOn('web:copy')
     dependsOn('upload:copy')
+    dependsOn('status:copy')
 }
 
 task deploy_all(group: group, description: "Redeploys docker") {
