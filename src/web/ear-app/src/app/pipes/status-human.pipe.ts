@@ -9,6 +9,9 @@ export class StatusHumanPipe implements PipeTransform {
     if (value === 'RECEIVED') {
       return 'Įkeltas. Laukia';
     }
+    if (value === 'NOT_FOUND') {
+      return 'Nežinomas ID';
+    }
     return value;
   }
 }

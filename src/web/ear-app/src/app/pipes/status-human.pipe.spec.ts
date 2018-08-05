@@ -12,6 +12,12 @@ describe('StatusHumanPipe', () => {
     expect(transformed).not.toEqual('RECEIVED');
   });
 
+  it('transforms NOT_FOUND', () => {
+    const pipe = new StatusHumanPipe();
+    const transformed = pipe.transform('NOT_FOUND');
+    expect(transformed).not.toEqual('NOT_FOUND');
+  });
+
   it('returns the same', () => {
     const pipe = new StatusHumanPipe();
     const transformed = pipe.transform('olia');
