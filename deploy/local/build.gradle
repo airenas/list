@@ -10,12 +10,14 @@ task clean_all(type: Delete, group: group, description: "Deletes copied resource
     dependsOn 'web:clean'
     dependsOn 'upload:clean'
     dependsOn 'status:clean'
+    dependsOn 'manager:clean'
 }
 
 task copy_all(group: group, description: "Copies all resourses") {
     dependsOn('web:copy')
     dependsOn('upload:copy')
     dependsOn('status:copy')
+    dependsOn('manager:copy')
 }
 
 task deploy_all(group: group, description: "Redeploys docker") {
