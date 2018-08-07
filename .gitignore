@@ -2,4 +2,5 @@
 src/web/ear-app/.editorconfig
 deploy/local/upload/deploy/**
 deploy/local/status/deploy/**
+deploy/local/manager/deploy/**
 volumes/**
