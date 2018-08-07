@@ -1,7 +1,6 @@
 FROM iron/base
-MAINTAINER Airenas Vaiciunas <airenass@gmail.com>
-
-LABEL Description="This image is used to start the LiST status provider service" Vendor="Airenas Vaiciunas" Version="1.0"
+LABEL Description="This image is used to start the LiST status provider service" \ 
+      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
 
 WORKDIR /app
 

@@ -1,0 +1,14 @@
+messageServer: 
+    broker: redis://redis:6379
+    defaultQueue: tasks
+    resultBackend: redis://redis:6379
+mongo:
+    url: mongo  
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

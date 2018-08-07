@@ -37,7 +37,14 @@ services:
       - mongo
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
-     - "traefik.port=8000"     
+     - "traefik.port=8000" 
+  
+  manager-service:
+    build: manager
+    restart: unless-stopped
+    depends_on: 
+      - mongo
+      - redis
 
   redis:
     image: redis
