@@ -46,6 +46,14 @@ services:
       - mongo
       - redis
 
+  audio-prepare-service:
+    build: audio.prepare
+    restart: unless-stopped
+    depends_on: 
+      - redis
+    volumes:
+      - fileStorage:/data
+      
   redis:
     image: redis
     ports:

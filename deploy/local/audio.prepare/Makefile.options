@@ -1,0 +1,2 @@
+OUTPUT_ROOT=/data/audio.prepared
+INPUT_ROOT=/data/audio.in
