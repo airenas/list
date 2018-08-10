@@ -63,6 +63,17 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models    
+  
+  transcription-service:
+    build: transcription
+    restart: unless-stopped
+    depends_on: 
+      - redis
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models      
+      
       
   redis:
     image: redis

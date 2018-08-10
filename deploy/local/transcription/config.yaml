@@ -1,0 +1,17 @@
+worker:
+    taskName: Transcription
+    command: make /data/decoded/trans/{ID}/1-pass/decode/log
+    workingDir: /cmd/
+
+messageServer: 
+    broker: redis://redis:6379
+    defaultQueue: tasks
+    resultBackend: redis://redis:6379
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

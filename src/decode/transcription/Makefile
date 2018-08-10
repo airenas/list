@@ -23,6 +23,9 @@ utils:
 conf:
 	ln -s $(MODELS_ROOT)/conf
 
+.SECONDARY:
+.DELETE_ON_ERROR:	
+
 # MFCC calculation
 $(OUTPUT_ROOT)/trans/%/mfcc: $(INPUT_ROOT)/trans/%/spk2utt steps utils conf
 	rm -rf $@
