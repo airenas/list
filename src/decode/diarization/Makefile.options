@@ -1,0 +1,5 @@
+OUTPUT_ROOT=decoded
+INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.prepared
+APPS_ROOT=/home/airenas/projects/list/volumes/apps/diarization
+MODELS_ROOT=/home/airenas/projects/list/volumes/models/diarization
+JAVA_BIN=java

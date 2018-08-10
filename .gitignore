@@ -6,3 +6,4 @@ deploy/local/manager/deploy/**
 deploy/local/audio.prepare/deploy/**
 volumes/**
 src/decode/audio.prepare/audio.prepared/**
+src/decode/diarization/decoded/**

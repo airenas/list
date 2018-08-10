@@ -1,4 +1,6 @@
 #!/bin/bash
+# copied and modified from https://github.com/alumae/kaldi-offline-transcriber
+# see Licenses/LICENSE.alumae
 
 set -o errexit
 if [ -z $LOCALCLASSPATH ]; then
