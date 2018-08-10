@@ -4,6 +4,9 @@
 # - mp3
 # - mp4
 
+# copied and modified from https://github.com/alumae/kaldi-offline-transcriber
+# see Licenses/LICENSE.alumae
+
 -include Makefile.options
 
 OUTPUT_ROOT?=/audio.prepared
