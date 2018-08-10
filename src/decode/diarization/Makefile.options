@@ -1,4 +1,4 @@
-OUTPUT_ROOT=decoded
+OUTPUT_ROOT=/home/airenas/projects/list/src/decode/data/decoded
 INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.prepared
 APPS_ROOT=/home/airenas/projects/list/volumes/apps/diarization
 MODELS_ROOT=/home/airenas/projects/list/volumes/models/diarization

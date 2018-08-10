@@ -11,3 +11,4 @@ src/decode/diarization/decoded/**
 ataskaitos/Koncepcinė architektūra - AFT posistemė.doc
 deploy/production/membrane/deploy/membrane.service
 deploy/production/mouth/deploy/mouth.service
+src/decode/data/**
