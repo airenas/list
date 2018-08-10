@@ -1,0 +1,4 @@
+OUTPUT_ROOT=/data/decoded
+INPUT_ROOT=/data/audio.prepared
+APPS_ROOT=/apps/diarization
+MODELS_ROOT=/models/diarization

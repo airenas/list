@@ -53,6 +53,16 @@ services:
       - redis
     volumes:
       - fileStorage:/data
+
+  diarization-service:
+    build: diarization
+    restart: unless-stopped
+    depends_on: 
+      - redis
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models    
       
   redis:
     image: redis
@@ -102,6 +112,18 @@ volumes:
       type: none
       device: /home/airenas/projects/list/volumes/fileStorage
       o: bind
+
+  appsStorage:
+    driver_opts:
+      type: none
+      device: /home/airenas/projects/list/volumes/apps
+      o: bind
+
+  modelsStorage:
+    driver_opts:
+      type: none
+      device: /home/airenas/projects/list/volumes/models
+      o: bind          
 
   redis:
     driver_opts:

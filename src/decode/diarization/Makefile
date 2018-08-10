@@ -9,6 +9,7 @@ INPUT_ROOT?=/audio.prepared
 APPS_ROOT?=/diarization
 LOCALCLASSPATH?=$(APPS_ROOT)/lib/LIUM_SpkDiarization-4.2.jar
 DO_MUSIC_DETECTION=no
+JAVA_BIN?=java
 
 # Speaker diarization
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav

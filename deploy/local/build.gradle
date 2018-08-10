@@ -11,6 +11,8 @@ task clean_all(type: Delete, group: group, description: "Deletes copied resource
     dependsOn 'upload:clean'
     dependsOn 'status:clean'
     dependsOn 'manager:clean'
+    dependsOn 'audio.prepare:clean'
+    dependsOn 'diarization:clean'
 }
 
 task copy_all(group: group, description: "Copies all resourses") {
@@ -18,6 +20,8 @@ task copy_all(group: group, description: "Copies all resourses") {
     dependsOn('upload:copy')
     dependsOn('status:copy')
     dependsOn('manager:copy')
+    dependsOn('audio.prepare:copy')
+    dependsOn('diarization:copy')
 }
 
 task deploy_all(group: group, description: "Redeploys docker") {
