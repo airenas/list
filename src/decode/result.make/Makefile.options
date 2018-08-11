@@ -1,0 +1,3 @@
+OUTPUT_ROOT=/home/airenas/projects/list/src/decode/data/decoded
+INPUT_ROOT=/home/airenas/projects/list/src/decode/data/decoded
+APPS_ROOT=/home/airenas/projects/list/volumes/apps/kaldi
