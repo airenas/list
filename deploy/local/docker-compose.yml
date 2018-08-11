@@ -73,7 +73,16 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models      
-      
+  
+  result-make-service:
+    build: result.make
+    restart: unless-stopped
+    depends_on: 
+      - redis
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models  
       
   redis:
     image: redis
@@ -96,26 +105,6 @@ services:
      - 27018:27017
     restart: unless-stopped     
     command: mongod --logpath=/dev/null # --quiet
-
-
-  # membrane:
-  #   image: airenas/membrane
-  #   depends_on: 
-  #    - redis
-  #   volumes:
-  #    - /home/airenas/list/test.volume/:/data
-  #   restart: unless-stopped 
-  #   labels:
-  #    - "traefik.service.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
-  #   user: "1002"
-
-  # mouth:
-  #   image: airenas/mouth
-  #   volumes:
-  #    - /home/airenas/list/test.volume/:/data
-  #   restart: unless-stopped 
-  #   labels:
-  #    - "traefik.service.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
 
 volumes:
   fileStorage:

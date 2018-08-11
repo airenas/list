@@ -15,3 +15,4 @@ src/decode/data/**
 deploy/local/transcription/deploy/**
 src/decode/transcription/steps
 src/decode/transcription/utils
+deploy/local/result.make/deploy/**
