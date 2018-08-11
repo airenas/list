@@ -34,8 +34,11 @@ utils:
 $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/.ctm
 	cat $(OUTPUT_ROOT)/trans/$*/decode/score_$(LM_SCALE)/`dirname $*`.ctm  | perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
 
-%.txt: %.selected.ctm
-	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@
+%.synced.ctm: %.selected.ctm
+	cat $^ | LC_ALL=C sort -k 1,1 -k 3,3n -k 4,4n > $@
+
+%.txt: %.synced.ctm
+	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@	
 
 $(OUTPUT_ROOT)/trans/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 	cat $^ > $@	
