@@ -1,4 +1,4 @@
-version: '3'
+version: '3.1'
 
 services:
   reverse-proxy:
@@ -24,7 +24,7 @@ services:
     volumes:
       - fileStorage:/data
     depends_on: 
-      - redis  
+      - rabbitmq  
       - mongo
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
@@ -44,13 +44,13 @@ services:
     restart: unless-stopped
     depends_on: 
       - mongo
-      - redis
+      - rabbitmq
 
   audio-prepare-service:
     build: audio.prepare
     restart: unless-stopped
     depends_on: 
-      - redis
+      - rabbitmq
     volumes:
       - fileStorage:/data
 
@@ -58,7 +58,7 @@ services:
     build: diarization
     restart: unless-stopped
     depends_on: 
-      - redis
+      - rabbitmq
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -68,7 +68,7 @@ services:
     build: transcription
     restart: unless-stopped
     depends_on: 
-      - redis
+      - rabbitmq
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -78,20 +78,12 @@ services:
     build: result.make
     restart: unless-stopped
     depends_on: 
-      - redis
+      - rabbitmq
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models  
       
-  redis:
-    image: redis
-    ports:
-     - "6379:6379"
-    volumes:
-     - redis:/data
-    restart: unless-stopped    
-
   mongo:
     image: mongo:4.1.1
     environment:
@@ -105,6 +97,22 @@ services:
      - 27018:27017
     restart: unless-stopped     
     command: mongod --logpath=/dev/null # --quiet
+
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
+      RABBITMQ_DEFAULT_USER: "list"
+      RABBITMQ_DEFAULT_PASS: "list"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
 
 volumes:
   fileStorage:
@@ -125,11 +133,11 @@ volumes:
       device: /home/airenas/projects/list/volumes/models
       o: bind          
 
-  redis:
+  rabbitmq:
     driver_opts:
       type: none
-      device: /home/airenas/projects/list/volumes/redis
-      o: bind   
+      device: /home/airenas/projects/list/volumes/rabbitmq
+      o: bind     
 
   mongo:
     driver_opts:

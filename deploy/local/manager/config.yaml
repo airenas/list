@@ -1,7 +1,6 @@
 messageServer: 
-    broker: redis://redis:6379
-    defaultQueue: tasks
-    resultBackend: redis://redis:6379
+    broker: amqp://list:list@rabbitmq:5672/
+    
 mongo:
     url: mongo  
 
