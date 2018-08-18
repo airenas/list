@@ -1,5 +1,5 @@
 worker:
-    taskName: MakeResult
+    taskName: ResultMake
     command: make /data/decoded/trans/{ID}/result.txt
     workingDir: /cmd/
 
