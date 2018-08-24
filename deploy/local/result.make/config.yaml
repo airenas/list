@@ -2,6 +2,7 @@ worker:
     taskName: ResultMake
     command: make /data/decoded/trans/{ID}/result.txt
     workingDir: /cmd/
+    resultFile: /data/decoded/trans/{ID}/result.txt
 
 messageServer: 
     broker: amqp://list:list@rabbitmq:5672/
