@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   sendFileUrl: 'transcriber/',
   resultUrl: 'result.provider/',
-  subscribeUrl: 'subscribe/'
+  subscribeUrl: 'result.provider/subscribe'
 };
 
 /*

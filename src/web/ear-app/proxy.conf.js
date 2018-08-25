@@ -1,16 +1,16 @@
 const PROXY_CONFIG = {
   "/transcriber/": {
-    "target": "http://localhost:8080",
-    "secure": false,
-    "pathRewrite": {"^/transcriber": ""}
+    "target": "http://localhost:7050/ausis",
+    "secure": false
+    //"pathRewrite": {"^/transcriber": ""}
   },
   "/result.provider/": {
-    "target": "http://localhost:8081",
-    "secure": false,
-    "pathRewrite": {"^/result.provider": ""}
+    "target": "http://localhost:7050/ausis",
+    "secure": false
+    //"pathRewrite": {"^/result.provider": ""}
   },
-  "/subscribe/": {
-    "target": "ws://localhost:8082",
+  "/result.provider/subscribe": {
+    "target": "ws://localhost:7050/ausis",
     "secure": false,
     "ws": true
   }
