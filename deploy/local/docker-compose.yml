@@ -35,6 +35,7 @@ services:
     restart: unless-stopped
     depends_on: 
       - mongo
+      - rabbitmq  
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
      - "traefik.port=8000" 
