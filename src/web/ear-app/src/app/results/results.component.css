@@ -7,3 +7,14 @@
   .result-full-width {
     width: 100%;
   }
+
+  .result-progress-section {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    height: 20px;
+  }
+  
+  .result-progress {
+    margin: 0 10px;
+  }

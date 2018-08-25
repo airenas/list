@@ -3,4 +3,5 @@ export interface TranscriptionResult {
     status: string;
     error: string;
     recognizedText: string;
+    progress: number;
 }

@@ -17,6 +17,7 @@ import { Config } from './config';
 import { HttpClientModule } from '@angular/common/http';
 import { StatusHumanPipe } from './pipes/status-human.pipe';
 import { ParamsProviderService } from './service/params-provider.service';
+import {MatProgressBarModule} from '@angular/material/progress-bar'
 
 @NgModule({
   declarations: [
@@ -31,7 +32,7 @@ import { ParamsProviderService } from './service/params-provider.service';
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule,
+    MatSnackBarModule, MatProgressBarModule,
     MatCardModule, FileSizeModule,
     ReactiveFormsModule, MatTooltipModule
   ],
