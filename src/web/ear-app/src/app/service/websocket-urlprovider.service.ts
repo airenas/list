@@ -7,26 +7,25 @@ export class WebsocketURLProviderService {
   constructor(private config: Config, private router: Router) { }
 
   public getURL() {
-    console.log('window.location.hostname: ' + window.location.hostname);
-    console.log('router.url                ' + this.router.url);
-    console.log('window.location.pathname: ' + window.location.pathname);
-    const basePathURL = this.basePathName(window.location.pathname, this.router.url);
-    const r = this.addURL(
-      this.addURL(this.websocketProtocolByLocation() + window.location.hostname
-        + this.websocketPortWithColonByLocation(), basePathURL),
-      this.config.subscribeUrl);
-    console.log('getURL: ' + r);
-    return r;
+    return this.getURLInternal(window.location, this.router.url);
   }
 
-  private websocketProtocolByLocation() {
+  getURLInternal(location: Location, routerURL: string): string {
+    const basePathURL = this.basePathName(location.pathname, routerURL);
+    let result = this.getProtocol(location) + location.hostname + this.getPort(location);
+    result = this.addURL(result, basePathURL);
+    result = this.addURL(result, this.config.subscribeUrl);
+    return result;
+  }
+
+  private getProtocol(location: Location) {
     return window.location.protocol === 'https:' ? 'wss://' : 'ws://';
   }
 
-  private websocketPortWithColonByLocation() {
-    const defaultPort = window.location.protocol === 'https:' ? '443' : '80';
-    if (window.location.port !== defaultPort) {
-      return ':' + window.location.port;
+  private getPort(location: Location) {
+    const defaultPort = location.protocol === 'https:' ? '443' : '80';
+    if (location.port !== defaultPort) {
+      return ':' + location.port;
     } else {
       return '';
     }

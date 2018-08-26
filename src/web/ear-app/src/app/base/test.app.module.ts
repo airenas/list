@@ -1,10 +1,11 @@
+import { Config } from './../config';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
-import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule } from '@angular/material';
+import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatProgressBarModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FileSizeModule } from 'ngx-filesize';
 import { TranscriptionService } from '../service/transcription.service';
@@ -54,18 +55,20 @@ export class FileHelper {
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule,
+    MatSnackBarModule, MatProgressBarModule,
     MatCardModule, FileSizeModule,
     ReactiveFormsModule
   ],
   providers: [ParamsProviderService, { provide: APP_BASE_HREF, useValue: '/' },
     { provide: TranscriptionService, useClass: MockTestService },
     { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-    { provide: ActivatedRoute, useClass: MockActivatedRoute }],
+    { provide: ActivatedRoute, useClass: MockActivatedRoute },
+    { provide: Config, useClass: Config }
+  ],
   bootstrap: [],
   exports: [
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatCardModule
+    MatSnackBarModule, MatCardModule, MatProgressBarModule
   ],
 })
 
