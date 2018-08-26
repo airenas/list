@@ -18,6 +18,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StatusHumanPipe } from './pipes/status-human.pipe';
 import { ParamsProviderService } from './service/params-provider.service';
 import {MatProgressBarModule} from '@angular/material/progress-bar'
+import { WebsocketURLProviderService } from './service/websocket-urlprovider.service';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {MatProgressBarModule} from '@angular/material/progress-bar'
   ],
   providers: [Config,
     ParamsProviderService,
+    WebsocketURLProviderService,
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },

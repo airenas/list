@@ -12,7 +12,8 @@ const PROXY_CONFIG = {
   "/result.provider/subscribe": {
     "target": "ws://localhost:7050/ausis",
     "secure": false,
-    "ws": true
+    "ws": true,
+    "logLevel": "debug"
   }
 }
 

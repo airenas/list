@@ -11,6 +11,6 @@ export class Config {
         const prefix = '';
         this.sendFileUrl = prefix + environment.sendFileUrl + 'upload';
         this.resultUrl = prefix + environment.resultUrl + 'result/';
-        this.subscribeUrl = 'ws://127.0.0.1:4200/subscribe/';
+        this.subscribeUrl = prefix + environment.subscribeUrl;
     }
 }

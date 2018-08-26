@@ -1,3 +1,4 @@
+import { WebsocketURLProviderService } from './websocket-urlprovider.service';
 import { TranscriptionResult } from './../api/transcription-result';
 import { Injectable } from '@angular/core';
 import websocketConnect from 'rxjs-websockets';
@@ -5,6 +6,7 @@ import { QueueingSubject } from 'queueing-subject';
 import { Observable } from 'rxjs/Observable';
 import { Config } from '../config';
 import 'rxjs/add/operator/share';
+import { Router } from '@angular/router';
 
 @Injectable()
 export abstract class ResultSubscriptionService {
@@ -16,7 +18,7 @@ export abstract class ResultSubscriptionService {
 export class WSResultSubscriptionService implements ResultSubscriptionService {
   private inputStream: QueueingSubject<string>;
 
-  constructor(private config: Config) {
+  constructor(private urlProvider: WebsocketURLProviderService) {
   }
 
   public connect(): Observable<TranscriptionResult> {
@@ -24,12 +26,12 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
     // observer subscribes. This socket is shared with subsequent observers
     // and closed when the observer count falls to zero.
     return websocketConnect(
-        this.config.subscribeUrl,
-        this.inputStream = new QueueingSubject<string>()
+      this.urlProvider.getURL(),
+      this.inputStream = new QueueingSubject<string>()
     ).messages.share().map(data => {
       return <TranscriptionResult>JSON.parse(data);
     }
-  );
+    );
   }
 
   public send(id: string): void {
