@@ -9,7 +9,7 @@
     </mat-form-field>
     <div *ngIf="result?.status">Statusas: <strong>{{result?.status | statusHuman}}</strong></div>
     <section class="result-progress-section" *ngIf="progress">
-      <mat-progress-bar class="result-progress" [color]="progress.color" mode="buffer" 
+      <mat-progress-bar id="progressBar" class="result-progress" [color]="progress.color" mode="buffer" 
       [value]="progress.value" [bufferValue]="progress.buffer">
       </mat-progress-bar>
     </section>

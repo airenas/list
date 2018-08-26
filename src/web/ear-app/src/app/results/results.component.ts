@@ -83,7 +83,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   }
 }
 
-class Progress {
+export class Progress {
   color: string;
   value: number;
   buffer: number;

@@ -1,6 +1,7 @@
+import { TranscriptionResult } from './../api/transcription-result';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ResultsComponent } from './results.component';
+import { ResultsComponent, Progress } from './results.component';
 import { TestAppModule, MockActivatedRoute, MockSubscriptionService, MockTestService } from '../base/test.app.module';
 import { StatusHumanPipe } from '../pipes/status-human.pipe';
 import { By } from '@angular/platform-browser';
@@ -16,10 +17,10 @@ describe('ResultsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResultsComponent, StatusHumanPipe ],
+      declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -72,6 +73,34 @@ describe('ResultsComponent', () => {
       expect(component.refresh).toHaveBeenCalled();
     });
   }));
+
+  it('should have no progress bar', async(() => {
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#progressBar'))).toBe(null);
+    });
+  }));
+
+  it('should have progress status bar', async(() => {
+    component.progress = new Progress();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#progressBar')).nativeElement).not.toBe(null);
+    });
+  }));
+
+  it('should have progress status bar set from result', async(() => {
+    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10};
+
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#progressBar')).nativeElement).not.toBe(null);
+      expect(fixture.debugElement.query(By.css('#progressBar')).nativeElement.value).toBe(10);
+    });
+  }));
+
+
 });
 
 describe('ResultsComponent Own Mock', () => {
@@ -84,14 +113,14 @@ describe('ResultsComponent Own Mock', () => {
     }
 
     TestBed.configureTestingModule({
-      declarations: [ ResultsComponent, StatusHumanPipe ],
+      declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule],
       providers: [ParamsProviderService, { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
+        { provide: TranscriptionService, useClass: MockTestService },
+        { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+        { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
     })
-    .compileComponents();
+      .compileComponents();
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -106,15 +135,15 @@ describe('ResultsComponent Own Mock', () => {
     const params = new ParamsProviderService();
     params.lastId = 'id1';
     TestBed.configureTestingModule({
-      declarations: [ ResultsComponent, StatusHumanPipe ],
+      declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule],
-      providers: [{provide: ParamsProviderService, useValue: params},
+      providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
-    .compileComponents();
+      .compileComponents();
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
