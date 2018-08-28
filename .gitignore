@@ -16,3 +16,4 @@ deploy/local/transcription/deploy/**
 src/decode/transcription/steps
 src/decode/transcription/utils
 deploy/local/result.make/deploy/**
+deploy/local/rabbitmq_pass

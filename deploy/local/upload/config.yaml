@@ -3,8 +3,10 @@ port: 8000
 fileStorage:
     path: /data/audio.in/
 
-messageServer: 
-    broker: amqp://list:list@rabbitmq:5672/
+# messageServer: 
+#     url: rabbitmq:5672/
+#     user: list
+#     pass: olia
 
 mongo:
     url: mongo    

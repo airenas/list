@@ -26,6 +26,12 @@ services:
     depends_on: 
       - rabbitmq  
       - mongo
+    environment:
+      MESSAGESERVER_URL: rabbitmq:5672/
+      MESSAGESERVER_USER: list
+      MESSAGESERVER_PASS_FILE: /run/secrets/rabbitmq_pass
+    secrets:
+      - rabbitmq_pass   
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
      - "traefik.port=8000"  
@@ -105,15 +111,17 @@ services:
     environment:
       RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
       RABBITMQ_DEFAULT_USER: "list"
-      RABBITMQ_DEFAULT_PASS: "list"
+      RABBITMQ_DEFAULT_PASS_FILE: /run/secrets/rabbitmq_pass
       RABBITMQ_DEFAULT_VHOST: "/"
     ports:
-      - "15672:15672"
+      - "7052:15672"
       - "5672:5672"
     labels:
       NAME: "rabbitmq"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+    secrets:
+      - rabbitmq_pass 
 
 volumes:
   fileStorage:
@@ -145,3 +153,8 @@ volumes:
       type: none
       device: /home/airenas/projects/list/volumes/mongo
       o: bind
+
+
+secrets:
+  rabbitmq_pass:
+    file: ./rabbitmq_pass
