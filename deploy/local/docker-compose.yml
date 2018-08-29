@@ -40,7 +40,12 @@ services:
     restart: unless-stopped
     depends_on: 
       - mongo
-      - rabbitmq  
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}    
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
      - "traefik.port=8000" 
@@ -51,6 +56,11 @@ services:
     depends_on: 
       - mongo
       - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}  
 
   audio-prepare-service:
     build: audio.prepare

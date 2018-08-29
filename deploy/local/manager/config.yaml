@@ -1,8 +1,8 @@
-messageServer: 
-    broker: amqp://list:list@rabbitmq:5672/
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/
     
-mongo:
-    url: mongo  
+# mongo:
+#     url: mongo  
 
 # logger:
 #     level: info

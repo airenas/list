@@ -1,10 +1,10 @@
 port: 8000
 
-mongo:
-    url: mongo  
+# mongo:
+#     url: mongo  
 
-messageServer: 
-    broker: amqp://list:list@rabbitmq:5672/      
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/      
 
 # logger:
 #     level: info
