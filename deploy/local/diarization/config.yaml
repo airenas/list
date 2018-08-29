@@ -3,8 +3,8 @@ worker:
     command: make /data/decoded/trans/{ID}/spk2utt
     workingDir: /cmd/
 
-messageServer: 
-    broker: amqp://list:list@rabbitmq:5672/
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/
 
 # logger:
 #     level: info
