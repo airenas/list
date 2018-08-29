@@ -8,8 +8,8 @@ fileStorage:
 #     user: list
 #     pass: olia
 
-mongo:
-    url: mongo    
+# mongo:
+#     url: mongo    
 
 # logger:
 #     level: info

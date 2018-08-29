@@ -8,10 +8,7 @@ WORKDIR /app
 
 COPY deploy/uploadService /app/
 COPY config.yaml /app/
-COPY start.service.sh /app/
 
 EXPOSE 8000
 
-CMD ["./start.service.sh"]
-
-#CMD ["./uploadService"]
+CMD ["./uploadService"]
