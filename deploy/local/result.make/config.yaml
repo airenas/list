@@ -4,8 +4,8 @@ worker:
     workingDir: /cmd/
     resultFile: /data/decoded/trans/{ID}/result.txt
 
-messageServer: 
-    broker: amqp://list:list@rabbitmq:5672/
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/
 
 # logger:
 #     level: info
