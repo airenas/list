@@ -67,6 +67,10 @@ services:
     restart: unless-stopped
     depends_on: 
       - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data
 
@@ -75,6 +79,10 @@ services:
     restart: unless-stopped
     depends_on: 
       - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -85,6 +93,10 @@ services:
     restart: unless-stopped
     depends_on: 
       - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -95,11 +107,16 @@ services:
     restart: unless-stopped
     depends_on: 
       - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models  
-      
+
+########### db & broker
   mongo:
     image: mongo:4.1.1
     environment:
@@ -129,7 +146,7 @@ services:
       NAME: "rabbitmq"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-
+########### volumes 
 volumes:
   fileStorage:
     driver_opts:
