@@ -10,6 +10,7 @@ import { TranscriptionService } from '../service/transcription.service';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
 import { ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
+import { Status } from '../api/status';
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
@@ -95,6 +96,33 @@ describe('ResultsComponent', () => {
     fixture.detectChanges();
     fixture.whenStable().then(() => {
       expect(fixture.debugElement.query(By.css('#progressBar')).nativeElement).not.toBe(null);
+    });
+  }));
+
+  it('should have status set from result', async(() => {
+    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10};
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#status')).nativeElement).not.toBe(null);
+    });
+  }));
+
+  it('should have no status set from result', async(() => {
+    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10};
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#status'))).toBe(null);
+    });
+  }));
+
+  it('should have no progress status bar set from result', async(() => {
+    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10};
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#progressBar'))).toBe(null);
     });
   }));
 
