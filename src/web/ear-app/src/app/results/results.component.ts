@@ -21,6 +21,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   recognizedText: string;
   private resultSubscription: Subscription;
   progress: Progress;
+  status: string;
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
@@ -62,15 +63,20 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.error = null;
     this.recognizedText = null;
     this.progress = null;
+    this.status = null;
     if (this.result) {
       this.error = result.error;
       this.recognizedText = result.recognizedText;
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
+      this.status = (result.status === Status.Completed) ? null : result.status;
     }
   }
 
   prepareProgress(result: TranscriptionResult): Progress {
+    if (result.status === Status.Completed) {
+      return null;
+    }
     const progress = new Progress();
     progress.value = result.progress;
     progress.color = result.error ? 'warn' : 'primary';

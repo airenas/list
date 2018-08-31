@@ -7,7 +7,7 @@
       <input id="transcriptionIDInput" matInput placeholder="Transkripcijos ID" [(ngModel)]="transcriptionId" (keyup.enter)="refresh()"
         (keyup)="transcriptionIdUpdated()">
     </mat-form-field>
-    <div *ngIf="result?.status">Statusas: <strong>{{result?.status | statusHuman}}</strong></div>
+    <div *ngIf="status">Statusas: <strong>{{status | statusHuman}}</strong></div>
     <section class="result-progress-section" *ngIf="progress">
       <mat-progress-bar id="progressBar" class="result-progress" [color]="progress.color" mode="buffer" 
       [value]="progress.value" [bufferValue]="progress.buffer">
