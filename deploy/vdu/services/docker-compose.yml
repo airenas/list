@@ -24,22 +24,22 @@ services:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/"
      - "traefik.port=8000"
 
-#   upload-service:
-#     build: upload
-#     restart: unless-stopped
-#     volumes:
-#       - fileStorage:/data
-#     depends_on: 
-#       - rabbitmq  
-#       - mongo
-#     environment:
-#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-#       MONGO_URL: ${LIST_MONGO_URL}
-#     labels:
-#      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
-#      - "traefik.port=8000"  
+  upload-service:
+    image: airenas/list-upload-service:${SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    depends_on: 
+      - rabbitmq  
+      - mongo
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+     - "traefik.port=8000"  
 
 #   status-service:
 #     build: status
@@ -123,42 +123,44 @@ services:
 #       - modelsStorage:/models  
 
 # ########### db & broker
-#   mongo:
-#     image: mongo:4.1.1
-#     environment:
-#       MONGO_DATA_DIR: "/data/db"
-#       MONGO_LOG_DIR: "/dev/null"
-#       MONGO_INITDB_ROOT_USERNAME: ${LIST_MONGO_USER}
-#       MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
-#     volumes:
-#       - mongo:/data/db
-#     ports:
-#       - ${LIST_MONGO_EXT_PORT}:27017
-#     restart: unless-stopped     
-#     command: mongod --logpath=/dev/null # --quiet
+  mongo:
+    image: mongo:4.1.1
+    environment:
+      MONGO_DATA_DIR: "/data/db"
+      MONGO_LOG_DIR: "/dev/null"
+      MONGO_INITDB_ROOT_USERNAME: ${LIST_MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
+    volumes:
+      - mongo:/data/db
+    restart: unless-stopped     
+    command: mongod --logpath=/dev/null # --quiet
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/mongo/"
+     - "traefik.port=27017"
 
-#   rabbitmq:
-#     image: "rabbitmq:3.7-management"
-#     hostname: "rabbitmq"
-#     environment:
-#       RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
-#       RABBITMQ_DEFAULT_USER: ${LIST_RABBITMQ_USER}
-#       RABBITMQ_DEFAULT_PASS: ${LIST_RABBITMQ_PASS}
-#       RABBITMQ_DEFAULT_VHOST: "/"
-#     ports:
-#       - "${LIST_RABBITMQ_EXT_PORT}:15672"
-#       - "5672:5672"
-#     labels:
-#       NAME: "rabbitmq"
-#     volumes:
-#       - rabbitmq:/var/lib/rabbitmq
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
+      RABBITMQ_DEFAULT_USER: ${LIST_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${LIST_RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: "/"
+    labels:
+      NAME: "rabbitmq"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
+     - "traefik.port=15672"  
+
 # ########### volumes 
-# volumes:
-#   fileStorage:
-#     driver_opts:
-#       type: none
-#       device: ${LIST_VOLUMES_DIR}fileStorage
-#       o: bind
+volumes:
+  fileStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}fileStorage
+      o: bind
 
 #   appsStorage:
 #     driver_opts:
@@ -172,14 +174,14 @@ services:
 #       device: ${LIST_VOLUMES_DIR}models
 #       o: bind          
 
-#   rabbitmq:
-#     driver_opts:
-#       type: none
-#       device: ${LIST_VOLUMES_DIR}rabbitmq
-#       o: bind     
+  rabbitmq:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}rabbitmq
+      o: bind     
 
-#   mongo:
-#     driver_opts:
-#       type: none
-#       device: ${LIST_VOLUMES_DIR}mongo
-#       o: bind
+  mongo:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}mongo
+      o: bind

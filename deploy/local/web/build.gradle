@@ -39,3 +39,9 @@ task dpush(type: DPush, group: group) {
     tag = 'airenas/ear-app:' + EAR_APP_VERSION
     mustRunAfter('dbuild')
 }
+
+task dall(group: group) {
+    dependsOn 'copy'
+    dependsOn 'dbuild'
+    dependsOn 'dpush'
+}

@@ -25,7 +25,18 @@ task copy_remote(group: group, description: "Copies all data to server") {
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: servicesDir, into: '/home/airenas/'
+                put from: servicesDir, into: HOME_DIR
+            }
+        }
+    }
+}
+
+task init_volumes(group: group, description: "Init volumes dir on server") {
+    dependsOn('copy_remote')
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage && mkdir -p ' + VOLUMES_DIR + 'mongo && ' + 'mkdir -p ' + VOLUMES_DIR + 'rabbitmq' 
             }
         }
     }
