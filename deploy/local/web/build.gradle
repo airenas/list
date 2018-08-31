@@ -1,5 +1,9 @@
 /*
  */
+import com.aireno.gradle.DCRedeploy
+import com.aireno.gradle.DBuild
+import com.aireno.gradle.DPush
+
 def main_dir = "../../../src/web/ear-app/"
 def dist_dir = "deploy/"
 
@@ -20,24 +24,18 @@ task copy(type: Copy, group: group, description: "Copies htmls") {
     dependsOn 'build'
 }
 
-task deploy(group: group, description: "Deploys web service") {
-    doLast {
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'stop', 'web'
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'rm', '-f', 'web'
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'build', 'web' 
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'up', '-d', 'web'
-    }
-    }
+task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service") {
+    serviceName = 'web'
+    composePath = './..'
     mustRunAfter('copy')
+}
+
+task dbuild(type: DBuild, group: group) {
+    tag = 'airenas/ear-app:' + EAR_APP_VERSION
+    mustRunAfter('copy')
+}
+
+task dpush(type: DPush, group: group) {
+    tag = 'airenas/ear-app:' + EAR_APP_VERSION
+    mustRunAfter('dbuild')
 }

@@ -18,3 +18,6 @@ src/decode/transcription/utils
 deploy/local/result.make/deploy/**
 deploy/local/rabbitmq_pass
 deploy/local/.env
+deploy/local/buildSrc/.build.gradle.swp
+deploy/local/secret.properties
+deploy/local/buildSrc/**

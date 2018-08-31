@@ -1,0 +1,64 @@
+plugins {
+    id 'org.hidetake.ssh' version '2.9.0'
+}
+
+def group="vdu"
+
+def servicesDir = projectDir.getAbsolutePath() + "/services"
+def distDir = servicesDir + "/data/"
+
+remotes {
+    server1 {
+        host = '193.219.38.47'
+        user = 'airenas'
+        identity = file(System.getProperty("user.home") + '/.ssh/id_rsa')
+        port=7022
+    }
+}
+
+task clean(type: Delete, group: group, description: "Deletes copied resources") {
+    delete distDir
+    dependsOn 'web:clean'
+}
+
+task copy_remote(group: group, description: "Copies all data to server") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: servicesDir, into: '/home/airenas/'
+            }
+        }
+    }
+}
+
+task deploy(group: group, description: "Deploys services to server") {
+    dependsOn('copy_remote')
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                execute 'cd services && docker-compose stop && docker-compose rm -f && docker-compose pull && docker-compose up -d'
+            }
+        }
+    }
+}
+
+task copy_kaldi(group: group, description: "Copies kaldi init data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: '/home/airenas/projects/kaldi_test/configure.kaldi.sh', into: '/home/airenas/list'
+            }
+        }
+    }
+}
+
+task copy_kolt(group: group, description: "Copies kolt data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: '/home/airenas/projects/kaldi_test/kolt', into: '/home/airenas/list'
+            }
+        }
+    }
+}
+

@@ -1,0 +1,185 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: traefik 
+    command: --api --docker 
+    ports:
+      - "80:80"     
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    restart: unless-stopped
+    labels:
+      - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
+      - "traefik.proxy.port=8080"
+      - "traefik.api.frontend.rule=PathPrefix:/api/"
+      - "traefik.api.port=8080"
+      - "traefik.health.frontend.rule=PathPrefix:/health"
+      - "traefik.health.port=8080"
+
+  web:
+    image: airenas/ear-app:${EAR_APP_VERSION}
+    restart: unless-stopped
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/"
+     - "traefik.port=8000"
+
+#   upload-service:
+#     build: upload
+#     restart: unless-stopped
+#     volumes:
+#       - fileStorage:/data
+#     depends_on: 
+#       - rabbitmq  
+#       - mongo
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+#       MONGO_URL: ${LIST_MONGO_URL}
+#     labels:
+#      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+#      - "traefik.port=8000"  
+
+#   status-service:
+#     build: status
+#     restart: unless-stopped
+#     depends_on: 
+#       - mongo
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+#       MONGO_URL: ${LIST_MONGO_URL}    
+#     labels:
+#      - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
+#      - "traefik.port=8000" 
+  
+#   manager-service:
+#     build: manager
+#     restart: unless-stopped
+#     depends_on: 
+#       - mongo
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+#       MONGO_URL: ${LIST_MONGO_URL}  
+
+#   audio-prepare-service:
+#     build: audio.prepare
+#     restart: unless-stopped
+#     depends_on: 
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+#     volumes:
+#       - fileStorage:/data
+
+#   diarization-service:
+#     build: diarization
+#     restart: unless-stopped
+#     depends_on: 
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+#     volumes:
+#       - fileStorage:/data    
+#       - appsStorage:/apps
+#       - modelsStorage:/models    
+  
+#   transcription-service:
+#     build: transcription
+#     restart: unless-stopped
+#     depends_on: 
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+#     volumes:
+#       - fileStorage:/data    
+#       - appsStorage:/apps
+#       - modelsStorage:/models      
+  
+#   result-make-service:
+#     build: result.make
+#     restart: unless-stopped
+#     depends_on: 
+#       - rabbitmq
+#     environment:
+#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+#     volumes:
+#       - fileStorage:/data    
+#       - appsStorage:/apps
+#       - modelsStorage:/models  
+
+# ########### db & broker
+#   mongo:
+#     image: mongo:4.1.1
+#     environment:
+#       MONGO_DATA_DIR: "/data/db"
+#       MONGO_LOG_DIR: "/dev/null"
+#       MONGO_INITDB_ROOT_USERNAME: ${LIST_MONGO_USER}
+#       MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
+#     volumes:
+#       - mongo:/data/db
+#     ports:
+#       - ${LIST_MONGO_EXT_PORT}:27017
+#     restart: unless-stopped     
+#     command: mongod --logpath=/dev/null # --quiet
+
+#   rabbitmq:
+#     image: "rabbitmq:3.7-management"
+#     hostname: "rabbitmq"
+#     environment:
+#       RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
+#       RABBITMQ_DEFAULT_USER: ${LIST_RABBITMQ_USER}
+#       RABBITMQ_DEFAULT_PASS: ${LIST_RABBITMQ_PASS}
+#       RABBITMQ_DEFAULT_VHOST: "/"
+#     ports:
+#       - "${LIST_RABBITMQ_EXT_PORT}:15672"
+#       - "5672:5672"
+#     labels:
+#       NAME: "rabbitmq"
+#     volumes:
+#       - rabbitmq:/var/lib/rabbitmq
+# ########### volumes 
+# volumes:
+#   fileStorage:
+#     driver_opts:
+#       type: none
+#       device: ${LIST_VOLUMES_DIR}fileStorage
+#       o: bind
+
+#   appsStorage:
+#     driver_opts:
+#       type: none
+#       device: ${LIST_VOLUMES_DIR}apps
+#       o: bind
+
+#   modelsStorage:
+#     driver_opts:
+#       type: none
+#       device: ${LIST_VOLUMES_DIR}models
+#       o: bind          
+
+#   rabbitmq:
+#     driver_opts:
+#       type: none
+#       device: ${LIST_VOLUMES_DIR}rabbitmq
+#       o: bind     
+
+#   mongo:
+#     driver_opts:
+#       type: none
+#       device: ${LIST_VOLUMES_DIR}mongo
+#       o: bind
