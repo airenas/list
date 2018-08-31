@@ -18,7 +18,6 @@ remotes {
 
 task clean(type: Delete, group: group, description: "Deletes copied resources") {
     delete distDir
-    dependsOn 'web:clean'
 }
 
 task copy_remote(group: group, description: "Copies all data to server") {
@@ -32,11 +31,16 @@ task copy_remote(group: group, description: "Copies all data to server") {
 }
 
 task init_volumes(group: group, description: "Init volumes dir on server") {
-    dependsOn('copy_remote')
     doLast {
         ssh.run {
             session(remotes.server1) {
                 execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage && mkdir -p ' + VOLUMES_DIR + 'mongo && ' + 'mkdir -p ' + VOLUMES_DIR + 'rabbitmq' 
+            }
+        }
+
+        ssh.run {
+            session(remotes.server1) {
+                execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage/decoded/audio && mkdir -p ' + VOLUMES_DIR + 'fileStorage/decoded/trans' 
             }
         }
     }
@@ -53,21 +57,21 @@ task deploy(group: group, description: "Deploys services to server") {
     }
 }
 
-task copy_kaldi(group: group, description: "Copies kaldi init data") {
+task copy_apps(group: group, description: "Copies apps to volume") {
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: '/home/airenas/projects/kaldi_test/configure.kaldi.sh', into: '/home/airenas/list'
+                put from: LOCAL_APPS_DIR, into: VOLUMES_DIR
             }
         }
     }
 }
 
-task copy_kolt(group: group, description: "Copies kolt data") {
+task copy_models(group: group, description: "Copies models data") {
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: '/home/airenas/projects/kaldi_test/kolt', into: '/home/airenas/list'
+                put from: LOCAL_MODELS_DIR, into: VOLUMES_DIR
             }
         }
     }
