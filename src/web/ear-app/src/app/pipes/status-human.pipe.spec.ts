@@ -1,4 +1,5 @@
 import { StatusHumanPipe } from './status-human.pipe';
+import { Status } from '../api/status';
 
 describe('StatusHumanPipe', () => {
   it('create an instance', () => {
@@ -6,10 +7,14 @@ describe('StatusHumanPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-  it('transforms RECEIVED', () => {
+  it('transforms knowns types', () => {
+    const statuses: string[] = [Status.Uploaded, Status.Completed, Status.AudioConvert,
+      Status.Diarization, Status.Transcription, Status.ResultMake, Status.NOT_FOUND];
     const pipe = new StatusHumanPipe();
-    const transformed = pipe.transform('RECEIVED');
-    expect(transformed).not.toEqual('RECEIVED');
+    statuses.forEach(function (value) {
+      const transformed = pipe.transform(value);
+      expect(transformed).not.toEqual(value);
+    });
   });
 
   it('transforms NOT_FOUND', () => {
