@@ -1,5 +1,7 @@
-/*
- */
+import com.aireno.gradle.DCRedeploy
+import com.aireno.gradle.DBuild
+import com.aireno.gradle.DPush
+
 def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
 def cmdDir = "/home/airenas/projects/list/src/decode/audio.prepare/"
@@ -31,24 +33,24 @@ task copyCmd(type: Copy, group: group, description: "Copies command files") {
     include "Makefile"
 }
 
-task deploy(group: group, description: "Deploys audioPrepare service") {
-    doLast {
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'stop', 'audio-prepare-service'
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'rm', '-f', 'audio-prepare-service'
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'build', 'audio-prepare-service' 
-    }
-    exec {
-        workingDir './..'
-        commandLine 'docker-compose', 'up', '-d', 'audio-prepare-service'
-    }
-    }
+task ddeploy(type: DCRedeploy, group: group, description: "Deploys audio-prepare service") {
+    serviceName = 'audio-prepare-service'
+    composePath = './..'
     mustRunAfter('copy')
+}
+
+task dbuild(type: DBuild, group: group) {
+    tag = 'airenas/list-audio-prepare-service:' + SERVICE_VERSION
+    mustRunAfter('copy')
+}
+
+task dpush(type: DPush, group: group) {
+    tag = 'airenas/list-audio-prepare-service:' + SERVICE_VERSION
+    mustRunAfter('dbuild')
+}
+
+task dall(group: group) {
+    dependsOn 'copy'
+    dependsOn 'dbuild'
+    dependsOn 'dpush'
 }

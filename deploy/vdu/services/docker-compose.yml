@@ -68,17 +68,17 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}  
 
-#   audio-prepare-service:
-#     build: audio.prepare
-#     restart: unless-stopped
-#     depends_on: 
-#       - rabbitmq
-#     environment:
-#       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-#       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-#       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-#     volumes:
-#       - fileStorage:/data
+  audio-prepare-service:
+    image: airenas/list-audio-prepare-service:${SERVICE_VERSION}
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+    volumes:
+      - fileStorage:/data
 
 #   diarization-service:
 #     build: diarization
