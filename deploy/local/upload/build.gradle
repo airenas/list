@@ -24,8 +24,8 @@ task copy(type: Copy, group: group, description: "Copies service") {
     dependsOn 'build'
 }
 
-task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service") {
-    serviceName = 'web'
+task ddeploy(type: DCRedeploy, group: group, description: "Deploys upload service") {
+    serviceName = 'upload-service'
     composePath = './..'
     mustRunAfter('copy')
 }

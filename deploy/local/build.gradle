@@ -6,6 +6,16 @@
  */
 def group="local"
 
+// def spFile = rootProject.file("secret.properties");
+// def secrets = new Properties()
+// secrets.load(new FileInputStream(spFile))
+// secrets["PASS"]
+
+task info(group: group, description: "shows parameters info") {
+    println 'EAR_APP_VERSION=' + EAR_APP_VERSION
+    println 'SERVICE_VERSION=' + SERVICE_VERSION
+}
+
 task clean_all(type: Delete, group: group, description: "Deletes copied resources") {
     dependsOn 'web:clean'
     dependsOn 'upload:clean'
@@ -50,4 +60,3 @@ task build_deploy_all(group: group, description: "Builds souce and deploys servi
     dependsOn('copy_all')
     dependsOn('deploy_all')
 }
-
