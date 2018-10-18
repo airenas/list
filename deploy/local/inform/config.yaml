@@ -1,0 +1,48 @@
+worker:
+    taskName: Inform
+    location: Europe/Vilnius
+
+mail:
+    url: http://localhost:7050/ausis/results/{{ID}}
+
+    Started:
+        subject: Pradėta Trankripcija
+        text: > 
+            Sveiki, 
+        
+            Informuojame, kad {{DATE}} pradėta transkripcija.
+
+            Transkripcijai suteikatas ID: {{ID}}.
+
+            Transkripcijos statusą galite stebėti čia: {{URL}}
+
+    Finished:
+        subject: Baigta Trankripcija
+        text: > 
+            Sveiki, 
+        
+            Informuojame, kad transkripcija {{ID}} baigta.
+
+            Transkripcijos rezultatą galite peržiūrėti čia: {{URL}}
+
+# messageServer: 
+#     url: 
+#     user: 
+#     pass: 
+    
+# mongo:
+#     url: 
+
+smtp:
+    host: smtp.gmail.com
+    port: 587
+    # username: 
+    # password: 
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

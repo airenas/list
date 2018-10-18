@@ -21,3 +21,4 @@ deploy/local/.env
 deploy/local/buildSrc/.build.gradle.swp
 deploy/local/secret.properties
 deploy/local/buildSrc/**
+deploy/local/inform/deploy/**

@@ -25,6 +25,7 @@ task clean_all(type: Delete, group: group, description: "Deletes copied resource
     dependsOn 'diarization:clean'
     dependsOn 'transcription:clean'
     dependsOn 'result.make:clean'
+    dependsOn 'inform:clean'
 }
 
 task copy_all(group: group, description: "Copies all resourses") {
@@ -36,6 +37,7 @@ task copy_all(group: group, description: "Copies all resourses") {
     dependsOn('diarization:copy')
     dependsOn('transcription:copy')
     dependsOn('result.make:copy')
+    dependsOn 'inform:copy'
 }
 
 task deploy_all(group: group, description: "Redeploys docker") {
