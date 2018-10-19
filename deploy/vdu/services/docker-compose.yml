@@ -120,7 +120,22 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models  
+      - modelsStorage:/models 
+
+  inform-service:
+    image: airenas/list-inform-service:${INFORM_SERVICE_VERSION}
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+      - mongo
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      MAIL_URL: ${MAIL_URL}     
 
 # ########### db & broker
   mongo:
