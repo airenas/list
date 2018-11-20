@@ -1,6 +1,7 @@
 ## Lentelės ##
 
 **request** 
+
 Saugomos užklausos
 
 | Laukas| Tipas | Paskirtis | 
@@ -13,6 +14,7 @@ Saugomos užklausos
 
 ---
 **status**
+
 Saugomas dabartinis transkripcijos statusas
 
 | Laukas| Tipas | Paskirtis |
@@ -24,6 +26,7 @@ Saugomas dabartinis transkripcijos statusas
 
 ---
 **result**
+
 Saugomas galutinis transkripcijos rezultatas
 
 | Laukas| Tipas | Paskirtis |
@@ -33,6 +36,7 @@ Saugomas galutinis transkripcijos rezultatas
 
 ---
 **emailLock**
+
 Lentelė skirta sinchronizuoti el. laiškų siuntimą ir užtikrinti, kad laiškas bus išsiųstas ne daugiau, kaip vieną kartą
 
 | Laukas| Tipas | Paskirtis |
@@ -40,4 +44,5 @@ Lentelė skirta sinchronizuoti el. laiškų siuntimą ir užtikrinti, kad laišk
 | ID[*pk, i*] | string | Transkripcijos ID |
 | key[*pk*] | string | Laiško tipas. Galimos reišmės: Started, Finished |
 | status | int | Statusas. Galimos reikšmės: 0 - nepradėta, 1 - siunčiama, 2 - išsiųsta
+
 *i* - indeksuojamas laukas
