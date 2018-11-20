@@ -2,7 +2,8 @@
 
 Lithuanian Speech Transcription
 
-The repository contains 
+The repository contains: 
+
 - scripts for transcription using Kaldi, 
 - architecture documentation, 
 - deployment scripts. 
