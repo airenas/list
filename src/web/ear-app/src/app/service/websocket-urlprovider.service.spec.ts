@@ -65,6 +65,7 @@ describe('WebsocketURLProviderService', () => {
 });
 
 class MockLocation implements Location {
+  ancestorOrigins: DOMStringList;
   hash: string; host: string;
   hostname: string;
   href: string;
