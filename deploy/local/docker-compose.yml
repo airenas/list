@@ -160,6 +160,7 @@ services:
       - "5672:5672"
     labels:
       NAME: "rabbitmq"
+    restart: unless-stopped  
     volumes:
       - rabbitmq:/var/lib/rabbitmq
 ########### volumes 
