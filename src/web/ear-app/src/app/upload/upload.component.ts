@@ -1,11 +1,14 @@
 import { SendFileResult } from './../api/send-file-result';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { Router } from '@angular/router';
 import { MatSnackBar, ErrorStateMatcher } from '@angular/material';
 import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
 import { Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import Recorder from 'recorder-js';
+
+declare var WaveSurfer: any;
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -21,17 +24,23 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 })
 export class UploadComponent extends BaseComponent implements OnInit {
   constructor(protected transcriptionService: TranscriptionService,
-    private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService) {
+    private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService,
+    private cdr: ChangeDetectorRef) {
     super(transcriptionService, snackBar);
   }
 
   selectedFile: File; // hold our file
   selectedFileName: string; // hold our file name
   private _email: string;
+  private wavesurferout: any = null;
+  private wavesurfer: any = null;
+  recording = false;
+  private recorder: Recorder = null;
 
   ngOnInit() {
     this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.email;
+    this.recording = false;
   }
 
   openInput() {
@@ -54,6 +63,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
       this.selectedFile = file;
       this.selectedFileName = this.selectedFile.name;
     }
+    this.showAudioFile(file);
   }
 
   upload() {
@@ -83,4 +93,91 @@ export class UploadComponent extends BaseComponent implements OnInit {
   isValid() {
     return this.selectedFile && this._email;
   }
+
+  canPlayAudio(): boolean {
+    return this.wavesurferout && !this.wavesurferout.isPlaying() && this.selectedFile != null;
+  }
+
+  canStopAudio(): boolean {
+    return this.wavesurferout && this.wavesurferout.isPlaying();
+  }
+
+  getAudioWaveDiv(): any {
+    if (this.wavesurferout == null) {
+      this.wavesurferout = WaveSurfer.create({
+        container: '#audioWaveDiv',
+        waveColor: 'grey',
+        progressColor: 'blue',
+        height: 40
+      });
+      this.wavesurferout.on('pause', () => { this.cdr.detectChanges(); });
+      this.wavesurferout.on('play', () => { this.cdr.detectChanges(); });
+    }
+    return this.wavesurferout;
+  }
+
+  showAudioFile(file: File) {
+    if (file != null) {
+      this.getAudioWaveDiv().loadBlob(file);
+    } else {
+      if (this.wavesurferout != null) {
+        this.getAudioWaveDiv().empty();
+      }
+    }
+  }
+
+  playAudio() {
+    this.getAudioWaveDiv().play();
+  }
+
+  stopAudio() {
+    this.getAudioWaveDiv().pause();
+  }
+
+  startRecord() {
+    this.recording = true;
+    if (this.initMicrophone()) {
+      this.wavesurfer.microphone.start();
+    } else {
+      this.recording = false;
+    }
+  }
+
+  stopRecord() {
+    if (this.wavesurfer != null) {
+      this.recorder.stop().then(({ blob, buffer }) => {
+        this.fileChange(new File([blob], 'audio.wav'));
+      });
+      this.recording = false;
+      this.wavesurfer.microphone.stop();
+    }
+  }
+
+  initMicrophone(): boolean {
+    if (this.wavesurfer == null) {
+      this.wavesurfer = WaveSurfer.create({
+        container: '#micWaveDiv',
+        waveColor: 'blue',
+        interact: false,
+        cursorWidth: 0,
+        height: 40,
+        plugins: [
+          WaveSurfer.microphone.create()
+        ]
+      });
+      this.wavesurfer.microphone.on('deviceReady', stream => {
+        const audioContext = new AudioContext();
+        this.recorder = new Recorder(audioContext, {});
+        this.recorder.init(stream);
+        this.recorder.start();
+      });
+      this.wavesurfer.microphone.on('deviceError', code => {
+        this.recording = false;
+        console.error('Device error: ' + code);
+        this.showError('Nepavyko inicializuoti mikrofono.', <any>code);
+      });
+    }
+    return this.wavesurfer != null;
+  }
+
 }

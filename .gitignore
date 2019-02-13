@@ -23,3 +23,4 @@ deploy/local/secret.properties
 deploy/local/buildSrc/**
 deploy/local/inform/deploy/**
 **/.env
+**/.vscode/**

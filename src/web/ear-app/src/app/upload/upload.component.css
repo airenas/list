@@ -6,10 +6,54 @@
   
   .upload-input-width {
     min-width: 250px;
-    max-width: 250px;
-    display: inline-block;
+    width: 100%;
   }
 
   .upload-select-button {
-    display: inline-block;
+    min-width: 0px;
+    width: 18%;
+  }
+
+  .upload-file-control {
+    width: 60%;
+  }
+
+  .upload-file-container
+  {
+    width: 100%;
+    align-items: center;
+    display: flex;
+  }
+  .audio-wave {
+    border-style: solid;
+    border-width: 1px;
+    border-color: grey; 
+    display:inline-block;
+    width: 80%;
+  }
+
+  .mic-wave {
+    border-style: solid;
+    border-width: 1px;
+    border-color: grey; 
+    display:inline-block;
+    width: 95%;
+  }
+
+  .audio-control {
+    width: 100%;
+    align-items: center;
+    display: flex;
+  }
+
+  .mic-audio-control {
+    width: 100%;
+  }
+  .audio-button{
+    min-width: 0px;
+    width: 18%;
+  }
+  .mic-button{
+    min-width: 0px;
+    padding-left: 5%;
   }

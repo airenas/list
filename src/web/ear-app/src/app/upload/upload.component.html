@@ -6,24 +6,55 @@
     <div>
 
       <mat-form-field class="full-width" class="upload-input-width">
-        <input id="emailInput" name="email" matInput [(ngModel)]="email" placeholder="El. paštas" type="email" matTooltip="Įveskite el. paštą">
+        <input id="emailInput" name="email" matInput [(ngModel)]="email" placeholder="El. paštas" type="email"
+          matTooltip="Įveskite el. paštą">
       </mat-form-field>
 
       <div class="upload-input-width">
-        <mat-form-field class="upload-input-width">
-          <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3" (change)="filesChange($event.target.files)">
-          <input id="fileInput" matInput placeholder="Failas" readonly="true" [(ngModel)]="selectedFileName" (click)="openInput()"
-            matTooltip="Pasirinkite failą">
-        </mat-form-field>
+        <div class="upload-file-container">
+          <mat-form-field class="upload-file-control">
+            <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3"
+              (change)="filesChange($event.target.files)">
+            <input id="fileInput" matInput placeholder="Failas" readonly="true" [(ngModel)]="selectedFileName"
+              (click)="openInput()" matTooltip="Pasirinkite failą">
+          </mat-form-field>
+          <button class="upload-select-button" id="selectFileButton" mat-button (click)="openInput()">
+            <i class="material-icons">attachment</i>
+          </button>
+
+          <button *ngIf="!recording" class="mic-button" id="selectFileButton" color="primary" mat-button
+            (click)="startRecord()">
+            <i class="material-icons">mic</i>
+          </button>
+          <button *ngIf="recording" class="mic-button" color="warn" id="selectFileButton" mat-button
+            (click)="stopRecord()">
+            <i class="material-icons">stop</i>
+          </button>
+        </div>
       </div>
-      <div id="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size | filesize}}</div>
+      <div [hidden]="recording || selectedFile == null">
+        <div class="audio-control">
+          <div id="audioWaveDiv" class="audio-wave"></div>
+          <button class="audio-button" id="playAudionButton" color="primary" mat-button [disabled]="!canPlayAudio()"
+            (click)="playAudio()" *ngIf="canPlayAudio()">
+            <i class="material-icons">play_arrow</i>
+          </button>
+          <button class="audio-button" id="stopAudioButton" color="warn" mat-button [disabled]="!canStopAudio()"
+            (click)="stopAudio()" *ngIf="canStopAudio()">
+            <i class="material-icons">stop</i>
+          </button>
+        </div>
+        <div id="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size | filesize}}</div>
+      </div>
+      <div [hidden]="!recording">
+        <div class="mic-audio-control">
+          <div id="micWaveDiv" class="mic-wave"></div>
+        </div>
+      </div>
     </div>
   </mat-card-content>
   <mat-card-actions>
-    <button class="upload-select-button" id="selectFileButton" mat-button (click)="openInput()">
-      <i class="material-icons">attachment</i>
-    </button>
-
-    <button id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()" (click)="upload()">Siųsti failą transkripcijai</button>
+    <button id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()" (click)="upload()">Siųsti failą
+      transkripcijai</button>
   </mat-card-actions>
 </mat-card>
