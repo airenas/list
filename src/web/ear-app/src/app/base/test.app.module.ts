@@ -48,6 +48,15 @@ export class FileHelper {
   }
 }
 
+export class TestHelper {
+  static Visible(element: any): boolean {
+    if (element.nativeElement == null) {
+      return false;
+    }
+    return !element.nativeElement.hasAttribute('hidden') && (element.parent == null || TestHelper.Visible(element.parent));
+  }
+}
+
 @NgModule({
   declarations: [],
   imports: [

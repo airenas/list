@@ -22,11 +22,11 @@
             <i class="material-icons">attachment</i>
           </button>
 
-          <button *ngIf="!recording" class="mic-button" id="selectFileButton" color="primary" mat-button
+          <button *ngIf="!recording" class="mic-button" id="startRecordButton" color="primary" mat-button
             (click)="startRecord()">
             <i class="material-icons">mic</i>
           </button>
-          <button *ngIf="recording" class="mic-button" color="warn" id="selectFileButton" mat-button
+          <button *ngIf="recording" class="mic-button" color="warn" id="stopRecordButton" mat-button
             (click)="stopRecord()">
             <i class="material-icons">stop</i>
           </button>
@@ -35,7 +35,7 @@
       <div [hidden]="recording || selectedFile == null">
         <div class="audio-control">
           <div id="audioWaveDiv" class="audio-wave"></div>
-          <button class="audio-button" id="playAudionButton" color="primary" mat-button [disabled]="!canPlayAudio()"
+          <button class="audio-button" id="playAudioButton" color="primary" mat-button [disabled]="!canPlayAudio()"
             (click)="playAudio()" *ngIf="canPlayAudio()">
             <i class="material-icons">play_arrow</i>
           </button>

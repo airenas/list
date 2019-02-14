@@ -7,6 +7,7 @@ import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
 import { Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import Recorder from 'recorder-js';
+import { AudioPlayer, WebSurferAudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 
 declare var WaveSurfer: any;
 
@@ -25,19 +26,20 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class UploadComponent extends BaseComponent implements OnInit {
   constructor(protected transcriptionService: TranscriptionService,
     private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory) {
     super(transcriptionService, snackBar);
   }
 
   selectedFile: File; // hold our file
   selectedFileName: string; // hold our file name
   private _email: string;
-  private wavesurferout: any = null;
   private wavesurfer: any = null;
+  private audioPlayer: AudioPlayer;
   recording = false;
   private recorder: Recorder = null;
 
   ngOnInit() {
+    this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.email;
     this.recording = false;
@@ -95,43 +97,27 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   canPlayAudio(): boolean {
-    return this.wavesurferout && !this.wavesurferout.isPlaying() && this.selectedFile != null;
+    return !this.audioPlayer.isPlaying() && this.selectedFile != null;
   }
 
   canStopAudio(): boolean {
-    return this.wavesurferout && this.wavesurferout.isPlaying();
-  }
-
-  getAudioWaveDiv(): any {
-    if (this.wavesurferout == null) {
-      this.wavesurferout = WaveSurfer.create({
-        container: '#audioWaveDiv',
-        waveColor: 'grey',
-        progressColor: 'blue',
-        height: 40
-      });
-      this.wavesurferout.on('pause', () => { this.cdr.detectChanges(); });
-      this.wavesurferout.on('play', () => { this.cdr.detectChanges(); });
-    }
-    return this.wavesurferout;
+    return this.audioPlayer.isPlaying();
   }
 
   showAudioFile(file: File) {
     if (file != null) {
-      this.getAudioWaveDiv().loadBlob(file);
+      this.audioPlayer.loadFile(file);
     } else {
-      if (this.wavesurferout != null) {
-        this.getAudioWaveDiv().empty();
-      }
+      this.audioPlayer.clear();
     }
   }
 
   playAudio() {
-    this.getAudioWaveDiv().play();
+    this.audioPlayer.play();
   }
 
   stopAudio() {
-    this.getAudioWaveDiv().pause();
+    this.audioPlayer.pause();
   }
 
   startRecord() {
@@ -179,5 +165,4 @@ export class UploadComponent extends BaseComponent implements OnInit {
     }
     return this.wavesurfer != null;
   }
-
 }

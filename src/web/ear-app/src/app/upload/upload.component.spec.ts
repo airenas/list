@@ -1,17 +1,17 @@
+import { TestAudioPlayerFactory } from './../utils/audio.player.specs';
 import { HttpTranscriptionService, TranscriptionService } from './../service/transcription.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UploadComponent } from './upload.component';
-import { TestAppModule, FileHelper, MockActivatedRoute, MockSubscriptionService, MockTestService } from '../base/test.app.module';
+import { TestAppModule, FileHelper, MockActivatedRoute, MockSubscriptionService, MockTestService, TestHelper } from '../base/test.app.module';
 import { FileSizeModule } from 'ngx-filesize';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 import { ParamsProviderService } from '../service/params-provider.service';
-import { ResultsComponent } from '../results/results.component';
 import { APP_BASE_HREF } from '@angular/common';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
 import { ActivatedRoute } from '@angular/router';
-import { StatusHumanPipe } from '../pipes/status-human.pipe';
+import { AudioPlayerFactory } from '../utils/audio.player';
 
 
 describe('UploadComponent', () => {
@@ -21,7 +21,9 @@ describe('UploadComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])]
+      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      providers: [
+        { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory }]
     })
       .compileComponents();
   }));
@@ -84,6 +86,37 @@ describe('UploadComponent', () => {
     });
   }));
 
+  it('should be play controls', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.disabled).toBe(false);
+      expect(fixture.debugElement.query(By.css('#stopAudioButton'))).toBeNull();
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(true);
+    });
+  }));
+
+  it('should be stop audio button', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#playAudioButton'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('#stopAudioButton')).nativeElement.disabled).toBe(false);
+    });
+  }));
+
+  it('should be no play controls', async(() => {
+    component.fileChange(null);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#playAudioButton'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('#stopAudioButton'))).toBeNull();
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(false);
+    });
+  }));
+
   it('should invoke select file on input click', async(() => {
     spyOn(component, 'openInput');
     fixture.debugElement.query(By.css('#fileInput')).nativeElement.click();
@@ -112,6 +145,7 @@ describe('UploadComponent Own Mock', () => {
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
       .compileComponents();
@@ -136,6 +170,7 @@ describe('UploadComponent Own Mock', () => {
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
       .compileComponents();

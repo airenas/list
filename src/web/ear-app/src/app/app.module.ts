@@ -1,3 +1,4 @@
+import { AudioPlayerFactory } from './utils/audio.player';
 import { ResultSubscriptionService, WSResultSubscriptionService } from './service/result-subscription.service';
 import { HttpTranscriptionService, TranscriptionService } from './service/transcription.service';
 import { BrowserModule } from '@angular/platform-browser';
@@ -42,6 +43,7 @@ import { WebsocketURLProviderService } from './service/websocket-urlprovider.ser
     WebsocketURLProviderService,
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
+    { provide: AudioPlayerFactory, useClass: AudioPlayerFactory },
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
   ],
   bootstrap: [AppComponent]
