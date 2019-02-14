@@ -20,6 +20,7 @@ import { StatusHumanPipe } from './pipes/status-human.pipe';
 import { ParamsProviderService } from './service/params-provider.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { WebsocketURLProviderService } from './service/websocket-urlprovider.service';
+import { MicrophoneFactory } from './utils/microphone';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { WebsocketURLProviderService } from './service/websocket-urlprovider.ser
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
     { provide: AudioPlayerFactory, useClass: AudioPlayerFactory },
+    { provide: MicrophoneFactory, useClass: MicrophoneFactory },
     { provide: ErrorStateMatcher, useClass: ShowOnDirtyErrorStateMatcher },
   ],
   bootstrap: [AppComponent]

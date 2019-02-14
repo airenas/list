@@ -5,11 +5,9 @@ import { Router } from '@angular/router';
 import { MatSnackBar, ErrorStateMatcher } from '@angular/material';
 import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
-import { Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
-import Recorder from 'recorder-js';
-import { AudioPlayer, WebSurferAudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
-
-declare var WaveSurfer: any;
+import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
+import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
+import { Microphone, MicrophoneFactory } from '../utils/microphone';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -26,23 +24,30 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 export class UploadComponent extends BaseComponent implements OnInit {
   constructor(protected transcriptionService: TranscriptionService,
     private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService,
-    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory) {
+    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory,
+    private microphoneFactory: MicrophoneFactory) {
     super(transcriptionService, snackBar);
   }
 
   selectedFile: File; // hold our file
   selectedFileName: string; // hold our file name
   private _email: string;
-  private wavesurfer: any = null;
-  private audioPlayer: AudioPlayer;
-  recording = false;
-  private recorder: Recorder = null;
+  recorder: Microphone;
+  audioPlayer: AudioPlayer;
 
   ngOnInit() {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
+    this.recorder = this.microphoneFactory.create('#micWaveDiv', (ev, data) => this.recordEvent(ev, data));
     this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.email;
-    this.recording = false;
+  }
+
+  recordEvent(ev: string, data: any): void {
+    if (ev === 'data') {
+      this.fileChange(new File([data], 'audio.wav'));
+    } else if (ev === 'error') {
+      this.showError('Nepavyko inicializuoti mikrofono.', data);
+    }
   }
 
   openInput() {
@@ -121,48 +126,10 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   startRecord() {
-    this.recording = true;
-    if (this.initMicrophone()) {
-      this.wavesurfer.microphone.start();
-    } else {
-      this.recording = false;
-    }
+    this.recorder.start();
   }
 
   stopRecord() {
-    if (this.wavesurfer != null) {
-      this.recorder.stop().then(({ blob, buffer }) => {
-        this.fileChange(new File([blob], 'audio.wav'));
-      });
-      this.recording = false;
-      this.wavesurfer.microphone.stop();
-    }
-  }
-
-  initMicrophone(): boolean {
-    if (this.wavesurfer == null) {
-      this.wavesurfer = WaveSurfer.create({
-        container: '#micWaveDiv',
-        waveColor: 'blue',
-        interact: false,
-        cursorWidth: 0,
-        height: 40,
-        plugins: [
-          WaveSurfer.microphone.create()
-        ]
-      });
-      this.wavesurfer.microphone.on('deviceReady', stream => {
-        const audioContext = new AudioContext();
-        this.recorder = new Recorder(audioContext, {});
-        this.recorder.init(stream);
-        this.recorder.start();
-      });
-      this.wavesurfer.microphone.on('deviceError', code => {
-        this.recording = false;
-        console.error('Device error: ' + code);
-        this.showError('Nepavyko inicializuoti mikrofono.', <any>code);
-      });
-    }
-    return this.wavesurfer != null;
+    this.recorder.stop();
   }
 }

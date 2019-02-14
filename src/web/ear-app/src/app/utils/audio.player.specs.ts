@@ -16,20 +16,20 @@ export class TestAudioPlayer implements AudioPlayer {
     constructor(private divName: string, private eventHandler: NamedEvent) {
     }
 
-
     loadFile(file: File) {
-
     }
 
     clear() {
-
     }
+
     play() {
         this.playing = true;
     }
+
     pause() {
         this.playing = false;
     }
+
     isPlaying(): boolean {
         return this.playing;
     }

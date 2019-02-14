@@ -3,7 +3,8 @@ import { HttpTranscriptionService, TranscriptionService } from './../service/tra
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UploadComponent } from './upload.component';
-import { TestAppModule, FileHelper, MockActivatedRoute, MockSubscriptionService, MockTestService, TestHelper } from '../base/test.app.module';
+import { MockActivatedRoute, MockSubscriptionService, MockTestService } from '../base/test.app.module';
+import { TestAppModule, FileHelper, TestHelper } from '../base/test.app.module';
 import { FileSizeModule } from 'ngx-filesize';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
@@ -12,6 +13,8 @@ import { APP_BASE_HREF } from '@angular/common';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
 import { ActivatedRoute } from '@angular/router';
 import { AudioPlayerFactory } from '../utils/audio.player';
+import { MicrophoneFactory } from '../utils/microphone';
+import { TestMicrophoneFactory } from '../utils/microphone.specs';
 
 
 describe('UploadComponent', () => {
@@ -23,7 +26,8 @@ describe('UploadComponent', () => {
       declarations: [UploadComponent],
       imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
       providers: [
-        { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory }]
+        { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+        { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }]
     })
       .compileComponents();
   }));
@@ -93,6 +97,7 @@ describe('UploadComponent', () => {
       expect(fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.disabled).toBe(false);
       expect(fixture.debugElement.query(By.css('#stopAudioButton'))).toBeNull();
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(true);
+      expect(component.audioPlayer.isPlaying()).toBe(false);
     });
   }));
 
@@ -104,6 +109,22 @@ describe('UploadComponent', () => {
     fixture.whenStable().then(() => {
       expect(fixture.debugElement.query(By.css('#playAudioButton'))).toBeNull();
       expect(fixture.debugElement.query(By.css('#stopAudioButton')).nativeElement.disabled).toBe(false);
+      expect(component.audioPlayer.isPlaying()).toBe(true);
+    });
+  }));
+
+  it('should invoke stop audio button', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.audioPlayer.isPlaying()).toBe(true);
+      fixture.debugElement.query(By.css('#stopAudioButton')).nativeElement.click();
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(component.audioPlayer.isPlaying()).toBe(false);
+      });
     });
   }));
 
@@ -114,6 +135,27 @@ describe('UploadComponent', () => {
       expect(fixture.debugElement.query(By.css('#playAudioButton'))).toBeNull();
       expect(fixture.debugElement.query(By.css('#stopAudioButton'))).toBeNull();
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(false);
+    });
+  }));
+
+  it('should be record controls', async(() => {
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#startRecordButton')).nativeElement.disabled).toBe(false);
+      expect(fixture.debugElement.query(By.css('#stopRecordButton'))).toBeNull();
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#micWaveDiv')))).toBe(false);
+      expect(component.audioPlayer.isPlaying()).toBe(false);
+    });
+  }));
+
+  it('should invoke record event', async(() => {
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('#startRecordButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#startRecordButton'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('#stopRecordButton')).nativeElement.disabled).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#micWaveDiv')))).toBe(true);
     });
   }));
 
@@ -146,6 +188,7 @@ describe('UploadComponent Own Mock', () => {
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
       { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
       .compileComponents();
@@ -171,6 +214,7 @@ describe('UploadComponent Own Mock', () => {
       { provide: TranscriptionService, useClass: MockTestService },
       { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
       { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
       { provide: ActivatedRoute, useClass: MockActivatedRoute }]
     })
       .compileComponents();
