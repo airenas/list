@@ -98,7 +98,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   isValid() {
-    return this.selectedFile && this._email;
+    return this.selectedFile && this._email && !this.recorder.recording;
   }
 
   canPlayAudio(): boolean {
