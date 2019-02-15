@@ -165,6 +165,7 @@ services:
       NAME: "rabbitmq"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+    restart: unless-stopped  
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
      - "traefik.port=15672"  
