@@ -1,0 +1,5 @@
+@import './../theme.scss';
+
+nav a.active {
+    color: mat-color($primary);
+}
