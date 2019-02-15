@@ -156,6 +156,27 @@ describe('UploadComponent', () => {
       expect(fixture.debugElement.query(By.css('#startRecordButton'))).toBeNull();
       expect(fixture.debugElement.query(By.css('#stopRecordButton')).nativeElement.disabled).toBe(false);
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#micWaveDiv')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(false);
+    });
+  }));
+
+  it('should disable uploadButton on recording', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    component.email = 'olia';
+    fixture.debugElement.query(By.css('#startRecordButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#uploadButton')).nativeElement.disabled).toBe(true);
+    });
+  }));
+
+  it('should disable record button on Playing audio', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#startRecordButton')).nativeElement.disabled).toBe(true);
     });
   }));
 
