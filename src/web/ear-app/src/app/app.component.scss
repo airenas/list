@@ -3,3 +3,16 @@
 nav a.active {
     color: mat-color($primary);
 }
+
+.footer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 1rem;
+    height: 0px;
+    padding-top: 4px;
+    background-color: #efefef;
+    font-family: mat-font-family($app-typography);
+    font-weight: lighter;
+    font-size: 10px;
+}
