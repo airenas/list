@@ -1,0 +1,36 @@
+debug = false
+
+logLevel = "ERROR"
+defaultEntryPoints = ["https","http"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+  [entryPoints.https]
+  address = ":443"
+  [entryPoints.https.tls]
+
+[retry]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "list.airenas.eu"
+watch = true
+exposedByDefault = false
+
+[acme]
+email = "airenass@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+acmeLogging=true 
+onDemand = false
+[acme.httpChallenge]
+  entryPoint = "http"
+ [acme.dnsChallenge]
+   provider = "cloudflare"
+   delayBeforeCheck = 0
+[[acme.domains]]
+   main = "list.airenas.eu"
+[[acme.domains]]
+   main = "*.list.airenas.eu"

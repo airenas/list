@@ -27,6 +27,11 @@ task copy_remote(group: group, description: "Copies all data to server") {
                 put from: servicesDir, into: HOME_DIR
             }
         }
+        ssh.run {
+            session(remotes.server1) {
+                execute 'chmod 600 ' + ACME_FILE 
+            }
+        }
     }
 }
 

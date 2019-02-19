@@ -2,13 +2,19 @@ version: '3.1'
 
 services:
   proxy:
-    image: traefik 
+    image: traefik:1.7.9 
     command: --api --docker 
     ports:
-      - "80:80"     
+      - "${LIST_TRAEFIK_HTTP_EXT_PORT}:80"     # main proxy port
+      - "${LIST_TRAEFIK_HTTPS_EXT_PORT}:443"     # https proxy port
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
+      - ./traefik/traefik.toml:/traefik.toml
+      - ./traefik/acme.json:/acme.json
     restart: unless-stopped
+    environment:
+      CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
+      CLOUDFLARE_API_KEY: ${CF_API_KEY}  
     labels:
       - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
       - "traefik.proxy.port=8080"
@@ -21,8 +27,9 @@ services:
     image: airenas/ear-app:${EAR_APP_VERSION}
     restart: unless-stopped
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/ausis/"
-     - "traefik.port=8000"
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/ausis/"
+     - "traefik.http.port=8000"
 
   upload-service:
     image: airenas/list-upload-service:${SERVICE_VERSION}
