@@ -170,6 +170,22 @@ describe('UploadComponent', () => {
     });
   }));
 
+  it('should hide uploadButton on sending', async(() => {
+    component.fileChange(new FileHelper().createFakeFile());
+    component.sending = true;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#uploadButton'))).toBeNull();
+      expect(fixture.debugElement.query(By.css('#uploadSpinner'))).toBeDefined();
+    });
+  }));
+
+  it('should show no spinner', async(() => {
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#uploadSpinner'))).toBeNull();
+    });
+  }));
+
   it('should disable record button on Playing audio', async(() => {
     component.fileChange(new FileHelper().createFakeFile());
     fixture.detectChanges();

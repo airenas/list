@@ -72,7 +72,7 @@
         <div class="stepper-title">Siuntimas transkripcijai</div>
         <button *ngIf="!sending" id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()"
           (click)="upload()">Siųsti</button>
-        <mat-progress-spinner *ngIf="sending" class="upload-spinner" color="primary" mode="indeterminate"
+        <mat-progress-spinner id="uploadSpinner" *ngIf="sending" class="upload-spinner" color="primary" mode="indeterminate"
         diameter="40">
         </mat-progress-spinner>
       </div>

@@ -1,3 +1,4 @@
+import { MatProgressSpinnerModule } from '@angular/material';
 import { Config } from './../config';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -64,7 +65,7 @@ export class TestHelper {
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatProgressBarModule,
+    MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
     MatCardModule, FileSizeModule,
     ReactiveFormsModule
   ],
@@ -77,7 +78,7 @@ export class TestHelper {
   bootstrap: [],
   exports: [
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatCardModule, MatProgressBarModule
+    MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule
   ],
 })
 
