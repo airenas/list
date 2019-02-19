@@ -32,9 +32,8 @@
               <i class="material-icons">attachment</i>
             </button>
 
-            <button *ngIf="!recorder.recording" class="mic-button" id="startRecordButton" color="primary" 
-              mat-button [disabled]="canStopAudio()"
-              (click)="startRecord()">
+            <button *ngIf="!recorder.recording" class="mic-button" id="startRecordButton" color="primary" mat-button
+              [disabled]="canStopAudio()" (click)="startRecord()">
               <i class="material-icons">mic</i>
             </button>
             <button *ngIf="recorder.recording" class="mic-button" color="warn" id="stopRecordButton" mat-button
@@ -71,7 +70,11 @@
       </div>
       <div>
         <div class="stepper-title">Siuntimas transkripcijai</div>
-        <button id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()" (click)="upload()">Siųsti</button>
+        <button *ngIf="!sending" id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()"
+          (click)="upload()">Siųsti</button>
+        <mat-progress-spinner *ngIf="sending" class="upload-spinner" color="primary" mode="indeterminate"
+        diameter="40">
+        </mat-progress-spinner>
       </div>
     </div>
   </mat-card-content>

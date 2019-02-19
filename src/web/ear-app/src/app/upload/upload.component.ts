@@ -34,6 +34,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   private _email: string;
   recorder: Microphone;
   audioPlayer: AudioPlayer;
+  sending = false;
 
   ngOnInit() {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
@@ -75,10 +76,17 @@ export class UploadComponent extends BaseComponent implements OnInit {
 
   upload() {
     console.log('sending this to server', this.selectedFile);
+    this.sending = true;
     this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName, email: this.email })
       .subscribe(
-        result => this.onResult(result),
-        error => this.showError('Nepavyko nusiųsti failo', <any>error)
+        result => {
+          this.sending = false;
+          this.onResult(result);
+        },
+        error => {
+          this.sending = false;
+          this.showError('Nepavyko nusiųsti failo', <any>error);
+        }
       );
 
   }

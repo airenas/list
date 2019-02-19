@@ -10,7 +10,7 @@ import { UploadComponent } from './upload/upload.component';
 import { ResultsComponent } from './results/results.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatTooltipModule } from '@angular/material';
-import { ShowOnDirtyErrorStateMatcher, ErrorStateMatcher } from '@angular/material';
+import { ShowOnDirtyErrorStateMatcher, ErrorStateMatcher, MatProgressSpinnerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { FileSizeModule } from 'ngx-filesize';
@@ -35,7 +35,7 @@ import { MicrophoneFactory } from './utils/microphone';
     HttpClientModule,
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatProgressBarModule,
+    MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
     MatCardModule, FileSizeModule,
     ReactiveFormsModule, MatTooltipModule
   ],
