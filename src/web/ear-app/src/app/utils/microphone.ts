@@ -68,8 +68,14 @@ export class WebSurferMicrophone implements Microphone {
                     console.log('got recorded audio');
                     this.eventHandler('data', blob);
                 };
+
+                this.recorder.onTimeout = (recorder) => {
+                    console.log('timeout');
+                    this.stop();
+                };
+
                 this.recorder.setOptions({
-                    timeLimit: 120,
+                    timeLimit: 30,
                     encodeAfterRecord: true
                 });
 
