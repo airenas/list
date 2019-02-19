@@ -2,13 +2,6 @@ import { Injectable } from '@angular/core';
 import { NamedEvent, AudioPlayer } from './audio.player';
 
 @Injectable()
-export class TestAudioPlayerFactory {
-    create(divName: string, handler: NamedEvent): AudioPlayer {
-        return new TestAudioPlayer(divName, handler);
-    }
-}
-
-@Injectable()
 export class TestAudioPlayer implements AudioPlayer {
 
     playing = false;
@@ -32,5 +25,12 @@ export class TestAudioPlayer implements AudioPlayer {
 
     isPlaying(): boolean {
         return this.playing;
+    }
+}
+
+@Injectable()
+export class TestAudioPlayerFactory {
+    create(divName: string, handler: NamedEvent): AudioPlayer {
+        return new TestAudioPlayer(divName, handler);
     }
 }

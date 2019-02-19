@@ -3,13 +3,6 @@ import { NamedEvent, AudioPlayer } from './audio.player';
 import { Microphone } from './microphone';
 
 @Injectable()
-export class TestMicrophoneFactory {
-    create(divName: string, handler: NamedEvent): Microphone {
-        return new TestMicrophone(divName);
-    }
-}
-
-@Injectable()
 export class TestMicrophone implements Microphone {
     recording = false;
     constructor(private divName: string) {
@@ -21,5 +14,12 @@ export class TestMicrophone implements Microphone {
 
     start() {
         this.recording = true;
+    }
+}
+
+@Injectable()
+export class TestMicrophoneFactory {
+    create(divName: string, handler: NamedEvent): Microphone {
+        return new TestMicrophone(divName);
     }
 }

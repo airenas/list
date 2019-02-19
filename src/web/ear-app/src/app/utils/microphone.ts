@@ -1,36 +1,26 @@
 import { Injectable } from '@angular/core';
-import Recorder from 'recorder-js';
 
-@Injectable()
 export abstract class Microphone {
     recording: boolean;
     abstract stop();
     abstract start();
 }
 
-@Injectable()
-export class MicrophoneFactory {
-    create(divName: string, eventHandler: RecorderEvent): Microphone {
-        return new WebSurferMicrophone(divName, eventHandler);
-    }
-}
-
 declare var WaveSurfer: any;
+declare var WebAudioRecorder: any;
 
 export type RecorderEvent = (event: string, data: any) => void;
 
-@Injectable()
 export class WebSurferMicrophone implements Microphone {
     recording = false;
     private wavesurfer: any = null;
-    private recorder: Recorder = null;
+    private recorder: any = null;
 
     stop() {
         if (this.wavesurfer != null) {
-            this.recorder.stop().then(({ blob, buffer }) => {
-                this.eventHandler('data', blob);
-//                this.fileChange(new File([blob], 'audio.wav'));
-            });
+            console.log('stopping recording');
+            this.recorder.finishRecording();
+            console.log('stopping wavesurfer');
             this.recording = false;
             this.wavesurfer.microphone.stop();
         }
@@ -61,17 +51,45 @@ export class WebSurferMicrophone implements Microphone {
             });
             this.wavesurfer.microphone.on('deviceReady', stream => {
                 const audioContext = new AudioContext();
-                this.recorder = new Recorder(audioContext, {});
-                this.recorder.init(stream);
-                this.recorder.start();
+                const input = audioContext.createMediaStreamSource(stream);
+                this.recorder = new WebAudioRecorder(input, {
+                    workerDir: 'assets/',
+                    numChannels: 1,
+                    encoding: 'wav',
+                    onEncoderLoading: (recorder, encoding) => {
+                        console.log('Loading ' + encoding + ' encoder...');
+                    },
+                    onEncoderLoaded: (recorder, encoding) => {
+                        console.log(encoding + ' encoder loaded');
+                    }
+                });
+
+                this.recorder.onComplete = (recorder, blob) => {
+                    console.log('got recorded audio');
+                    this.eventHandler('data', blob);
+                };
+                this.recorder.setOptions({
+                    timeLimit: 120,
+                    encodeAfterRecord: true
+                });
+
+                this.recorder.startRecording();
+
+                console.log('Recording started');
             });
             this.wavesurfer.microphone.on('deviceError', code => {
                 this.recording = false;
-                this.eventHandler('error', code);
-//                console.error('Device error: ' + code);
-//                this.showError('Nepavyko inicializuoti mikrofono.', <any>code);
+                this.eventHandler('error', code == null ? '' : code.toString());
+                console.error('Device error: ' + code == null ? '' : code.toString());
             });
         }
         return this.wavesurfer != null;
+    }
+}
+
+@Injectable()
+export class MicrophoneFactory {
+    create(divName: string, eventHandler: RecorderEvent): Microphone {
+        return new WebSurferMicrophone(divName, eventHandler);
     }
 }

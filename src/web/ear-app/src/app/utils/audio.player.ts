@@ -10,13 +10,6 @@ export abstract class AudioPlayer {
   abstract isPlaying(): boolean;
 }
 
-@Injectable()
-export class AudioPlayerFactory {
-  create(divName: string, handler: NamedEvent): AudioPlayer {
-    return new WebSurferAudioPlayer(divName, handler);
-  }
-}
-
 declare var WaveSurfer: any;
 
 @Injectable()
@@ -64,5 +57,12 @@ export class WebSurferAudioPlayer implements AudioPlayer {
     if (this.eventHandler != null) {
         this.eventHandler(event);
     }
+  }
+}
+
+@Injectable()
+export class AudioPlayerFactory {
+  create(divName: string, handler: NamedEvent): AudioPlayer {
+    return new WebSurferAudioPlayer(divName, handler);
   }
 }
