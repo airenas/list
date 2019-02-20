@@ -25,3 +25,4 @@ deploy/local/inform/deploy/**
 **/.env
 **/.vscode/**
 deploy/local/traefik/acme.json
+ataskaitos/**
