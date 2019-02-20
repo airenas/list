@@ -40,6 +40,19 @@ services:
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+     - "traefik.port=8000" 
+  
+  result-service:
+    build: result
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    depends_on: 
+      - mongo
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.service/"
      - "traefik.port=8000"  
 
   status-service:

@@ -15,6 +15,7 @@ task info(group: group, description: "shows parameters info") {
     println 'EAR_APP_VERSION=\t' + EAR_APP_VERSION
     println 'UPLOAD_SERVICE_VERSION=\t' + UPLOAD_SERVICE_VERSION
     println 'INFORM_SERVICE_VERSION=\t' + INFORM_SERVICE_VERSION
+    println 'RESULT_SERVICE_VERSION=\t' + RESULT_SERVICE_VERSION
 }
 
 task clean_all(type: Delete, group: group, description: "Deletes copied resources") {

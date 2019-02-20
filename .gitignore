@@ -26,3 +26,4 @@ deploy/local/inform/deploy/**
 **/.vscode/**
 deploy/local/traefik/acme.json
 ataskaitos/**
+deploy/local/result/deploy/**
