@@ -13,7 +13,7 @@ def group="local"
 
 task info(group: group, description: "shows parameters info") {
     println 'EAR_APP_VERSION=\t' + EAR_APP_VERSION
-    println 'SERVICE_VERSION=\t' + SERVICE_VERSION
+    println 'UPLOAD_SERVICE_VERSION=\t' + UPLOAD_SERVICE_VERSION
     println 'INFORM_SERVICE_VERSION=\t' + INFORM_SERVICE_VERSION
 }
 
