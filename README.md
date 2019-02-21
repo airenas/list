@@ -25,4 +25,6 @@ For transcription service code look at [bitbucket.org/airenas/listgo](https://bi
 Copyright © 2018, [Airenas Vaičiūnas](https://bitbucket.org/airenas).
 Released under the [The 3-Clause BSD License](LICENSE).
 
+The project uses other licenses. See [Licenses](src/master/Licenses/) 
+
 ---
