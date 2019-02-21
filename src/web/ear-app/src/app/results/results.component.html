@@ -44,7 +44,7 @@
             (click)="stopAudio()" *ngIf="canStopAudio()">
             <i class="material-icons">stop</i>
           </button>
-          <a mat-button class="audio-button" href="{{audioURLKeeper.URL}}" target="_blank">
+          <a mat-button id="audioDownloadButton" class="audio-button" href="{{audioURLKeeper.URL}}" target="_blank">
             <i class="material-icons">cloud_download</i>
           </a>
         </div>

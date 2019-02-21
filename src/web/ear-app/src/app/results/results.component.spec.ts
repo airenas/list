@@ -2,7 +2,7 @@ import { TranscriptionResult } from './../api/transcription-result';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResultsComponent, Progress } from './results.component';
-import { TestAppModule, MockActivatedRoute, MockSubscriptionService, MockTestService } from '../base/test.app.module';
+import { TestAppModule, MockActivatedRoute, MockSubscriptionService, MockTestService, TestHelper } from '../base/test.app.module';
 import { StatusHumanPipe } from '../pipes/status-human.pipe';
 import { By } from '@angular/platform-browser';
 import { ParamsProviderService } from '../service/params-provider.service';
@@ -91,7 +91,7 @@ describe('ResultsComponent', () => {
   }));
 
   it('should have progress status bar set from result', async(() => {
-    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10};
+    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10 };
     component.onResult(r);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -100,7 +100,7 @@ describe('ResultsComponent', () => {
   }));
 
   it('should have status set from result', async(() => {
-    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10};
+    const r = { status: 'Status', id: '1', error: '', recognizedText: '', progress: 10 };
     component.onResult(r);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -109,7 +109,7 @@ describe('ResultsComponent', () => {
   }));
 
   it('should have no status set from result', async(() => {
-    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10};
+    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10 };
     component.onResult(r);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -118,7 +118,7 @@ describe('ResultsComponent', () => {
   }));
 
   it('should have no progress status bar set from result', async(() => {
-    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10};
+    const r = { status: Status.Completed, id: '1', error: '', recognizedText: '', progress: 10 };
     component.onResult(r);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
@@ -126,7 +126,52 @@ describe('ResultsComponent', () => {
     });
   }));
 
+  it('should have no audio control on start', async(() => {
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(false);
+    });
+  }));
 
+  it('should have no audio control on no ID', async(() => {
+    const r = { status: Status.NOT_FOUND, id: 'x', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(false);
+    });
+  }));
+
+  it('should have audio control', async(() => {
+    const r = { status: Status.Completed, id: 'x', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioWaveDiv')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#playAudioButton')))).toBe(true);
+    });
+  }));
+
+  it('should have audio download button', async(() => {
+    const r = { status: Status.Completed, id: 'oliaID', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#audioDownloadButton')))).toBe(true);
+      expect(fixture.debugElement.query(By.css('#audioDownloadButton')).nativeElement.href).toContain('oliaID');
+    });
+  }));
+
+  it('should hide play audio button', async(() => {
+    const r = { status: Status.Completed, id: 'oliaID', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.debugElement.query(By.css('#playAudioButton')).nativeElement.click();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#playAudioButton'))).toBeNull();
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#stopAudioButton')))).toBe(true);
+    });
+  }));
 });
 
 describe('ResultsComponent Own Mock', () => {
