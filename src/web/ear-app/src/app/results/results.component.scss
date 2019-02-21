@@ -1,19 +1,30 @@
 .result-form {
     min-width: 250px;
     max-width: 1000px;
-    //width: 100%;
+    width: 100%;
   }
 
   .result-card {
-    width: 100%;
+   // width: 100%;
   }
 
   .audio-card {
-    width: 100%;
+   // width: 100%;
   }
 
-  .transcription-input-card {
+  .transcription-control {
     width: 100%;
+    align-items: center;
+    display: flex;
+  }
+
+  .transcription-input {
+    display:inline-block;
+    width: 85%;
+  }
+
+  .transcription-button{
+    margin-left: 10px;
   }
 
   .result-full-width {

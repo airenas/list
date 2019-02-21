@@ -1,14 +1,16 @@
 <div class="result-form">
-  <mat-card class="transcription-input-card">
-      <mat-card-content>
-          <mat-form-field class="result-full-width">
-              <input id="transcriptionIDInput" matInput placeholder="Transkripcijos ID" [(ngModel)]="transcriptionId"
-                (keyup.enter)="refresh()" (keyup)="transcriptionIdUpdated()">
-            </mat-form-field>
-            <button id="updateButton" mat-raised-button color="primary" [disabled]="!transcriptionId"
-              (click)="refresh()">Atnaujinti</button>
-      </mat-card-content>
-    </mat-card>
+  <mat-card class="result-card">
+    <mat-card-content>
+      <div class="transcription-control">
+        <mat-form-field class="transcription-input">
+          <input id="transcriptionIDInput" matInput placeholder="Transkripcijos ID" [(ngModel)]="transcriptionId"
+            (keyup.enter)="refresh()" (keyup)="transcriptionIdUpdated()">
+        </mat-form-field>
+        <button class="transcription-button" id="updateButton" mat-raised-button color="primary"
+          [disabled]="!transcriptionId" (click)="refresh()">Atnaujinti</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <mat-card class="result-card">
     <mat-card-header>
