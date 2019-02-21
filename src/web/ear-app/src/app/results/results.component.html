@@ -28,12 +28,12 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="audio-card">
-    <mat-card-header>
-      <mat-card-title class="header-title">Originalus įrašas</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div [hidden]="false">
+  <div [hidden]="!audioURLKeeper.isAudio">
+    <mat-card class="audio-card">
+      <mat-card-header>
+        <mat-card-title class="header-title">Originalus įrašas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
         <div class="audio-control">
           <div id="audioWaveDiv" class="audio-wave"></div>
           <button class="audio-button" id="playAudioButton" color="primary" mat-button [disabled]="!canPlayAudio()"
@@ -44,8 +44,11 @@
             (click)="stopAudio()" *ngIf="canStopAudio()">
             <i class="material-icons">stop</i>
           </button>
+          <a mat-button class="audio-button" href="{{audioURLKeeper.URL}}" target="_blank">
+            <i class="material-icons">cloud_download</i>
+          </a>
         </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
+      </mat-card-content>
+    </mat-card>
+  </div>
 </div>

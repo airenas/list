@@ -25,7 +25,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   progress: Progress;
   status: string;
   audioPlayer: AudioPlayer;
-  audioURLKeeper: AudioURLKeeper = new AudioURLKeeper(this.config);
+  audioURLKeeper: AudioURLKeeper = null;
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
@@ -38,7 +38,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   ngOnInit() {
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
-    this.audioURLKeeper.audioPlayer = this.audioPlayer;
+    this.audioURLKeeper = new AudioURLKeeper(this.config, this.audioPlayer);
     if (this.transcriptionId == null) {
       this.transcriptionId = this.paramsProviderService.lastId;
     } else {
@@ -77,10 +77,8 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
       this.status = (result.status === Status.Completed) ? null : result.status;
-      this.audioURLKeeper.setId(result.id);
-    } else {
-      this.audioURLKeeper.setId(null);
     }
+    this.audioURLKeeper.setAudio(this.result);
   }
 
   prepareProgress(result: TranscriptionResult): Progress {
@@ -122,18 +120,32 @@ export class Progress {
 }
 
 class AudioURLKeeper {
-  constructor(private config: Config) {
+  private ID: string = null;
+  URL: string = null;
+  private lastLoadedURL: string = null;
+  isAudio = false;
 
+  constructor(private config: Config, private audioPlayer: AudioPlayer) {
   }
-  ID: string;
-  audioPlayer: AudioPlayer;
-  setId(ID: string) {
-    console.log('keeper ID: ' + ID);
-    if (ID === this.ID || ID == null) {
+
+  setAudio(result: TranscriptionResult) {
+    console.log('keeper ID: ' + (result == null ? 'null' : result.id));
+    if (result == null || result.status === Status.NOT_FOUND) {
+      this.URL = null;
+      this.ID = null;
+      this.isAudio = false;
       return;
     }
-    this.ID = ID;
-    console.log('load ID: ' + ID);
-    this.audioPlayer.load(this.config.audioUrl + ID);
+    if (result.id === this.ID) {
+      return;
+    }
+    this.ID = result.id;
+    this.URL = this.config.audioUrl + result.id;
+    this.isAudio = this.ID != null;
+    if (this.isAudio && this.lastLoadedURL !== this.URL) {
+      console.log('load URL: ' + this.URL);
+      this.audioPlayer.load(this.URL);
+      this.lastLoadedURL = this.URL;
+    }
   }
 }
