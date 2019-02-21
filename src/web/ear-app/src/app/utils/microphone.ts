@@ -85,11 +85,18 @@ export class WebSurferMicrophone implements Microphone {
             });
             this.wavesurfer.microphone.on('deviceError', code => {
                 this.recording = false;
-                this.eventHandler('error', code == null ? '' : code.toString());
-                console.error('Device error: ' + code == null ? '' : code.toString());
+                console.error('Device error: ', code);
+                this.eventHandler('error', this.asString(code));
             });
         }
         return this.wavesurfer != null;
+    }
+    asString(code: any): string {
+        const value = code == null ? '' : code.toString();
+        if (value.includes('NotAllowedError')) {
+            return 'Neleidžiama';
+        }
+        return value;
     }
 }
 

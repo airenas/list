@@ -3,7 +3,7 @@ import { Config } from './../config';
 import { Injectable } from '@angular/core';
 import { FileData } from './file-data';
 import { SendFileResult } from './../api/send-file-result';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -21,6 +21,22 @@ export class HttpTranscriptionService implements TranscriptionService {
   sendFileUrl: string;
   statusUrl: string;
   private socket;
+
+  static asString(error: HttpErrorResponse): string {
+    if (error !== null) {
+      const value = String(error.error);
+      if (value.includes('Wrong email')) {
+        return 'Neteisingas El. paštas';
+      }
+      if (value.includes('No email')) {
+        return 'Nenurodytas El. paštas';
+      }
+      if (value.includes('No file')) {
+        return 'Nenurodytas failas';
+      }
+    }
+    return 'Serviso klaida';
+  }
 
   constructor(public _http: HttpClient, _config: Config) {
     this.sendFileUrl = _config.sendFileUrl;
@@ -56,12 +72,13 @@ export class HttpTranscriptionService implements TranscriptionService {
       .map(res => {
         return <TranscriptionResult>res;
       })
-      .catch(this.handleError);
+      .catch(e => this.handleError(e));
   }
 
-  protected handleError(error: Response) {
+  protected handleError(error: HttpErrorResponse): Observable<never> {
     console.error(error);
-    return throwError(new Error('Serviso klaida: ' + error.text() || 'Serviso klaida'));
+    const errStr = HttpTranscriptionService.asString(error);
+    return throwError(errStr);
   }
 
   protected getHeader() {

@@ -85,10 +85,9 @@ export class UploadComponent extends BaseComponent implements OnInit {
         },
         error => {
           this.sending = false;
-          this.showError('Nepavyko nusiųsti failo', <any>error);
+          this.showError('Nepavyko nusiųsti failo.', error);
         }
       );
-
   }
 
   onResult(result: SendFileResult) {

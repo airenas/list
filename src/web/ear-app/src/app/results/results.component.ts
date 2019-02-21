@@ -56,7 +56,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     if (this.transcriptionId) {
       this.transcriptionService.getResult(this.transcriptionId).subscribe(
         result => this.onResult(result),
-        error => this.showError('Nepavyko gauti informacijos apie transkripcijos ID', <any>error)
+        error => this.showError('Nepavyko gauti informacijos apie transkripcijos ID.', error)
       );
     }
   }
