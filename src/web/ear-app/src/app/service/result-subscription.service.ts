@@ -4,9 +4,7 @@ import { Injectable } from '@angular/core';
 import websocketConnect from 'rxjs-websockets';
 import { QueueingSubject } from 'queueing-subject';
 import { Observable } from 'rxjs/Observable';
-import { Config } from '../config';
 import 'rxjs/add/operator/share';
-import { Router } from '@angular/router';
 
 @Injectable()
 export abstract class ResultSubscriptionService {

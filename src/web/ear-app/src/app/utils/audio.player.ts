@@ -4,6 +4,7 @@ export type NamedEvent = (event: string) => void;
 
 export abstract class AudioPlayer {
   abstract loadFile(file: File);
+  abstract load(url: string);
   abstract clear();
   abstract play();
   abstract pause();
@@ -22,6 +23,10 @@ export class WebSurferAudioPlayer implements AudioPlayer {
 
   loadFile(file: File) {
     this.getSurfer().loadBlob(file);
+  }
+
+  load(url: string) {
+    this.getSurfer().load(url);
   }
 
   clear() {

@@ -3,13 +3,15 @@ import { NamedEvent, AudioPlayer } from './audio.player';
 
 @Injectable()
 export class TestAudioPlayer implements AudioPlayer {
-
     playing = false;
 
     constructor(private divName: string, private eventHandler: NamedEvent) {
     }
 
     loadFile(file: File) {
+    }
+
+    load(url: string) {
     }
 
     clear() {

@@ -1,18 +1,20 @@
 import { ResultSubscriptionService } from './../service/result-subscription.service';
 import { TranscriptionResult } from './../api/transcription-result';
 import { MatSnackBar } from '@angular/material';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
 import { ParamsProviderService } from '../service/params-provider.service';
 import { Subscription } from 'rxjs/Subscription';
 import { Status } from '../api/status';
+import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
+import { Config } from '../config';
 
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
-  styleUrls: ['./results.component.css']
+  styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy {
   transcriptionId: string;
@@ -22,16 +24,21 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   private resultSubscription: Subscription;
   progress: Progress;
   status: string;
+  audioPlayer: AudioPlayer;
+  audioURLKeeper: AudioURLKeeper = new AudioURLKeeper(this.config);
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
     private route: ActivatedRoute, private paramsProviderService: ParamsProviderService,
-    private resultSubscriptionService: ResultSubscriptionService) {
+    private resultSubscriptionService: ResultSubscriptionService,
+    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory, private config: Config) {
     super(transcriptionService, snackBar);
   }
 
   ngOnInit() {
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
+    this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
+    this.audioURLKeeper.audioPlayer = this.audioPlayer;
     if (this.transcriptionId == null) {
       this.transcriptionId = this.paramsProviderService.lastId;
     } else {
@@ -70,6 +77,9 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
       this.status = (result.status === Status.Completed) ? null : result.status;
+      this.audioURLKeeper.setId(result.id);
+    } else {
+      this.audioURLKeeper.setId(null);
     }
   }
 
@@ -87,10 +97,43 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   ngOnDestroy() {
     this.resultSubscription.unsubscribe();
   }
+
+  canPlayAudio(): boolean {
+    return !this.audioPlayer.isPlaying();
+  }
+
+  canStopAudio(): boolean {
+    return this.audioPlayer.isPlaying();
+  }
+
+  playAudio() {
+    this.audioPlayer.play();
+  }
+
+  stopAudio() {
+    this.audioPlayer.pause();
+  }
 }
 
 export class Progress {
   color: string;
   value: number;
   buffer: number;
+}
+
+class AudioURLKeeper {
+  constructor(private config: Config) {
+
+  }
+  ID: string;
+  audioPlayer: AudioPlayer;
+  setId(ID: string) {
+    console.log('keeper ID: ' + ID);
+    if (ID === this.ID || ID == null) {
+      return;
+    }
+    this.ID = ID;
+    console.log('load ID: ' + ID);
+    this.audioPlayer.load(this.config.audioUrl + ID);
+  }
 }

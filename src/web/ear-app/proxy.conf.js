@@ -4,12 +4,16 @@ const PROXY_CONFIG = {
     "secure": false
     //"pathRewrite": {"^/transcriber": ""}
   },
-  "/result.provider/": {
+  "/status.service/": {
     "target": "http://localhost:7050/ausis",
     "secure": false
     //"pathRewrite": {"^/result.provider": ""}
   },
-  "/result.provider/subscribe": {
+  "/result.service/": {
+    "target": "http://localhost:7050/ausis",
+    "secure": false
+  },
+  "/status.service/subscribe": {
     "target": "ws://localhost:7050/ausis",
     "secure": false,
     "ws": true,

@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   sendFileUrl: 'transcriber/',
-  resultUrl: 'result.provider/',
-  subscribeUrl: 'result.provider/subscribe'
+  statusUrl: 'status.service/',
+  resultUrl: 'result.service/',
 };

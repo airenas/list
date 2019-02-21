@@ -1,3 +1,4 @@
+import { MicrophoneFactory } from './../utils/microphone';
 import { MatProgressSpinnerModule } from '@angular/material';
 import { Config } from './../config';
 import { NgModule } from '@angular/core';
@@ -18,6 +19,9 @@ import { ActivatedRoute } from '@angular/router';
 import { ParamsProviderService } from '../service/params-provider.service';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
 import { EMPTY } from 'rxjs';
+import { AudioPlayerFactory } from '../utils/audio.player';
+import { TestMicrophoneFactory } from '../utils/microphone.specs';
+import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
 
 export class MockTestService implements TranscriptionService {
   sendFile(fileData: FileData): Observable<SendFileResult> {
@@ -73,7 +77,9 @@ export class TestHelper {
     { provide: TranscriptionService, useClass: MockTestService },
     { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
     { provide: ActivatedRoute, useClass: MockActivatedRoute },
-    { provide: Config, useClass: Config }
+    { provide: Config, useClass: Config },
+    { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+    { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }
   ],
   bootstrap: [],
   exports: [

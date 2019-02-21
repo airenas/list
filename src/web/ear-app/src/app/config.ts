@@ -4,13 +4,15 @@ import {environment} from '../environments/environment';
 @Injectable()
 export class Config {
     public sendFileUrl: string;
-    public resultUrl: string;
+    public statusUrl: string;
     public subscribeUrl: string;
+    public audioUrl: string;
 
     constructor() {
         const prefix = '';
         this.sendFileUrl = prefix + environment.sendFileUrl + 'upload';
-        this.resultUrl = prefix + environment.resultUrl + 'result/';
-        this.subscribeUrl = prefix + environment.subscribeUrl;
+        this.statusUrl = prefix + environment.statusUrl + 'result/';
+        this.subscribeUrl = prefix + environment.statusUrl + 'subscribe';
+        this.audioUrl = prefix + environment.resultUrl + 'audio/';
     }
 }

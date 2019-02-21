@@ -19,12 +19,12 @@ export abstract class TranscriptionService {
 export class HttpTranscriptionService implements TranscriptionService {
 
   sendFileUrl: string;
-  resultUrl: string;
+  statusUrl: string;
   private socket;
 
   constructor(public _http: HttpClient, _config: Config) {
     this.sendFileUrl = _config.sendFileUrl;
-    this.resultUrl = _config.resultUrl;
+    this.statusUrl = _config.statusUrl;
   }
 
   sendFile(fileData: FileData): Observable<SendFileResult> {
@@ -52,7 +52,7 @@ export class HttpTranscriptionService implements TranscriptionService {
         'Accept': 'application/json'
       })
     };
-    return this._http.get(this.resultUrl + id, httpOptions)
+    return this._http.get(this.statusUrl + id, httpOptions)
       .map(res => {
         return <TranscriptionResult>res;
       })
