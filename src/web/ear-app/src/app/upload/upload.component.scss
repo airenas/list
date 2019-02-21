@@ -1,4 +1,5 @@
 @import './../../theme.scss';
+@import './../../styles.scss';
 
 .upload-form {
   min-width: 250px;
@@ -45,19 +46,10 @@
     width: 95%;
   }
 
-  .audio-control {
-    width: 100%;
-    align-items: center;
-    display: flex;
-  }
-
   .mic-audio-control {
     width: 100%;
   }
-  .audio-button{
-    min-width: 0px;
-    padding: 0 5px;
-  }
+  
   .mic-button{
     min-width: 0px;
     margin-left: 21%;

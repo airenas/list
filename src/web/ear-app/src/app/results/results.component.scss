@@ -1,3 +1,5 @@
+@import './../../styles.scss';
+
 .result-form {
     min-width: 250px;
     max-width: 1000px;
@@ -44,23 +46,4 @@
   
   .result-progress {
     margin: 0 10px;
-  }
-
-  .audio-wave {
-    border-style: solid;
-    border-width: 1px;
-    border-color: grey; 
-    display:inline-block;
-    width: 95%;
-  }
-
-  .audio-control {
-    width: 100%;
-    align-items: center;
-    display: flex;
-  }
-
-  .audio-button{
-    min-width: 0px;
-    padding: 0 5px;
   }

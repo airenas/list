@@ -2,3 +2,22 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import '~material-design-icons/iconfont/material-icons.css';
 body { margin: 0; }
+
+.audio-wave {
+    border-style: solid;
+    border-width: 1px;
+    border-color: grey; 
+    display:inline-block;
+    width: 95%;
+}
+
+.audio-control {
+    width: 100%;
+    align-items: center;
+    display: flex;
+}
+
+.audio-button{
+    min-width: 0px;
+    padding: 0 5px;
+}
