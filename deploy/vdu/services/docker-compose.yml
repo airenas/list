@@ -32,7 +32,7 @@ services:
      - "traefik.http.port=8000"
 
   upload-service:
-    image: airenas/list-upload-service:${SERVICE_VERSION}
+    image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
@@ -47,6 +47,19 @@ services:
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
      - "traefik.port=8000"  
+  
+  result-service:
+    image: airenas/list-result-service:${RESULT_SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    depends_on: 
+      - mongo
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.service/"
+     - "traefik.port=8000"     
 
   status-service:
     image: airenas/list-status-service:${SERVICE_VERSION}
@@ -60,7 +73,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}    
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.provider/"
+     - "traefik.frontend.rule=PathPrefixStrip:/ausis/status.service/"
      - "traefik.port=8000" 
   
   manager-service:
