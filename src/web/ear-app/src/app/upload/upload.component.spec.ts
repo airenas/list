@@ -15,6 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { AudioPlayerFactory } from '../utils/audio.player';
 import { MicrophoneFactory } from '../utils/microphone';
 import { TestMicrophoneFactory } from '../utils/microphone.specs';
+import { TestParamsProviderService } from '../service/params-provider.service.spec';
 
 
 describe('UploadComponent', () => {
@@ -215,7 +216,7 @@ describe('UploadComponent Own Mock', () => {
   let fixture: ComponentFixture<UploadComponent>;
 
   it('should read File value from provider', async(() => {
-    const params = new ParamsProviderService();
+    const params = new TestParamsProviderService();
     params.lastSelectedFile = new FileHelper().createFakeFile();
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
@@ -240,8 +241,8 @@ describe('UploadComponent Own Mock', () => {
   }));
 
   it('should read email value from provider', async(() => {
-    const params = new ParamsProviderService();
-    params.email = 'olia';
+    const params = new TestParamsProviderService();
+    params.setEmail('olia');
 
     TestBed.configureTestingModule({
       declarations: [UploadComponent],

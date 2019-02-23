@@ -1,8 +1,8 @@
-import { TranscriptionResult } from './../api/transcription-result';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResultsComponent, Progress } from './results.component';
-import { TestAppModule, MockActivatedRoute, MockSubscriptionService, MockTestService, TestHelper } from '../base/test.app.module';
+import { TestAppModule, MockActivatedRoute, MockSubscriptionService } from '../base/test.app.module';
+import { MockTestService, TestHelper } from '../base/test.app.module';
 import { StatusHumanPipe } from '../pipes/status-human.pipe';
 import { By } from '@angular/platform-browser';
 import { ParamsProviderService } from '../service/params-provider.service';
@@ -11,12 +11,14 @@ import { ResultSubscriptionService } from '../service/result-subscription.servic
 import { ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { Status } from '../api/status';
+import { TestParamsProviderService } from '../service/params-provider.service.spec';
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
   let fixture: ComponentFixture<ResultsComponent>;
 
   beforeEach(async(() => {
+
     TestBed.configureTestingModule({
       declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule]
@@ -186,10 +188,38 @@ describe('ResultsComponent Own Mock', () => {
     TestBed.configureTestingModule({
       declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule],
-      providers: [ParamsProviderService, { provide: APP_BASE_HREF, useValue: '/' },
-        { provide: TranscriptionService, useClass: MockTestService },
-        { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-        { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
+      providers: [{ provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
+    })
+      .compileComponents();
+    fixture = TestBed.createComponent(ResultsComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      const input = fixture.debugElement.query(By.css('#transcriptionIDInput'));
+      const el = input.nativeElement;
+      expect(el.value).toBe('id1');
+    });
+  }));
+
+  it('should ignore provider value', async(() => {
+    class MockActivatedRouteInternal {
+      snapshot = { paramMap: new Map([['id', 'id1']]) };
+    }
+
+    const params = new TestParamsProviderService();
+    params.setTranscriptionID('id2');
+
+    TestBed.configureTestingModule({
+      declarations: [ResultsComponent, StatusHumanPipe],
+      imports: [TestAppModule],
+      providers: [{ provide: ParamsProviderService, useValue: params },
+      { provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
     })
       .compileComponents();
     fixture = TestBed.createComponent(ResultsComponent);
@@ -203,8 +233,8 @@ describe('ResultsComponent Own Mock', () => {
   }));
 
   it('should read value from provider', async(() => {
-    const params = new ParamsProviderService();
-    params.lastId = 'id1';
+    const params = new TestParamsProviderService();
+    params.setTranscriptionID('id1');
     TestBed.configureTestingModule({
       declarations: [ResultsComponent, StatusHumanPipe],
       imports: [TestAppModule],

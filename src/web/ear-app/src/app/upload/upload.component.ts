@@ -40,7 +40,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.recorder = this.microphoneFactory.create('#micWaveDiv', (ev, data) => this.recordEvent(ev, data));
     this.fileChange(this.paramsProviderService.lastSelectedFile);
-    this._email = this.paramsProviderService.email;
+    this._email = this.paramsProviderService.getEmail();
   }
 
   recordEvent(ev: string, data: any): void {
@@ -99,9 +99,10 @@ export class UploadComponent extends BaseComponent implements OnInit {
   get email(): string {
     return this._email;
   }
+
   set email(email: string) {
     this._email = email;
-    this.paramsProviderService.email = email;
+    this.paramsProviderService.setEmail(email);
   }
 
   isValid() {

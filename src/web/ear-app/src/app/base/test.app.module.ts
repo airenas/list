@@ -22,6 +22,7 @@ import { EMPTY } from 'rxjs';
 import { AudioPlayerFactory } from '../utils/audio.player';
 import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
+import { TestParamsProviderService } from '../service/params-provider.service.spec';
 
 export class MockTestService implements TranscriptionService {
   sendFile(fileData: FileData): Observable<SendFileResult> {
@@ -73,13 +74,14 @@ export class TestHelper {
     MatCardModule, FileSizeModule,
     ReactiveFormsModule
   ],
-  providers: [ParamsProviderService, { provide: APP_BASE_HREF, useValue: '/' },
-    { provide: TranscriptionService, useClass: MockTestService },
-    { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-    { provide: ActivatedRoute, useClass: MockActivatedRoute },
-    { provide: Config, useClass: Config },
-    { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-    { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }
+  providers: [{ provide: APP_BASE_HREF, useValue: '/' },
+  { provide: ParamsProviderService, useClass: TestParamsProviderService },
+  { provide: TranscriptionService, useClass: MockTestService },
+  { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+  { provide: ActivatedRoute, useClass: MockActivatedRoute },
+  { provide: Config, useClass: Config },
+  { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+  { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }
   ],
   bootstrap: [],
   exports: [

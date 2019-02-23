@@ -17,7 +17,7 @@ import { FileSizeModule } from 'ngx-filesize';
 import { Config } from './config';
 import { HttpClientModule } from '@angular/common/http';
 import { StatusHumanPipe } from './pipes/status-human.pipe';
-import { ParamsProviderService } from './service/params-provider.service';
+import { ParamsProviderService, LocalStorageParamsProviderService } from './service/params-provider.service';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { WebsocketURLProviderService } from './service/websocket-urlprovider.service';
 import { MicrophoneFactory } from './utils/microphone';
@@ -40,8 +40,8 @@ import { MicrophoneFactory } from './utils/microphone';
     ReactiveFormsModule, MatTooltipModule
   ],
   providers: [Config,
-    ParamsProviderService,
     WebsocketURLProviderService,
+    { provide: ParamsProviderService, useClass: LocalStorageParamsProviderService },
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
     { provide: AudioPlayerFactory, useClass: AudioPlayerFactory },

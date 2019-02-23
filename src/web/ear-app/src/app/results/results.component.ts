@@ -40,9 +40,9 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.audioURLKeeper = new AudioURLKeeper(this.config, this.audioPlayer);
     if (this.transcriptionId == null) {
-      this.transcriptionId = this.paramsProviderService.lastId;
+      this.transcriptionId = this.paramsProviderService.getTranscriptionID();
     } else {
-      this.paramsProviderService.lastId = this.transcriptionId;
+      this.paramsProviderService.setTranscriptionID(this.transcriptionId);
     }
     this.resultSubscription = this.resultSubscriptionService.connect().subscribe((message: TranscriptionResult) => {
       console.log('received message from server: ' + JSON.stringify(message));
@@ -62,7 +62,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   }
 
   transcriptionIdUpdated() {
-    this.paramsProviderService.lastId = this.transcriptionId;
+    this.paramsProviderService.setTranscriptionID(this.transcriptionId);
   }
 
   onResult(result: TranscriptionResult) {
