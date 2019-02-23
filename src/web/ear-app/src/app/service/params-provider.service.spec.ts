@@ -1,6 +1,6 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { ParamsProviderService } from './params-provider.service';
+import { ParamsProviderService, LocalStorageParamsProviderService } from './params-provider.service';
 
 export class TestParamsProviderService implements ParamsProviderService {
 
@@ -32,11 +32,28 @@ export class TestParamsProviderService implements ParamsProviderService {
 describe('ParamsProviderService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [ParamsProviderService]
+      providers: [{ provide: ParamsProviderService, useClass: LocalStorageParamsProviderService }]
     });
   });
 
   it('should be created', inject([ParamsProviderService], (service: ParamsProviderService) => {
     expect(service).toBeTruthy();
+  }));
+
+  it('should remember email', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setEmail('olia');
+    expect(service.getEmail()).toBe('olia');
+  }));
+  it('should remember ID', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setTranscriptionID('id');
+    expect(service.getTranscriptionID()).toBe('id');
+  }));
+  it('should remember email from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setEmail('olia2');
+    expect(new LocalStorageParamsProviderService().getEmail()).toBe('olia2');
+  }));
+  it('should remember ID from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setTranscriptionID('id2');
+    expect(new LocalStorageParamsProviderService().getTranscriptionID()).toBe('id2');
   }));
 });
