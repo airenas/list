@@ -7,6 +7,7 @@ export const environment = {
   sendFileUrl: 'transcriber/',
   statusUrl: 'status.service/',
   resultUrl: 'result.service/',
+  version: 'DEV'
 };
 
 /*

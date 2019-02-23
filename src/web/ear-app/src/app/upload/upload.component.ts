@@ -8,6 +8,7 @@ import { ParamsProviderService } from '../service/params-provider.service';
 import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 import { Microphone, MicrophoneFactory } from '../utils/microphone';
+import { environment } from 'src/environments/environment';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -35,6 +36,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   recorder: Microphone;
   audioPlayer: AudioPlayer;
   sending = false;
+  versionClick = 0;
 
   ngOnInit() {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
@@ -139,5 +141,12 @@ export class UploadComponent extends BaseComponent implements OnInit {
 
   stopRecord() {
     this.recorder.stop();
+  }
+
+  showVersion() {
+    this.versionClick++;
+    if (this.versionClick > 4) {
+      this.showInfo('Version: ' + environment.version);
+    }
   }
 }
