@@ -32,5 +32,3 @@ onDemand = false
    delayBeforeCheck = 0
 [[acme.domains]]
    main = "airenas.eu"
-[[acme.domains]]
-   main = "*.airenas.eu"
