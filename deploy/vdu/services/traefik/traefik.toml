@@ -14,7 +14,7 @@ defaultEntryPoints = ["https","http"]
 
 [docker]
 endpoint = "unix:///var/run/docker.sock"
-domain = "list.airenas.eu"
+domain = "list.airenas.com"
 watch = true
 exposedByDefault = false
 
@@ -31,4 +31,4 @@ onDemand = false
    provider = "cloudflare"
    delayBeforeCheck = 0
 [[acme.domains]]
-   main = "list.airenas.eu"
+   main = "list.airenas.com"
