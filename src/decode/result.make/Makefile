@@ -5,6 +5,7 @@
 -include Makefile.options
 
 OUTPUT_ROOT?=/decoded
+RESULTS_ROOT?=/results
 APPS_ROOT?=/kaldi
 LM_SCALE?=17
 FINAL_PASS?=1-pass
@@ -40,6 +41,20 @@ $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/.ctm
 %.txt: %.synced.ctm
 	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@	
 
-$(OUTPUT_ROOT)/trans/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
+$(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
+	mkdir -p $(RESULTS_ROOT)/$*/
 	cat $^ > $@	
 
+$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz
+	mkdir -p $(RESULTS_ROOT)/$*/
+	cp $^ $@		
+
+$(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz
+	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
+		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
+
+$(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
+	gunzip -c $^ | \
+	    $(APPS_ROOT)/bin/lattice-to-nbest --lm-scale=$(LM_SCALE) --n=10 ark:- ark:- | \
+		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
+		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		

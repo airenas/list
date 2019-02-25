@@ -40,12 +40,12 @@ task ddeploy(type: DCRedeploy, group: group, description: "Deploys result-make s
 }
 
 task dbuild(type: DBuild, group: group) {
-    tag = 'airenas/list-result-make-service:' + SERVICE_VERSION
+    tag = 'airenas/list-result-make-service:' + TR_RESULT_SERVICE_VERSION
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: group) {
-    tag = 'airenas/list-result-make-service:' + SERVICE_VERSION
+    tag = 'airenas/list-result-make-service:' + TR_RESULT_SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 
