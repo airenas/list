@@ -2,6 +2,7 @@ port: 8000
 
 fileStorage:
     audio: /data/audio.in/
+    results: /data/results/
 
 # mongo:
 #     url: mongo  
