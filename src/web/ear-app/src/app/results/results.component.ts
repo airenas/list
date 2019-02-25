@@ -48,6 +48,29 @@ class AudioURLKeeper {
   }
 }
 
+class FileURLKeeper {
+  contains = false;
+  result: string;
+  nbest: string;
+  latticeGz: string;
+  lattice: string;
+
+  constructor(private config: Config) {
+  }
+
+  setID(result: TranscriptionResult) {
+    this.contains = false;
+    if (result == null || result.status !== Status.Completed) {
+      return;
+    }
+    this.contains = true;
+    this.result = this.config.resultUrl + result.id + '/result.txt';
+    this.lattice = this.config.resultUrl + result.id + '/lat.txt';
+    this.latticeGz = this.config.resultUrl + result.id + '/lat.gz';
+    this.nbest = this.config.resultUrl + result.id + '/lat.nb10.txt';
+  }
+}
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -63,6 +86,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   status: string;
   audioPlayer: AudioPlayer;
   audioURLKeeper: AudioURLKeeper = null;
+  fileKeeper: FileURLKeeper = null;
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
@@ -76,6 +100,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.transcriptionId = this.route.snapshot.paramMap.get('id');
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.audioURLKeeper = new AudioURLKeeper(this.config, this.audioPlayer);
+    this.fileKeeper = new FileURLKeeper(this.config);
     if (this.transcriptionId == null) {
       this.transcriptionId = this.paramsProviderService.getTranscriptionID();
     } else {
@@ -116,6 +141,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
       this.status = (result.status === Status.Completed) ? null : result.status;
     }
     this.audioURLKeeper.setAudio(this.result);
+    this.fileKeeper.setID(this.result);
   }
 
   prepareProgress(result: TranscriptionResult): Progress {

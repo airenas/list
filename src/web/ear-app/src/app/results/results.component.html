@@ -51,4 +51,25 @@
       </mat-card-content>
     </mat-card>
   </div>
+  <mat-card class="files-card" *ngIf="fileKeeper.contains" >
+    <mat-card-header>
+      <mat-card-title class="header-title">Rezultatų failai</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="audio-control">
+        <a mat-raised-button color="primary" id="resultFileButton" class="file-button" href="{{fileKeeper.result}}" target="_blank">
+          Rezultatas (.txt)
+        </a>
+        <a mat-raised-button color="primary" id="latticeFileButton" class="file-button" href="{{fileKeeper.latticeGz}}" target="_blank">
+          Grafas (.gz)
+        </a>
+        <a mat-raised-button color="primary" id="latticeTxtFileButton" class="file-button" href="{{fileKeeper.lattice}}" target="_blank">
+          Grafas (.txt)
+        </a>
+        <a mat-raised-button color="primary" id="nBestFileButton" class="file-button" href="{{fileKeeper.nbest}}" target="_blank">
+          Grafas 10-geriausių variantų (.txt)
+        </a>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
