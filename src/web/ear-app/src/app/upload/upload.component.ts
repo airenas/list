@@ -46,10 +46,22 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   recordEvent(ev: string, data: any): void {
+    console.log('recordEvent: ' + ev);
     if (ev === 'data') {
-      this.fileChange(new File([data], 'audio.wav'));
+      this.fileChange(this.newFile(data));
     } else if (ev === 'error') {
       this.showError('Nepavyko inicializuoti mikrofono.', data);
+    }
+  }
+
+  newFile(data: any): any {
+    try {
+      return new File([data], 'audio.wav');
+    } catch (e) { // workaround for edge
+      const file = new Blob([data]);
+      file['lastModifiedDate'] = new Date();
+      file['name'] = 'audio.wav';
+      return file;
     }
   }
 
@@ -65,7 +77,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     }
   }
 
-  fileChange(file: File) {
+  fileChange(file: File): void {
     this.selectedFile = null;
     this.selectedFileName = null;
     this.paramsProviderService.lastSelectedFile = file;

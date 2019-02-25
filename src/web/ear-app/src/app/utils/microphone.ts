@@ -29,6 +29,7 @@ export class WebSurferMicrophone implements Microphone {
         this.recording = true;
         if (this.initMicrophone()) {
             this.wavesurfer.microphone.start();
+            this.eventHandler('started', null);
         } else {
             this.recording = false;
         }
