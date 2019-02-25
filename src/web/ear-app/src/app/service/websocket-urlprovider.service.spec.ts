@@ -5,6 +5,30 @@ import { TestAppModule } from '../base/test.app.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Config } from '../config';
 
+class MockLocation implements Location {
+  ancestorOrigins: DOMStringList;
+  hash: string; host: string;
+  hostname: string;
+  href: string;
+  origin: string;
+  pathname: string;
+  port: string;
+  protocol: string;
+  search: string;
+  assign(url: string): void {
+  }
+
+  reload(forcedReload?: boolean): void {
+  }
+
+  replace(url: string): void {
+  }
+
+  toString(): string {
+    return '';
+  }
+}
+
 describe('WebsocketURLProviderService', () => {
   let location: MockLocation;
   let config: Config;
@@ -63,27 +87,3 @@ describe('WebsocketURLProviderService', () => {
   }));
 
 });
-
-class MockLocation implements Location {
-  ancestorOrigins: DOMStringList;
-  hash: string; host: string;
-  hostname: string;
-  href: string;
-  origin: string;
-  pathname: string;
-  port: string;
-  protocol: string;
-  search: string;
-  assign(url: string): void {
-
-  }
-  reload(forcedReload?: boolean): void {
-
-  }
-  replace(url: string): void {
-
-  }
-  toString(): string {
-    return '';
-  }
-}

@@ -13,7 +13,6 @@ export abstract class AudioPlayer {
 
 declare var WaveSurfer: any;
 
-@Injectable()
 export class WebSurferAudioPlayer implements AudioPlayer {
 
   wavesurfer: any = null;

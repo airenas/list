@@ -11,6 +11,43 @@ import { Status } from '../api/status';
 import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 import { Config } from '../config';
 
+export class Progress {
+  color: string;
+  value: number;
+  buffer: number;
+}
+
+class AudioURLKeeper {
+  private ID: string = null;
+  URL: string = null;
+  private lastLoadedURL: string = null;
+  isAudio = false;
+
+  constructor(private config: Config, private audioPlayer: AudioPlayer) {
+  }
+
+  setAudio(result: TranscriptionResult) {
+    console.log('keeper ID: ' + (result == null ? 'null' : result.id));
+    if (result == null || result.status === Status.NOT_FOUND) {
+      this.URL = null;
+      this.ID = null;
+      this.isAudio = false;
+      return;
+    }
+    if (result.id === this.ID) {
+      return;
+    }
+    this.ID = result.id;
+    this.URL = this.config.audioUrl + result.id;
+    this.isAudio = this.ID != null;
+    if (this.isAudio && this.lastLoadedURL !== this.URL) {
+      console.log('load URL: ' + this.URL);
+      this.audioPlayer.load(this.URL);
+      this.lastLoadedURL = this.URL;
+    }
+  }
+}
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -110,42 +147,5 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
 
   stopAudio() {
     this.audioPlayer.pause();
-  }
-}
-
-export class Progress {
-  color: string;
-  value: number;
-  buffer: number;
-}
-
-class AudioURLKeeper {
-  private ID: string = null;
-  URL: string = null;
-  private lastLoadedURL: string = null;
-  isAudio = false;
-
-  constructor(private config: Config, private audioPlayer: AudioPlayer) {
-  }
-
-  setAudio(result: TranscriptionResult) {
-    console.log('keeper ID: ' + (result == null ? 'null' : result.id));
-    if (result == null || result.status === Status.NOT_FOUND) {
-      this.URL = null;
-      this.ID = null;
-      this.isAudio = false;
-      return;
-    }
-    if (result.id === this.ID) {
-      return;
-    }
-    this.ID = result.id;
-    this.URL = this.config.audioUrl + result.id;
-    this.isAudio = this.ID != null;
-    if (this.isAudio && this.lastLoadedURL !== this.URL) {
-      console.log('load URL: ' + this.URL);
-      this.audioPlayer.load(this.URL);
-      this.lastLoadedURL = this.URL;
-    }
   }
 }

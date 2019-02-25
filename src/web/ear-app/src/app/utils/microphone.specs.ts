@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { NamedEvent, AudioPlayer } from './audio.player';
 import { Microphone } from './microphone';
 
-@Injectable()
 export class TestMicrophone implements Microphone {
     recording = false;
     constructor(private divName: string) {

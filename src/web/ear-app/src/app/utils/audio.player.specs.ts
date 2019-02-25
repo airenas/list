@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { NamedEvent, AudioPlayer } from './audio.player';
 
-@Injectable()
 export class TestAudioPlayer implements AudioPlayer {
     playing = false;
 
