@@ -93,11 +93,25 @@ export class WebSurferMicrophone implements Microphone {
         return this.wavesurfer != null;
     }
     asString(code: any): string {
-        const value = code == null ? '' : code.toString();
-        if (value.includes('NotAllowedError')) {
+        const value = this.codeAsString(code);
+        if (value.includes('NotAllowedError') || value.includes('PermissionDeniedError')) {
             return 'Neleidžiama';
         }
+        if (value.includes('NotSupportedError')) {
+            return 'Neleidžiama/Nepalaikoma';
+        }
         return value;
+    }
+
+    codeAsString(code: any): string {
+        if (code == null) {
+            return '';
+        }
+        const me = typeof(MediaStreamError) !== 'undefined' ? MediaStreamError : DOMException;
+        if (code instanceof me) {
+            return code.name + ':' + code.message;
+        }
+        return code.toString();
     }
 }
 
