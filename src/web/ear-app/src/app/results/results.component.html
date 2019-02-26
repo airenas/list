@@ -51,12 +51,12 @@
       </mat-card-content>
     </mat-card>
   </div>
-  <mat-card class="files-card" *ngIf="fileKeeper.contains" >
+  <mat-card class="file-card" *ngIf="fileKeeper.contains" >
     <mat-card-header>
       <mat-card-title class="header-title">Rezultatų failai</mat-card-title>
     </mat-card-header>
     <mat-card-content>
-      <div class="audio-control">
+      <div class="file-control">
         <a mat-raised-button color="primary" id="resultFileButton" class="file-button" href="{{fileKeeper.result}}" target="_blank">
           Rezultatas (.txt)
         </a>
