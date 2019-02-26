@@ -174,6 +174,51 @@ describe('ResultsComponent', () => {
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#stopAudioButton')))).toBe(true);
     });
   }));
+
+  it('should have file buttons', async(() => {
+    const r = { status: Status.Completed, id: 'x', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#resultFileButton')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeFileButton')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeTxtFileButton')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(true);
+    });
+  }));
+
+  it('should contain id in file buttons', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#resultFileButton')).nativeElement.href).toContain('iddddd');
+      expect(fixture.debugElement.query(By.css('#latticeFileButton')).nativeElement.href).toContain('iddddd');
+      expect(fixture.debugElement.query(By.css('#latticeTxtFileButton')).nativeElement.href).toContain('iddddd');
+      expect(fixture.debugElement.query(By.css('#nBestFileButton')).nativeElement.href).toContain('iddddd');
+    });
+  }));
+
+  it('should have hidden file buttons when in progress', async(() => {
+    const r = { status: Status.Transcription, id: 'id', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#resultFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeTxtFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(false);
+    });
+  }));
+
+  it('should have hidden file buttons on start', async(() => {
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#resultFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeTxtFileButton')))).toBe(false);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(false);
+    });
+  }));
 });
 
 describe('ResultsComponent Own Mock', () => {
