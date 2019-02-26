@@ -16,6 +16,7 @@ task info(group: group, description: "shows parameters info") {
     println 'UPLOAD_SERVICE_VERSION=\t' + UPLOAD_SERVICE_VERSION
     println 'INFORM_SERVICE_VERSION=\t' + INFORM_SERVICE_VERSION
     println 'RESULT_SERVICE_VERSION=\t' + RESULT_SERVICE_VERSION
+    println 'TR_RESULT_SERVICE_VERSION=\t' + TR_RESULT_SERVICE_VERSION
 }
 
 task clean_all(type: Delete, group: group, description: "Deletes copied resources") {

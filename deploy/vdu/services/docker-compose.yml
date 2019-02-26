@@ -129,7 +129,7 @@ services:
       - modelsStorage:/models      
   
   result-make-service:
-    image: airenas/list-result-make-service:${SERVICE_VERSION}
+    image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
