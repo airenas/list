@@ -2,7 +2,7 @@ import com.aireno.gradle.DCRedeploy
 import com.aireno.gradle.DBuild
 import com.aireno.gradle.DPush
 
-def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/uploadService/"
+def main_dir = GO_SRC_DIR + "cmd/uploadService/"
 def dist_dir = "deploy/"
 
 def group = "uploadService"

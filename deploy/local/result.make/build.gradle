@@ -2,7 +2,7 @@ import com.aireno.gradle.DCRedeploy
 import com.aireno.gradle.DBuild
 import com.aireno.gradle.DPush
 
-def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/cmdWorkerService/"
+def main_dir = GO_SRC_DIR + "cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
 def cmdDir = "/home/airenas/projects/list/src/decode/result.make/"
 
