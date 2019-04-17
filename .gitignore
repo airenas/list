@@ -28,3 +28,4 @@ deploy/local/traefik/acme.json
 ataskaitos/**
 deploy/local/result/deploy/**
 src/web/ear-app/src/environments/environment.prod.ts
+src/decode/transcription/conf
