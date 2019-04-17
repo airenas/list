@@ -2,14 +2,12 @@ import com.aireno.gradle.DCRedeploy
 import com.aireno.gradle.DBuild
 import com.aireno.gradle.DPush
 
-def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
-def cmdDir = "/home/airenas/projects/list/src/decode/transcription/"
+def executable_name = 'cmdWorkerService'
+def main_dir = go_build_dir + "cmd/" + executable_name
+def service_name = 'transcription-service'
 
-
-def group = "transcription"
-
-task clean(type: Delete, group: group, description: "Deletes copied resources") {
+task clean(type: Delete, group: project.name) {
     delete dist_dir
 }
 
@@ -19,38 +17,40 @@ task build(type: Exec, group: group, description: "Compiles servise") {
     environment CGO_ENABLED:0
 }
 
-task copy(type: Copy, group: group, description: "Copies service") {
-    from main_dir
-    into dist_dir
-    include "cmdWorkerService"
-    dependsOn 'build'
-    dependsOn 'copyCmd'
-}
-
-task copyCmd(type: Copy, group: group, description: "Copies command files") {
-    from cmdDir
+task copyCmd(type: Copy, group: project.name, description: "Copies command files") {
+    from cmd_src_dir + "transcription"
     into dist_dir + "/cmd"
     include "Makefile"
 }
 
-task ddeploy(type: DCRedeploy, group: group, description: "Deploys transcription service") {
-    serviceName = 'transcription-service'
-    composePath = './..'
+task copy(type: Copy, group: project.name, description: "Copies service") {
+    from main_dir
+    into dist_dir
+    include executable_name
+    dependsOn build, copyCmd
+}
+
+
+task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys transcription service") {
+    serviceName = service_name
+    composePath = local_compose_dir
+    mustRunAfter copy
+}
+
+task dbuild(type: DBuild, group: project.name) {
+    tag = 'airenas/' + docker_container_prefix + service_name + ':' + TRANSCRIPTION_SERVICE_VERSION
     mustRunAfter('copy')
 }
 
-task dbuild(type: DBuild, group: group) {
-    tag = 'airenas/list-transcription-service:' + SERVICE_VERSION
-    mustRunAfter('copy')
-}
-
-task dpush(type: DPush, group: group) {
-    tag = 'airenas/list-transcription-service:' + SERVICE_VERSION
+task dpush(type: DPush, group: project.name) {
+    tag = 'airenas/' + docker_container_prefix + service_name + ':' + TRANSCRIPTION_SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 
-task dall(group: group) {
-    dependsOn 'copy'
-    dependsOn 'dbuild'
-    dependsOn 'dpush'
+task dall(group: project.name) {
+    dependsOn copy, dbuild, dpush
+}
+
+task rd(group: project.name) {
+    dependsOn copy, ddeploy
 }

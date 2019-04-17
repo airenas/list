@@ -44,3 +44,5 @@ $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/trans/%/wav.scp
 
 $(OUTPUT_ROOT)/trans/%/spk2utt: $(OUTPUT_ROOT)/trans/%/utt2spk
 	$(APPS_ROOT)/utt2spk_to_spk2utt.pl $^ > $@
+
+test: $(OUTPUT_ROOT)/trans/a/spk2utt

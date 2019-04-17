@@ -43,9 +43,17 @@ $(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
         $(OUTPUT_ROOT)/trans/$* $(MODELS_ROOT)/ivector_extractor $(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; for f in $(MODELS_ROOT)/*; do ln -s $$f; done)
 	steps/nnet3/decode.sh --num-threads $(nthreads) --acwt 1.0  --post-decode-acwt 10.0 \
-	    --config conf/decode.conf --skip-scoring true --cmd "$$decode_cmd" --nj $(njobs) \
+	    --config conf/decode.conf \
+		--skip-scoring true --cmd "$$decode_cmd" --nj $(njobs) \
 	    --online-ivector-dir $(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors \
 	    --skip-diagnostics true \
+		--extra-left-context 40  \
+    	--extra-right-context 40  \
+    	--extra-left-context-initial 0 \
+    	--extra-right-context-final 0 \
+    	--frames-per-chunk 90 \
       $(MODELS_ROOT) $(OUTPUT_ROOT)/trans/$* `dirname $@` || exit 1;
 
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; ln -s ../../../fst/model)
+
+test: $(OUTPUT_ROOT)/trans/a/1-pass/decode/log

@@ -23,3 +23,5 @@ $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 $(OUTPUT_ROOT)
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 $(OUTPUT_ROOT)
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k
+
+test: $(OUTPUT_ROOT)/a.wav

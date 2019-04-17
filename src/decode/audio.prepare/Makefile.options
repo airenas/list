@@ -1,2 +1,2 @@
-OUTPUT_ROOT=audio.prepared
+OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.prepared
 INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.in
