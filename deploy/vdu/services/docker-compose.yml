@@ -115,7 +115,7 @@ services:
       - modelsStorage:/models    
   
   transcription-service:
-    image: airenas/list-transcription-service:${SERVICE_VERSION}
+    image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq

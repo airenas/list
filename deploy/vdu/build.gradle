@@ -2,8 +2,6 @@ plugins {
     id 'org.hidetake.ssh' version '2.9.0'
 }
 
-def group="vdu"
-
 def servicesDir = projectDir.getAbsolutePath() + "/services"
 def distDir = servicesDir + "/data/"
 
@@ -16,11 +14,11 @@ remotes {
     }
 }
 
-task clean(type: Delete, group: group, description: "Deletes copied resources") {
+task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
     delete distDir
 }
 
-task copy_remote(group: group, description: "Copies all data to server") {
+task copy_remote(group: project.name, description: "Copies all data to server") {
     doLast {
         ssh.run {
             session(remotes.server1) {
@@ -32,7 +30,7 @@ task copy_remote(group: group, description: "Copies all data to server") {
     }
 }
 
-task init_volumes(group: group, description: "Init volumes dir on server") {
+task init_volumes(group: project.name, description: "Init volumes dir on server") {
     doLast {
         ssh.run {
             session(remotes.server1) {
@@ -49,7 +47,7 @@ task init_volumes(group: group, description: "Init volumes dir on server") {
     }
 }
 
-task deploy(group: group, description: "Deploys services to server") {
+task deploy(group: project.name, description: "Deploys services to server") {
     dependsOn('copy_remote')
     doLast {
         ssh.run {
@@ -60,7 +58,7 @@ task deploy(group: group, description: "Deploys services to server") {
     }
 }
 
-task copy_apps(group: group, description: "Copies apps to volume") {
+task copy_apps(group: project.name, description: "Copies apps to volume") {
     doLast {
         ssh.run {
             session(remotes.server1) {
@@ -70,7 +68,7 @@ task copy_apps(group: group, description: "Copies apps to volume") {
     }
 }
 
-task copy_models(group: group, description: "Copies models data") {
+task copy_models(group: project.name, description: "Copies models data") {
     doLast {
         ssh.run {
             session(remotes.server1) {
