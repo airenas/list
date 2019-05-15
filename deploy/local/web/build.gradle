@@ -22,7 +22,7 @@ task updateVersion() {
 }
 
 task build(type: Exec, group: group, description: "Compiles angular site") {
-    commandLine 'ng', 'build', '--base-href', '/ausis/', '--prod'
+    commandLine 'ng', 'build', '--prod'
     workingDir main_dir
     dependsOn 'updateVersion'
 }
@@ -36,6 +36,14 @@ task copy(type: Copy, group: group, description: "Copies htmls") {
 task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service") {
     serviceName = 'web'
     composePath = './..'
+    mustRunAfter('copy')
+}
+
+task ddeploy_words(type: DCRedeploy, group: group, description: "Deploys web service") {
+    serviceName = 'web'
+    composePath = './..'
+    projectName = "list_words"
+    fileName = "docker-compose.words.yml"
     mustRunAfter('copy')
 }
 
@@ -53,4 +61,12 @@ task dall(group: group) {
     dependsOn 'copy'
     dependsOn 'dbuild'
     dependsOn 'dpush'
+}
+
+task rd_words(group: group) {
+    dependsOn copy, dbuild, ddeploy_words
+}
+
+task rd(group: group) {
+    dependsOn copy, dbuild, ddeploy
 }

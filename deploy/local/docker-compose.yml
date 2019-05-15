@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.7'
 
 services:
   proxy:
@@ -20,6 +20,8 @@ services:
   web:
     build: web
     restart: unless-stopped
+    environment:
+      BASE_HREF: /ausis/
     labels:
      - "traefik.enable=true"
      - "traefik.http.frontend.rule=PathPrefixStrip:/ausis/"

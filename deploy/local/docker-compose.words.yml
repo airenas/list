@@ -1,0 +1,163 @@
+version: '3.7'
+
+services:
+  web:
+    build: web
+    restart: unless-stopped
+    environment:
+      BASE_HREF: /ausisz/
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/ausisz/"
+     - "traefik.http.port=8000"
+
+  # upload-service:
+  #   build: upload
+  #   restart: unless-stopped
+  #   volumes:
+  #     - fileStorage:/data
+  #   depends_on: 
+  #     - rabbitmq  
+  #     - mongo
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+  #     MONGO_URL: ${LIST_MONGO_URL}
+  #   labels:
+  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+  #    - "traefik.port=8000" 
+  
+  # result-service:
+  #   build: result
+  #   restart: unless-stopped
+  #   volumes:
+  #     - fileStorage:/data
+  #   depends_on: 
+  #     - mongo
+  #   environment:
+  #     MONGO_URL: ${LIST_MONGO_URL}
+  #   labels:
+  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.service/"
+  #    - "traefik.port=8000"  
+
+  # status-service:
+  #   build: status
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - mongo
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+  #     MONGO_URL: ${LIST_MONGO_URL}    
+  #   labels:
+  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/status.service/"
+  #    - "traefik.port=8000" 
+  
+  # manager-service:
+  #   build: manager
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - mongo
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+  #     MONGO_URL: ${LIST_MONGO_URL}  
+
+  # audio-prepare-service:
+  #   build: audio.prepare
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #   volumes:
+  #     - fileStorage:/data
+
+  # diarization-service:
+  #   build: diarization
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #   volumes:
+  #     - fileStorage:/data    
+  #     - appsStorage:/apps
+  #     - modelsStorage:/models    
+  
+  # transcription-service:
+  #   build: transcription
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #   volumes:
+  #     - fileStorage:/data    
+  #     - appsStorage:/apps
+  #     - modelsStorage:/models      
+  
+  # result-make-service:
+  #   build: result.make
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #   volumes:
+  #     - fileStorage:/data    
+  #     - appsStorage:/apps
+  #     - modelsStorage:/models  
+
+  # inform-service:
+  #   build: inform
+  #   restart: unless-stopped
+  #   depends_on: 
+  #     - rabbitmq
+  #     - mongo
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+  #     MONGO_URL: ${LIST_MONGO_URL}
+  #     SMTP_USERNAME: ${SMTP_USERNAME}
+  #     SMTP_PASSWORD: ${SMTP_PASSWORD}
+  #     MAIL_URL: ${MAIL_URL}
+
+########### volumes 
+volumes:
+  fileStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}fileStorage
+      o: bind
+
+  appsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}apps
+      o: bind
+
+  modelsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}models
+      o: bind          
+
+networks:
+  default:
+    external:
+      name: list_default

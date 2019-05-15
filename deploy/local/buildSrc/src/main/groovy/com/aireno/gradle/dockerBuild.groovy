@@ -6,26 +6,37 @@ import org.gradle.api.tasks.TaskAction;
 class DCRedeploy extends DefaultTask {
      String serviceName 
      String composePath = "."
+     String projectName = ""
+     String fileName = ""
 
      @TaskAction
      def run() {
-
+        def str = new ArrayList <String> ();
+        str.add('docker-compose')
+        if (projectName != ""){
+            str.add('-p')
+            str.add(projectName)
+         }
+        if (fileName != ""){
+            str.add('-f')
+            str.add(fileName)
+        }
         println '==== Redeploy ' + serviceName
         project.exec {
             workingDir composePath
-            commandLine 'docker-compose', 'stop', serviceName
+            commandLine str + 'stop' + serviceName
         }
         project.exec {
             workingDir composePath
-            commandLine 'docker-compose', 'rm', '-f', serviceName
+            commandLine str + 'rm' + '-f' + serviceName
         }
         project.exec {
             workingDir composePath
-            commandLine 'docker-compose', 'build', serviceName
+            commandLine str + 'build' + serviceName
         }
         project.exec {
             workingDir composePath
-            commandLine 'docker-compose', 'up', '-d', serviceName
+            commandLine str + 'up' + '-d' + serviceName
         }
         println '==== Redeployed ' + serviceName
      }
