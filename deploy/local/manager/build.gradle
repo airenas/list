@@ -2,46 +2,60 @@ import com.aireno.gradle.DCRedeploy
 import com.aireno.gradle.DBuild
 import com.aireno.gradle.DPush
 
-def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/managerService/"
+def main_dir = GO_SRC_DIR + "cmd/managerService/"
 def dist_dir = "deploy/"
 
-def group = "managerService"
-
-task clean(type: Delete, group: group, description: "Deletes copied resources") {
+task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
     delete dist_dir
 }
 
-task build(type: Exec, group: group, description: "Compiles servise") {
+task build(type: Exec, group: project.name, description: "Compiles servise") {
     commandLine 'go', 'build', '-installsuffix', 'cgo' 
     workingDir main_dir
     environment CGO_ENABLED:0
 }
 
-task copy(type: Copy, group: group, description: "Copies service") {
+task copy(type: Copy, group: project.name, description: "Copies service") {
     from main_dir
     into dist_dir
     include "managerService"
     dependsOn 'build'
 }
 
-task ddeploy(type: DCRedeploy, group: group, description: "Deploys manager service") {
+task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys manager service") {
     serviceName = 'manager-service'
     composePath = './..'
     mustRunAfter('copy')
 }
 
-task dbuild(type: DBuild, group: group) {
+task dbuild(type: DBuild, group: project.name) {
     tag = 'airenas/list-manager-service:' + SERVICE_VERSION
     mustRunAfter('copy')
 }
 
-task dpush(type: DPush, group: group) {
+task dpush(type: DPush, group: project.name) {
     tag = 'airenas/list-manager-service:' + SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 
-task dall(group: group) {
+task dall(group: project.name) {
     dependsOn 'copy'
     dependsOn 'dbuild'
     dependsOn 'dpush'
+}
+
+task ddeploy_words(type: DCRedeploy, group: project.name) {
+    serviceName = 'manager-service'
+    composePath = './..'
+    projectName = project_name_words
+    fileName = compose_file_words
+    mustRunAfter('copy')
+}
+
+task rd(group: project.name) {
+    dependsOn copy, dbuild, ddeploy
+}
+
+task rd_words(group: project.name) {
+    dependsOn copy, dbuild, ddeploy_words
 }

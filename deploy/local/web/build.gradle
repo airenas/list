@@ -42,8 +42,8 @@ task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service")
 task ddeploy_words(type: DCRedeploy, group: group, description: "Deploys web service") {
     serviceName = 'web'
     composePath = './..'
-    projectName = "list_words"
-    fileName = "docker-compose.words.yml"
+    projectName = project_name_words
+    fileName = compose_file_words
     mustRunAfter('copy')
 }
 

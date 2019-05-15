@@ -2,6 +2,8 @@ ext.main_dir = new File(project.projectDir, '../../').getCanonicalPath() + '/'
 ext.go_build_dir = new File(main_dir, '../listgo/').getCanonicalPath() + '/'
 ext.cmd_src_dir = ext.main_dir + 'src/decode/'
 ext.local_compose_dir = ext.main_dir + 'deploy/local/'
+ext.project_name_words = 'list-words'
+ext.compose_file_words = 'docker-compose.words.yml'
 
 ext.docker_container_prefix='list-'
 

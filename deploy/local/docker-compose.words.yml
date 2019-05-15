@@ -11,62 +11,54 @@ services:
      - "traefik.http.frontend.rule=PathPrefixStrip:/ausisz/"
      - "traefik.http.port=8000"
 
-  # upload-service:
-  #   build: upload
-  #   restart: unless-stopped
-  #   volumes:
-  #     - fileStorage:/data
-  #   depends_on: 
-  #     - rabbitmq  
-  #     - mongo
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-  #     MONGO_URL: ${LIST_MONGO_URL}
-  #   labels:
-  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
-  #    - "traefik.port=8000" 
+  upload-service:
+    build: upload
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MESSAGESERVER_PREFIX: words
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausisz/transcriber/"
+     - "traefik.port=8000" 
   
-  # result-service:
-  #   build: result
-  #   restart: unless-stopped
-  #   volumes:
-  #     - fileStorage:/data
-  #   depends_on: 
-  #     - mongo
-  #   environment:
-  #     MONGO_URL: ${LIST_MONGO_URL}
-  #   labels:
-  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.service/"
-  #    - "traefik.port=8000"  
+  result-service:
+    build: result
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausisz/result.service/"
+     - "traefik.port=8000"  
 
-  # status-service:
-  #   build: status
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - mongo
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-  #     MONGO_URL: ${LIST_MONGO_URL}    
-  #   labels:
-  #    - "traefik.frontend.rule=PathPrefixStrip:/ausis/status.service/"
-  #    - "traefik.port=8000" 
+  status-service:
+    build: status
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MESSAGESERVER_PREFIX: words
+      MONGO_URL: ${LIST_MONGO_URL}    
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/ausisz/status.service/"
+     - "traefik.port=8000" 
   
-  # manager-service:
-  #   build: manager
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - mongo
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-  #     MONGO_URL: ${LIST_MONGO_URL}  
+  manager-service:
+    build: manager
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MESSAGESERVER_PREFIX: words
+      MONGO_URL: ${LIST_MONGO_URL}
 
   # audio-prepare-service:
   #   build: audio.prepare
