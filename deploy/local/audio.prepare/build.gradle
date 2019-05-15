@@ -6,8 +6,7 @@ def main_dir = GO_SRC_DIR + "cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
 def cmdDir = "/home/airenas/projects/list/src/decode/audio.prepare/"
 
-
-def group = "audioPrepareService"
+def service = "audio-prepare-service"
 
 task clean(type: Delete, group: group, description: "Deletes copied resources") {
     delete dist_dir
@@ -53,4 +52,20 @@ task dall(group: group) {
     dependsOn 'copy'
     dependsOn 'dbuild'
     dependsOn 'dpush'
+}
+
+task ddeploy_words(type: DCRedeploy, group: project.name) {
+    serviceName = service
+    composePath = './..'
+    projectName = project_name_words
+    fileName = compose_file_words
+    mustRunAfter('copy')
+}
+
+task rd(group: project.name) {
+    dependsOn copy, dbuild, ddeploy
+}
+
+task rd_words(group: project.name) {
+    dependsOn copy, dbuild, ddeploy_words
 }

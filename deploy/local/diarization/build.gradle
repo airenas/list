@@ -2,13 +2,13 @@ import com.aireno.gradle.DCRedeploy
 import com.aireno.gradle.DBuild
 import com.aireno.gradle.DPush
 
-def main_dir = "/home/airenas/go/src/bitbucket.org/airenas/listgo/cmd/cmdWorkerService/"
+def main_dir = GO_SRC_DIR + "cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
 def cmdDir = "/home/airenas/projects/list/src/decode/diarization/"
 def storage_dir = "/home/airenas/projects/list/volumes/apps/diarization/"
 
 
-def group = "diarization"
+def service = "diarization-service"
 
 task clean(type: Delete, group: group, description: "Deletes copied resources") {
     delete dist_dir
@@ -83,4 +83,20 @@ task dall(group: group) {
     dependsOn 'copy'
     dependsOn 'dbuild'
     dependsOn 'dpush'
+}
+
+task ddeploy_words(type: DCRedeploy, group: project.name) {
+    serviceName = service
+    composePath = './..'
+    projectName = project_name_words
+    fileName = compose_file_words
+    mustRunAfter('copy')
+}
+
+task rd(group: project.name) {
+    dependsOn copy, dbuild, ddeploy
+}
+
+task rd_words(group: project.name) {
+    dependsOn copy, dbuild, ddeploy_words
 }

@@ -5,7 +5,7 @@ import com.aireno.gradle.DPush
 def dist_dir = "deploy/"
 def executable_name = 'cmdWorkerService'
 def main_dir = go_build_dir + "cmd/" + executable_name
-def service_name = 'transcription-service'
+def service = 'transcription-service'
 
 task clean(type: Delete, group: project.name) {
     delete dist_dir
@@ -32,18 +32,18 @@ task copy(type: Copy, group: project.name, description: "Copies service") {
 
 
 task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys transcription service") {
-    serviceName = service_name
+    serviceName = service
     composePath = local_compose_dir
     mustRunAfter copy
 }
 
 task dbuild(type: DBuild, group: project.name) {
-    tag = 'airenas/' + docker_container_prefix + service_name + ':' + TRANSCRIPTION_SERVICE_VERSION
+    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: project.name) {
-    tag = 'airenas/' + docker_container_prefix + service_name + ':' + TRANSCRIPTION_SERVICE_VERSION
+    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 
@@ -53,4 +53,16 @@ task dall(group: project.name) {
 
 task rd(group: project.name) {
     dependsOn copy, ddeploy
+}
+
+task ddeploy_words(type: DCRedeploy, group: project.name) {
+    serviceName = service
+    composePath = './..'
+    projectName = project_name_words
+    fileName = compose_file_words
+    mustRunAfter('copy')
+}
+
+task rd_words(group: project.name) {
+    dependsOn copy, ddeploy_words
 }

@@ -60,45 +60,42 @@ services:
       MESSAGESERVER_PREFIX: words
       MONGO_URL: ${LIST_MONGO_URL}
 
-  # audio-prepare-service:
-  #   build: audio.prepare
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-  #   volumes:
-  #     - fileStorage:/data
+  audio-prepare-service:
+    build: audio.prepare
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PREFIX: words
+    volumes:
+      - fileStorage:/data
 
-  # diarization-service:
-  #   build: diarization
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-  #   volumes:
-  #     - fileStorage:/data    
-  #     - appsStorage:/apps
-  #     - modelsStorage:/models    
+  diarization-service:
+    build: diarization
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PREFIX: words
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - dModelsStorage:/models    
   
-  # transcription-service:
-  #   build: transcription
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-  #   volumes:
-  #     - fileStorage:/data    
-  #     - appsStorage:/apps
-  #     - modelsStorage:/models      
+  transcription-service:
+    build: transcription
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PREFIX: words
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorageWords:/models      
   
   # result-make-service:
   #   build: result.make
@@ -143,10 +140,16 @@ volumes:
       device: ${LIST_VOLUMES_DIR}apps
       o: bind
 
-  modelsStorage:
+  dModelsStorage:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models
+      o: bind      
+
+  modelsStorageWords:
+    driver_opts:
+      type: none
+      device: ${MODEL_DIR_WORDS}
       o: bind          
 
 networks:
