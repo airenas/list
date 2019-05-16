@@ -82,7 +82,7 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - dModelsStorage:/models    
+      - dModelsStorageWords:/models    
   
   transcription-service:
     build: transcription
@@ -97,34 +97,31 @@ services:
       - appsStorage:/apps
       - modelsStorageWords:/models      
   
-  # result-make-service:
-  #   build: result.make
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - rabbitmq
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-  #   volumes:
-  #     - fileStorage:/data    
-  #     - appsStorage:/apps
-  #     - modelsStorage:/models  
+  result-make-service:
+    build: result.make
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PREFIX: words
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorageWords:/models  
 
-  # inform-service:
-  #   build: inform
-  #   restart: unless-stopped
-  #   depends_on: 
-  #     - rabbitmq
-  #     - mongo
-  #   environment:
-  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
-  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-  #     MONGO_URL: ${LIST_MONGO_URL}
-  #     SMTP_USERNAME: ${SMTP_USERNAME}
-  #     SMTP_PASSWORD: ${SMTP_PASSWORD}
-  #     MAIL_URL: ${MAIL_URL}
+  inform-service:
+    build: inform
+    restart: unless-stopped
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MESSAGESERVER_PREFIX: words
+      MONGO_URL: ${LIST_MONGO_URL}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      MAIL_URL: ${MAIL_URL_WORDS}
 
 ########### volumes 
 volumes:
@@ -140,7 +137,7 @@ volumes:
       device: ${LIST_VOLUMES_DIR}apps
       o: bind
 
-  dModelsStorage:
+  dModelsStorageWords:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models

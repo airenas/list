@@ -6,6 +6,8 @@ def main_dir = GO_SRC_DIR + "cmd/cmdWorkerService/"
 def dist_dir = "deploy/"
 def cmdDir = "/home/airenas/projects/list/src/decode/result.make/"
 
+def service = 'result-make-service'
+
 
 task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
     delete dist_dir
@@ -54,7 +56,7 @@ task dall(group: project.name) {
 }
 
 task ddeploy_words(type: DCRedeploy, group: project.name) {
-    serviceName = 'result-make-service'
+    serviceName = service
     composePath = './..'
     projectName = project_name_words
     fileName = compose_file_words

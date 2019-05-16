@@ -58,3 +58,5 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 	    $(APPS_ROOT)/bin/lattice-to-nbest --lm-scale=$(LM_SCALE) --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
+
+test: $(RESULTS_ROOT)/a/result.txt

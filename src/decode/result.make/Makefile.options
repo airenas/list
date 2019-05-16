@@ -1,6 +1,6 @@
-OUTPUT_ROOT=/home/airenas/projects/list/src/decode/data/decoded
-RESULTS_ROOT=/home/airenas/projects/list/src/decode/data/results
-INPUT_ROOT=/home/airenas/projects/list/src/decode/data/decoded
+OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
+RESULTS_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
+INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
 APPS_ROOT=/home/airenas/projects/list/volumes/apps/kaldi
-MODELS_ROOT=/home/airenas/projects/list/volumes/models/kaldi
+MODELS_ROOT=/home/airenas/hdd/list/graph_w63g
 

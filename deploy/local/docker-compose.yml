@@ -108,7 +108,7 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models    
+      - dModelsStorage:/models    
   
   transcription-service:
     build: transcription
@@ -199,11 +199,17 @@ volumes:
       device: ${LIST_VOLUMES_DIR}apps
       o: bind
 
-  modelsStorage:
+  dModelsStorage:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models
-      o: bind          
+      o: bind
+
+  modelsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}models/kaldi
+      o: bind              
 
   rabbitmq:
     driver_opts:

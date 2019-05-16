@@ -30,3 +30,6 @@ deploy/local/result/deploy/**
 src/web/ear-app/src/environments/environment.prod.ts
 src/decode/transcription/conf
 deploy/atea/config
+src/decode/result.make/steps
+src/decode/result.make/utils
+src/decode/result.make/Makefile.options
