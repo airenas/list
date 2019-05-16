@@ -33,3 +33,4 @@ deploy/atea/config
 src/decode/result.make/steps
 src/decode/result.make/utils
 src/decode/result.make/Makefile.options
+words/**

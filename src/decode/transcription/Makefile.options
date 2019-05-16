@@ -1,4 +1,5 @@
 OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
 INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
 APPS_ROOT=/home/airenas/projects/list/volumes/apps/kaldi
-MODELS_ROOT=/home/airenas/projects/list/volumes/models/kaldi
+###MODELS_ROOT=/home/airenas/projects/list/volumes/models/kaldi
+MODELS_ROOT=/home/airenas/hdd/list/graph_w63g
