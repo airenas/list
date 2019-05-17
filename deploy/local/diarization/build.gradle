@@ -70,12 +70,12 @@ task ddeploy(type: DCRedeploy, group: group, description: "Deploys diarization s
 }
 
 task dbuild(type: DBuild, group: group) {
-    tag = 'airenas/list-diarization-service:' + SERVICE_VERSION
+    tag = 'airenas/list-diarization-service:' + DIARIZATION_SERVICE_VERSION
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: group) {
-    tag = 'airenas/list-diarization-service:' + SERVICE_VERSION
+    tag = 'airenas/list-diarization-service:' + DIARIZATION_SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 

@@ -31,12 +31,12 @@ task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys status
 }
 
 task dbuild(type: DBuild, group: project.name) {
-    tag = 'airenas/list-status-service:' + SERVICE_VERSION
+    tag = 'airenas/list-status-service:' + STATUS_SERVICE_VERSION
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: project.name) {
-    tag = 'airenas/list-status-service:' + SERVICE_VERSION
+    tag = 'airenas/list-status-service:' + STATUS_SERVICE_VERSION
     mustRunAfter('dbuild')
 }
 

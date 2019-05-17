@@ -21,10 +21,10 @@ services:
     build: web
     restart: unless-stopped
     environment:
-      BASE_HREF: /ausis/
+      BASE_HREF: /${URL_PHONES}/
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/ausis/"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL_PHONES}/"
      - "traefik.http.port=8000"
 
   upload-service:
@@ -41,7 +41,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/ausis/transcriber/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/transcriber/"
      - "traefik.port=8000" 
   
   result-service:
@@ -54,7 +54,7 @@ services:
     environment:
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/ausis/result.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/result.service/"
      - "traefik.port=8000"  
 
   status-service:
@@ -69,7 +69,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}    
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/ausis/status.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/status.service/"
      - "traefik.port=8000" 
   
   manager-service:
