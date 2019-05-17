@@ -58,6 +58,21 @@ task deploy(group: project.name, description: "Deploys services to server") {
     }
 }
 
+task deploy_words(group: project.name, description: "Deploys services to server") {
+    dependsOn('copy_remote')
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                def dCompose = 'cd services && docker-compose -p list-words -f docker-compose.words.yml '
+                execute dCompose + ' stop'
+                execute dCompose + 'rm -f'
+                execute dCompose + 'pull'
+                execute dCompose + 'up -d'
+            }
+        }
+    }
+}
+
 task copy_apps(group: project.name, description: "Copies apps to volume") {
     doLast {
         ssh.run {
