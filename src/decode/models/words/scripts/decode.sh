@@ -7,6 +7,7 @@
 
 # Begin configuration section.
 nj=1 # number of decoding jobs.
+num_threads=4 # if >1, will use gmm-latgen-faster-parallel
 cmd=run.pl
 # End configuration section.
 
@@ -30,8 +31,9 @@ echo "============= execute real decoding script ==================="
 feats="ark,s,cs:apply-cmvn --norm-means=false --norm-vars=false --utt2spk=ark:$datadir/split$nj/JOB/utt2spk scp:$datadir/split$nj/JOB/cmvn.scp scp:$datadir/split$nj/JOB/feats.scp ark:- |"
 lat_wspecifier="ark:|lattice-scale --acoustic-scale=10.0 ark:- ark:- | gzip -c >$decodedir/lat.JOB.gz"
 
-$cmd --num-threads 1 JOB=1:$nj $decodedir/log/decode.JOB.log \
-  nnet3-latgen-faster \
+$cmd --num-threads $num_threads JOB=1:$nj $decodedir/log/decode.JOB.log \
+  nnet3-latgen-faster-parallel \
+     --num-threads=$num_threads \
      --online-ivectors=scp:"$ivectorsdir"/ivector_online.scp \
      --online-ivector-period=10 \
      --frame-subsampling-factor=3 \

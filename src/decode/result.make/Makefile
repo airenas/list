@@ -7,8 +7,7 @@
 OUTPUT_ROOT?=/decoded
 RESULTS_ROOT?=/results
 APPS_ROOT?=/kaldi
-LM_SCALE?=17
-FINAL_PASS?=1-pass
+FINAL_PASS=2-pass
 
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
@@ -22,18 +21,19 @@ utils:
 .SECONDARY:
 .DELETE_ON_ERROR:	
 
-#extract data from lattice
-%/decode/.ctm: %/decode/log steps utils
-	frame_shift_opt=""; \
-	if [ -f $*/frame_subsampling_factor ]; then \
-	  factor=`cat $*/frame_subsampling_factor`; \
-	  frame_shift_opt="--frame-shift 0.0$$factor"; \
-	fi; \
-	steps/get_ctm.sh $$frame_shift_opt `dirname $*` $* $*/decode
-	touch -m $@
+#rescore lattice
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
+	mkdir -p `dirname $@`
+	## run rescore script from model dir
+	$(MODELS_ROOT)/scripts/rescore.sh $(MODELS_ROOT) $< $@
 
-$(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/.ctm
-	cat $(OUTPUT_ROOT)/trans/$*/decode/score_$(LM_SCALE)/`dirname $*`.ctm  | perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
+$(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/lat.1.gz
+	gunzip -c $^ | lattice-1best ark:- ark:- | \
+      lattice-align-words-lexicon $(MODELS_ROOT)/phones/align_lexicon.int $(MODELS_ROOT)/final.mdl ark:- ark:- | \
+      lattice-1best ark:- ark:- | \
+      nbest-to-ctm  ark:- - | \
+      utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
+	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
 
 %.synced.ctm: %.selected.ctm
 	cat $^ | LC_ALL=C sort -k 1,1 -k 3,3n -k 4,4n > $@
@@ -55,8 +55,10 @@ $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 	gunzip -c $^ | \
-	    $(APPS_ROOT)/bin/lattice-to-nbest --lm-scale=$(LM_SCALE) --n=10 ark:- ark:- | \
+	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
 
 test: $(RESULTS_ROOT)/a/result.txt
+
+r1: $(RESULTS_ROOT)/a/lat.gz $(RESULTS_ROOT)/a/lat.nb10.txt $(RESULTS_ROOT)/a/lat.txt $(RESULTS_ROOT)/a/result.txt

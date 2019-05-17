@@ -6,8 +6,8 @@
 # This script does decoding for phone model
 
 # Begin configuration section.
-nj=4 # number of decoding jobs.
-num_threads=1 # if >1, will use gmm-latgen-faster-parallel
+nj=1 # number of decoding jobs.
+num_threads=4 # if >1, will use gmm-latgen-faster-parallel
 cmd=run.pl
 # End configuration section.
 
