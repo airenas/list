@@ -29,8 +29,6 @@ $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz: $(OUTPUT_ROOT)/trans/%/1-p
 
 $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/lat.1.gz
 	gunzip -c $^ | lattice-1best ark:- ark:- | \
-      lattice-align-words-lexicon $(MODELS_ROOT)/phones/align_lexicon.int $(MODELS_ROOT)/final.mdl ark:- ark:- | \
-      lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
