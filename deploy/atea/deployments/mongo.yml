@@ -41,13 +41,11 @@ spec:
         ports:
         - containerPort: 27017
           name: http
-        command: ["mongod"]
-        args: ["--logpath=/dev/null"]  
+        #command: ["mongod"]
+        # args: ["--logpath=/logs", "--bind_ip_all"]  
         env:
         - name: MONGO_DATA_DIR
-          value: /data/db  
-        - name: MONGO_LOG_DIR
-          value: "/dev/null"   
+          value: /data/db   
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
             secretKeyRef:
