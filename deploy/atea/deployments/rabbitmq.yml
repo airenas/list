@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 5672
+    protocol: TCP
+    targetPort: 5672 
+  selector:
+    app: rabbitmq
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq
+  template:
+    metadata:
+      labels:
+        app: rabbitmq
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+        - name: rabbitmq-vol
+          persistentVolumeClaim:
+             claimName: rabbitmq
+      containers:
+      - name: rabbitmq
+        image: rabbitmq:3.7-management
+        ports:
+        - containerPort: 5672
+          name: client
+        env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          value: "Ohg9eirohn5aegi7hoonohdooku2thu9eeJ7aidohbee9Re5Za"  
+        - name: RABBITMQ_DEFAULT_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: RABBITMQ_DEFAULT_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        - name: RABBITMQ_DEFAULT_VHOST
+          value: "/"  
+        volumeMounts:
+        - name: rabbitmq-vol 
+          mountPath: /var/lib/rabbitmq

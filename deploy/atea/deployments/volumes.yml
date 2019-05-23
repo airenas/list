@@ -1,0 +1,112 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: tr-pv
+  namespace: aft
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/data"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tr-pvc
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+     requests:
+       storage: 5Gi
+---
+## rabbitMQ persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rabbitmq
+  namespace: aft
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/rabbitmq"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: rabbitmq
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: rabbitmq
+  resources:
+     requests:
+       storage: 1Gi  
+## mongo persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo
+  namespace: aft
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/mongo"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongo
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: mongo
+  resources:
+     requests:
+       storage: 2Gi   
+## file storage persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: filestorage
+  namespace: aft
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/filestorage"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: filestorage
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: filestorage
+  resources:
+     requests:
+       storage: 5Gi                  
