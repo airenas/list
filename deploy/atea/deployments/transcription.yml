@@ -263,3 +263,55 @@ spec:
           mountPath: /apps
         - name: modelstorage-vol 
           mountPath: /models
+---    
+## resultmake service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-make
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result-make
+  template:
+    metadata:
+      labels:
+        app: result-make
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: appstorage-vol
+        persistentVolumeClaim:
+          claimName: appstorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage        
+      containers:
+      - name: result-make
+        image: airenas/list-result-make-service:v0.4beta
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: appstorage-vol 
+          mountPath: /apps
+        - name: modelstorage-vol 
+          mountPath: /models
