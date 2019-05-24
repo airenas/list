@@ -36,3 +36,4 @@ src/decode/result.make/Makefile.options
 words/**
 deploy/atea/kconfig/config
 deploy/atea/secrets/secrets.yml
+deploy/tk8s/**

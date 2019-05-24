@@ -117,3 +117,149 @@ spec:
               key: password      
         - name: MONGO_URL
           value: mongodb://$(MONGO_USER):$(MONGO_PASS)@mongo:27017
+---    
+## audio preparation service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: audio-prepare
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audio-prepare
+  template:
+    metadata:
+      labels:
+        app: audio-prepare
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      containers:
+      - name: audio-prepare
+        image: airenas/list-audio-prepare-service:v0.3beta
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+---    
+## diarization service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: diarization
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: diarization
+  template:
+    metadata:
+      labels:
+        app: diarization
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: appstorage-vol
+        persistentVolumeClaim:
+          claimName: appstorage
+      - name: diarizationstorage-vol
+        persistentVolumeClaim:
+          claimName: diarizationstorage        
+      containers:
+      - name: diarization
+        image: airenas/list-diarization-service:v0.3beta
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: appstorage-vol 
+          mountPath: /apps
+        - name: diarizationstorage-vol 
+          mountPath: /models
+---    
+## transcription service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transcription
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transcription
+  template:
+    metadata:
+      labels:
+        app: transcription
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: appstorage-vol
+        persistentVolumeClaim:
+          claimName: appstorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage        
+      containers:
+      - name: transcription
+        image: airenas/list-transcription-service:v0.4beta
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: appstorage-vol 
+          mountPath: /apps
+        - name: modelstorage-vol 
+          mountPath: /models

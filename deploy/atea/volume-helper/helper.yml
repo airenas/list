@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vh
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vh
+  template:
+    metadata:
+      labels:
+        app: vh
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: appstorage-vol
+        persistentVolumeClaim:
+          claimName: appstorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage
+      - name: diarizationstorage-vol
+        persistentVolumeClaim:
+          claimName: diarizationstorage                   
+      containers:
+      - name: vh
+        image: airenas/volume-helper:1.0
+        volumeMounts:
+        - name: appstorage-vol 
+          mountPath: /apps
+        - name: modelstorage-vol 
+          mountPath: /models
+        - name: diarizationstorage-vol 
+          mountPath: /dmodels  

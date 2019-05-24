@@ -81,7 +81,8 @@ spec:
   volumeName: mongo
   resources:
      requests:
-       storage: 2Gi   
+       storage: 2Gi  
+---        
 ## file storage persistence volumes
 apiVersion: v1
 kind: PersistentVolume
@@ -109,4 +110,91 @@ spec:
   volumeName: filestorage
   resources:
      requests:
-       storage: 5Gi                  
+       storage: 5Gi  
+---         
+## apps storage persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: appstorage
+  namespace: aft
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/appstorage"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: appstorage
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: appstorage
+  resources:
+     requests:
+       storage: 1Gi  
+---       
+## diarization model persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: diarizationstorage
+  namespace: aft
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/diarizationstorage"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: diarizationstorage
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: diarizationstorage
+  resources:
+     requests:
+       storage: 1Gi   
+---       
+## kaldi model persistence volumes
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: modelstorage
+  namespace: aft
+spec:
+  capacity:
+    storage: 25Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/modelstorage"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: modelstorage
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: modelstorage
+  resources:
+     requests:
+       storage: 25Gi                                          

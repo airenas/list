@@ -1,0 +1,17 @@
+import com.aireno.gradle.DCRedeploy
+import com.aireno.gradle.DBuild
+import com.aireno.gradle.DPush
+
+def srv = 'airenas/volume-helper:1.0'
+task dbuild(type: DBuild, group: project.name) {
+    tag = 'airenas/volume-helper:1.0'
+}
+
+task dpush(type: DPush, group: group) {
+    tag = srv
+    mustRunAfter('dbuild')
+}
+
+task dall(group: group) {
+    dependsOn dbuild, dpush
+}
