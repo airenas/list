@@ -24,7 +24,7 @@
         </mat-progress-bar>
       </section>
       <div *ngIf="result?.recognizedText">Atpažinta: <strong>{{result?.recognizedText}}</strong></div>
-      <div *ngIf="result?.error">Klaida: <strong><span style="color:red">{{result?.error}}</span></strong></div>
+      <div *ngIf="error">Klaida: <strong><span style="color:red">{{error}}</span></strong></div>
     </mat-card-content>
   </mat-card>
 

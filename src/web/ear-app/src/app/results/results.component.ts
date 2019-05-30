@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { Status } from '../api/status';
 import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 import { Config } from '../config';
+import { ErrorPipe } from '../pipes/error.pipe';
 
 export class Progress {
   color: string;
@@ -134,7 +135,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.progress = null;
     this.status = null;
     if (this.result) {
-      this.error = result.error;
+      this.error = new ErrorPipe().transform(result);
       this.recognizedText = result.recognizedText;
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
