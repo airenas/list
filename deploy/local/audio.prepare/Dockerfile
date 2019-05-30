@@ -11,6 +11,6 @@ COPY config.yaml /app/
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/
 
-RUN apt-get update && apt-get install -y sox ffmpeg
+RUN apt-get update && apt-get install -y sox ffmpeg bc
 
 ENTRYPOINT ["./cmdWorkerService"]

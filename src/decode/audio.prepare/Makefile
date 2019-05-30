@@ -12,7 +12,7 @@
 OUTPUT_ROOT?=/audio.prepared
 INPUT_ROOT?=/audio.in
 
-MIN_LEN=/0.5
+MIN_LEN?=0.5
 
 WRONG_FORMAT_CMD=(echo -n [[[ >&2 && echo ErrorCode:WRONG_FORMAT]]] >&2 && exit 2)
 TOO_SHORT_AUDIO_CMD=(echo -n [[[ >&2 && echo ErrorCode:TOO_SHORT_AUDIO]]] >&2 && exit 3)

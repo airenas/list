@@ -63,9 +63,9 @@ task ddeploy_words(type: DCRedeploy, group: project.name) {
 }
 
 task rd(group: project.name) {
-    dependsOn copy, dbuild, ddeploy
+    dependsOn copy, ddeploy
 }
 
 task rd_words(group: project.name) {
-    dependsOn copy, dbuild, ddeploy_words
+    dependsOn copy, ddeploy_words
 }
