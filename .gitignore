@@ -37,3 +37,5 @@ words/**
 deploy/atea/kconfig/config
 deploy/atea/secrets/secrets.yml
 deploy/tk8s/**
+src/examples/wav/**
+src/examples/*.wav
