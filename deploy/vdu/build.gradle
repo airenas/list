@@ -63,8 +63,8 @@ task deploy_words(group: project.name, description: "Deploys services to server"
     doLast {
         ssh.run {
             session(remotes.server1) {
-                def dCompose = 'cd services && docker-compose -p list-words -f docker-compose.words.yml '
-                execute dCompose + ' stop'
+                def dCompose = 'cd services && docker-compose -p list-words -f docker-compose.words.yml --compatibility '
+                execute dCompose + 'stop'
                 execute dCompose + 'rm -f'
                 execute dCompose + 'pull'
                 execute dCompose + 'up -d'

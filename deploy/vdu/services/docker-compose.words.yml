@@ -87,6 +87,9 @@ services:
   transcription-service:
     image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
     restart: unless-stopped
+    deploy:
+      mode: replicated
+      replicas: 3
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
