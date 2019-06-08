@@ -136,6 +136,66 @@ spec:
         - name: MONGO_URL
           value: mongodb://$(MONGO_USER):$(MONGO_PASS)@mongo:27017
 ---
+### result service
+apiVersion: v1
+kind: Service
+metadata:
+  name: result
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 8000
+    protocol: TCP
+    targetPort: 8000 
+  selector:
+    app: result
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result
+  template:
+    metadata:
+      labels:
+        app: result
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage  
+      containers:
+      - name: result
+        image: airenas/list-result-service:v0.5beta
+        ports:
+        - containerPort: 8000
+          name: client
+        env:
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongo-login
+              key: username  
+        - name: MONGO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mongo-login
+              key: password      
+        - name: MONGO_URL
+          value: mongodb://$(MONGO_USER):$(MONGO_PASS)@mongo:27017
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data  
+---
 ### manager service
 apiVersion: apps/v1
 kind: Deployment
