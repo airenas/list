@@ -1,0 +1,49 @@
+import com.aireno.gradle.DCRedeploy
+import com.aireno.gradle.DBuild
+import com.aireno.gradle.DPush
+
+def main_dir = GO_SRC_DIR + "cmd/kafkaIntegrationService/"
+def dist_dir = "deploy/"
+def service_name = "kafka-integration-service"
+
+task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
+    delete dist_dir
+}
+
+task build(type: Exec, group: project.name, description: "Compiles servise") {
+    commandLine 'go', 'build', '-tags', 'static'
+    workingDir main_dir
+}
+
+task copy(type: Copy, group: project.name, description: "Copies service") {
+    from main_dir
+    into dist_dir
+    include "kafkaIntegrationService"
+    dependsOn 'build'
+}
+
+task ddeploy(type: DCRedeploy, group: project.name) {
+    serviceName = service_name
+    composePath = './..'
+    mustRunAfter('copy')
+}
+
+task dbuild(type: DBuild, group: project.name) {
+    tag = 'airenas/list-'+ service_name + ':' + KAFKA_INTEGRATION_SERVICE_VERSION
+    mustRunAfter('copy')
+}
+
+task dpush(type: DPush, group: project.name) {
+    tag = 'airenas/list-'+ service_name + ':' + KAFKA_INTEGRATION_SERVICE_VERSION
+    mustRunAfter('dbuild')
+}
+
+task dall(group: project.name) {
+    dependsOn 'copy'
+    dependsOn 'dbuild'
+    dependsOn 'dpush'
+}
+
+task rd(group: project.name) {
+    dependsOn copy, dbuild, ddeploy
+}

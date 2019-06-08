@@ -26,6 +26,7 @@ task clean_all(type: Delete, group: project.name, description: "Deletes copied r
     dependsOn 'transcription:clean'
     dependsOn 'result.make:clean'
     dependsOn 'inform:clean'
+    dependsOn 'kafka.int:clean'
 }
 
 task copy_all(group: project.name, description: "Copies all resourses") {
@@ -38,6 +39,7 @@ task copy_all(group: project.name, description: "Copies all resourses") {
     dependsOn('transcription:copy')
     dependsOn('result.make:copy')
     dependsOn 'inform:copy'
+    dependsOn 'kafka.int:copy'
 }
 
 task deploy_all(group: project.name, description: "Redeploys docker") {

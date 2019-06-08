@@ -1,0 +1,25 @@
+kafka:
+#    brokers: aserver:9092
+    group: gr1
+    input_topic: NewAudioAvailable
+    result_topic: TranscriptionFinished  
+    
+# fs:
+#    url: http://127.0.0.1:9010
+
+transcriber:
+    url: 
+#        upload: http://airenas.eu/ausis.1/transcriber/upload    
+#        status: http://airenas.eu/ausis.1/status.service/status
+#        result: http://airenas.eu/ausis.1/result.service
+
+# ids:
+#    path: /home/airenas/projects/listgo/cmd/kafkaIntegrationService/ids
+
+# logger:
+#     level: debug
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

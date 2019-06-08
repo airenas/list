@@ -84,6 +84,16 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}  
 
+  # kafka-integration-service:
+  #   build: kafka.int
+  #   environment:
+  #     KAFKA_BROKERS: aserver:9092
+  #     FS_URL: http://olia.com/
+  #     TRANSCRIBER_URL_UPLOAD: http://olia.com/
+  #     TRANSCRIBER_URL_STATUS: http://olia.com/
+  #     TRANSCRIBER_URL_RESULT: http://olia.com/
+  #     IDS_PATH: /tmp
+
   audio-prepare-service:
     build: audio.prepare
     restart: unless-stopped
