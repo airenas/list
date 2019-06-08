@@ -39,3 +39,4 @@ deploy/atea/secrets/secrets.yml
 deploy/tk8s/**
 src/examples/wav/**
 src/examples/*.wav
+deploy/local/kafka.int/deploy/**

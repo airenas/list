@@ -197,4 +197,34 @@ spec:
   volumeName: modelstorage
   resources:
      requests:
-       storage: 25Gi                                          
+       storage: 25Gi   
+
+---       
+## kafka integration persistence storage
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafkaintegrationstorage
+  namespace: aft
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: "/aft/kafkaintegrationstorage"
+    type: DirectoryOrCreate
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafkaintegrationstorage
+  namespace: aft
+spec:
+  accessModes:
+  - ReadWriteOnce
+  volumeName: kafkaintegrationstorage
+  resources:
+     requests:
+       storage: 1Gi                                                     

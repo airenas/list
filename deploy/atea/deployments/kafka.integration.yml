@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-integration
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-integration
+  template:
+    metadata:
+      labels:
+        app: kafka-integration
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: kafkaintegration-vol
+        persistentVolumeClaim:
+          claimName: kafkaintegrationstorage
+      containers:
+      - name: kafka-integration
+        image: airenas/list-kafka-integration-service:v0.3beta
+        env:
+        - name: KAFKA_BROKERS
+          value: kafka  
+        - name: FS_URL
+          value: aftstoragefs
+        - name: TRANSCRIBER_URL_UPLOAD
+          value: http://upload:8000/upload     
+        - name: TRANSCRIBER_URL_STATUS
+          value: http://status:8000/status 
+        - name: TRANSCRIBER_URL_RESULT
+          value: http://result:8000/   
+        volumeMounts:
+        - name: kafkaintegration-vol 
+          mountPath: /idsmap

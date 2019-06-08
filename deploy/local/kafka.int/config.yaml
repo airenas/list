@@ -13,8 +13,8 @@ transcriber:
 #        status: http://airenas.eu/ausis.1/status.service/status
 #        result: http://airenas.eu/ausis.1/result.service
 
-# ids:
-#    path: /home/airenas/projects/listgo/cmd/kafkaIntegrationService/ids
+ids:
+    path: /idsmap
 
 # logger:
 #     level: debug
