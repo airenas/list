@@ -38,7 +38,7 @@ spec:
           claimName: filestorage
       containers:
       - name: upoad
-        image: airenas/list-upload-service:v0.5beta
+        image: airenas/list-upload-service:v0.6beta
         ports:
         - containerPort: 8000
           name: client
@@ -344,7 +344,7 @@ metadata:
   name: transcription
   namespace: aft  
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: transcription

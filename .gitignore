@@ -40,3 +40,4 @@ deploy/tk8s/**
 src/examples/wav/**
 src/examples/*.wav
 deploy/local/kafka.int/deploy/**
+src/examples/wav1/**
