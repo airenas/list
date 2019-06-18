@@ -23,6 +23,16 @@ services:
       - "traefik.health.frontend.rule=PathPrefix:/health"
       - "traefik.health.port=8080"
 
+  testdata:
+    image: nginx:1.17.0
+    restart: unless-stopped
+    volumes:
+      - ./wwwdata:/usr/share/nginx/html
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/testdata/"
+     - "traefik.http.port=80"
+
   web:
     image: airenas/ear-app:${EAR_APP_VERSION}
     restart: unless-stopped

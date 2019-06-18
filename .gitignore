@@ -41,3 +41,6 @@ src/examples/wav/**
 src/examples/*.wav
 deploy/local/kafka.int/deploy/**
 src/examples/wav1/**
+src/tools/fix.trans/**
+testavimas/20190617/**
+deploy/vdu/services/wwwdata/**
