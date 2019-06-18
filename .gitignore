@@ -42,7 +42,8 @@ src/examples/*.wav
 deploy/local/kafka.int/deploy/**
 src/examples/wav1/**
 src/tools/fix.trans/**
-testavimas/20190617/**
 deploy/vdu/services/wwwdata/**
 src/examples/test_wer.sh
 src/examples/compute-wer
+testavimas/20190617/testdata/**
+testavimas/20190617/bin/compute-wer
