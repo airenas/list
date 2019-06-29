@@ -6,13 +6,12 @@
 ### returns status
 ###############################################################
 ### change the url to the correct one
-url=https://prn509.vdu.lt:7080/ausis
+url=http://localhost:8002
 ###############################################################
 id=$1
 file=$2
 ###############################################################
-statusURL="$url/status.service/status"
-#statusURL="http://127.0.0.1:8002/status"
+statusURL="$url/status"
 ###############################################################
 RED='\033[0;31m'
 GREEN='\033[0;32m'
