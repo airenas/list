@@ -38,7 +38,7 @@ spec:
           claimName: filestorage
       containers:
       - name: upoad
-        image: airenas/list-upload-service:v0.7beta
+        image: airenas/list-upload-service:v0.8beta
         ports:
         - containerPort: 8000
           name: client
