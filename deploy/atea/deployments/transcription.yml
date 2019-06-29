@@ -216,7 +216,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: manager
-        image: airenas/list-manager-service:v0.3beta
+        image: airenas/list-manager-service:v0.4beta
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -267,7 +267,7 @@ spec:
           claimName: filestorage
       containers:
       - name: audio-prepare
-        image: airenas/list-audio-prepare-service:v0.3beta
+        image: airenas/list-audio-prepare-service:v0.4beta
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
