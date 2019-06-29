@@ -292,7 +292,7 @@ metadata:
   name: diarization
   namespace: aft  
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: diarization
@@ -344,7 +344,7 @@ metadata:
   name: transcription
   namespace: aft  
 spec:
-  replicas: 2
+  replicas: 5
   selector:
     matchLabels:
       app: transcription
@@ -396,7 +396,7 @@ metadata:
   name: result-make
   namespace: aft  
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: result-make
