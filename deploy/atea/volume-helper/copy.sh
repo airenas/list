@@ -8,10 +8,10 @@
 # : kubectl delete deployment vh
 ###########################################################################################
 # no slash at the end!
-diarizationModels=/home/airenas/projects/list/volumes/models/diarization  
+diarizationModels=diarization_models  
 # slashes at the end required!
-kaldiModels=/home/airenas/hdd/list/graph_w63g/
-apps=/home/airenas/projects/list/volumes/apps/
+kaldiModels=kaldi_models/
+apps=kaldi_apps/
 ###########################################################################################
 podName=$(kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $1}')
 echo "Pod name = $podName"
