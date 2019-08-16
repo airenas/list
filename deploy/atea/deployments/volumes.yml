@@ -1,31 +1,3 @@
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: tr-pv
-  namespace: aft
-spec:
-  capacity:
-    storage: 5Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: "/aft/data"
-    type: DirectoryOrCreate
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: tr-pvc
-  namespace: aft
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-     requests:
-       storage: 5Gi
----
 ## rabbitMQ persistence volumes
 apiVersion: v1
 kind: PersistentVolume
@@ -54,6 +26,7 @@ spec:
   resources:
      requests:
        storage: 1Gi  
+---       
 ## mongo persistence volumes
 apiVersion: v1
 kind: PersistentVolume
