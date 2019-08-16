@@ -24,7 +24,16 @@ spec:
           claimName: modelstorage
       - name: diarizationstorage-vol
         persistentVolumeClaim:
-          claimName: diarizationstorage                   
+          claimName: diarizationstorage
+      - name: rabbitmq-vol
+        persistentVolumeClaim:
+          claimName: rabbitmq   
+      - name: mongo-vol
+        persistentVolumeClaim:
+          claimName: mongo 
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage                             
       containers:
       - name: vh
         image: airenas/volume-helper:1.0
@@ -35,3 +44,9 @@ spec:
           mountPath: /models
         - name: diarizationstorage-vol 
           mountPath: /dmodels  
+        - name: rabbitmq-vol 
+          mountPath: /rabbitmq
+        - name: mongo-vol
+          mountPath: /mongo
+        - name: filestorage-vol
+          mountPath: /filestorage  
