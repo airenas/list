@@ -29,7 +29,7 @@ The system requires kaldi binaries and models files to be populated into k8s vol
 3. Configure script *volume-helper/copy.sh*, populate correct local directories for *diarizationModels*, *kaldiModels* and *apps*.
 4. Copy everything to k8s volumes: 
 ```bash
-(cd volume-helper && copy.sh)
+(cd volume-helper && ./copy.sh)
 ```
 5. Remove temporary volume helper pod: `kubectl delete deployment vh`
 
