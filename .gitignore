@@ -47,3 +47,8 @@ src/examples/test_wer.sh
 src/examples/compute-wer
 testavimas/20190617/testdata/**
 testavimas/20190617/bin/compute-wer
+deploy/local/punctuation/deploy/**
+deploy/atea/volume-helper/kaldi_apps
+deploy/atea/volume-helper/kaldi_models
+deploy/atea/volume-helper/diarization_models
+
