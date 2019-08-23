@@ -163,7 +163,6 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MAIL_URL: ${MAIL_URL}
 
-
 ########### db & broker
   mongo:
     image: mongo:4.1.1

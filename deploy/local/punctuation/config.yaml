@@ -1,0 +1,17 @@
+#port: 8081
+modelDir: /model
+tf: 
+#    url: localhost:7055
+    name: punctuation
+    version: 1
+
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

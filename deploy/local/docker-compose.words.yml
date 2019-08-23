@@ -126,6 +126,30 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MAIL_URL: ${MAIL_URL_WORDS}
 
+
+  tensorflow:
+    image: tensorflow/serving:1.14.0
+    environment:
+      MODEL_NAME: punctuation
+      MODEL_BASE_PATH: /models/model
+    volumes:
+      - punctRestorationStorage:/models
+    ports:
+      - ${LIST_TF_GRPC_EXT_PORT}:8500
+      - ${LIST_TF_EXT_PORT}:8501
+    restart: unless-stopped 
+  
+  punctuation-service:
+    build: punctuation
+    restart: unless-stopped
+    volumes:
+      - punctRestorationStorage:/model
+    environment:
+      TF_URL: tensorflow:8500
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
+     - "traefik.port=8080"    
+
 ########### volumes 
 volumes:
   fileStorage:
@@ -150,7 +174,13 @@ volumes:
     driver_opts:
       type: none
       device: ${MODEL_DIR_WORDS}
-      o: bind          
+      o: bind   
+
+  punctRestorationStorage:
+    driver_opts:
+      type: none
+      device: ${PUNCT_RESTORATION_DIR_WORDS}
+      o: bind                       
 
 networks:
   default:
