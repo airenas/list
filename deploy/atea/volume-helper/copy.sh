@@ -7,9 +7,8 @@
 # after: run the script to destroy volume helper container
 # : kubectl delete deployment vh
 ###########################################################################################
-# no slash at the end!
-diarizationModels=diarization_models  
 # slashes at the end required!
+diarizationModels=diarization_models/
 kaldiModels=kaldi_models/
 apps=kaldi_apps/
 ###########################################################################################
