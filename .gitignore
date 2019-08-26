@@ -51,6 +51,7 @@ deploy/local/punctuation/deploy/**
 deploy/atea/volume-helper/kaldi_apps
 deploy/atea/volume-helper/kaldi_models
 deploy/atea/volume-helper/diarization_models
+deploy/atea/volume-helper/punctuation_models
 
 src/tools/go.sum
 src/tools/punct.file/**

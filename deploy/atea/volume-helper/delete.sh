@@ -29,6 +29,7 @@ kubectl exec $podName -i -- rm -rf /mongo
 kubectl exec $podName -i -- rm -rf /models
 kubectl exec $podName -i -- rm -rf /dmodels
 kubectl exec $podName -i -- rm -rf /filestorage
+kubectl exec $podName -i -- rm -rf /pmodels
 
 ###########################################################################################
 echo -e "\n\nDone.\n\nNow unload helper container:\nkubectl delete deployment vh\n"

@@ -10,6 +10,7 @@
 # slashes at the end required!
 diarizationModels=diarization_models/
 kaldiModels=kaldi_models/
+punctuationModels=punctuation_models/
 apps=kaldi_apps/
 ###########################################################################################
 podName=$(kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $1}')
@@ -28,6 +29,9 @@ rsync -avurP --blocking-io --rsync-path=/apps --rsh="kubectl exec $podName -i --
 ###########################################################################################
 echo -e "\n\ncopy kaldi models = $kaldiModels"
 rsync -avurP --blocking-io --rsync-path=/models --rsh="kubectl exec $podName -i -- " $kaldiModels rsync:/models
+###########################################################################################
+echo -e "\n\ncopy punctuation models = $punctuationModels"
+rsync -avurP --blocking-io --rsync-path=/pmodels --rsh="kubectl exec $podName -i -- " $punctuationModels rsync:/pmodels
 ###########################################################################################
 echo -e "\n\nDone.\n\nNow unload helper container:\nkubectl delete deployment vh\n"
 ###########################################################################################

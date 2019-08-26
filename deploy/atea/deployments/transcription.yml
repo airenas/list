@@ -440,3 +440,37 @@ spec:
           mountPath: /apps
         - name: modelstorage-vol 
           mountPath: /models
+---    
+## tensorflow
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tensorflow
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tensorflow
+  template:
+    metadata:
+      labels:
+        app: tensorflow
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: punctuationstorage-vol
+        persistentVolumeClaim:
+          claimName: punctuationstorage
+      containers:
+      - name: tensorflow
+        image: tensorflow/serving:1.14.0
+        env:
+        - name: MODEL_NAME
+          value: punctuation  
+        - name: MODEL_BASE_PATH
+          value: /models/model
+        volumeMounts:
+        - name: punctuationstorage-vol 
+          mountPath: /models
