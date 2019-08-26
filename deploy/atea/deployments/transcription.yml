@@ -419,7 +419,7 @@ spec:
           claimName: modelstorage        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:v0.4beta
+        image: airenas/list-result-make-service:v0.5beta
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -433,6 +433,8 @@ spec:
             secretKeyRef:
               name: rabbit-mq-login
               key: password
+        - name: PR_URL
+          value: http://punctuation:8080/punctuation    
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
@@ -441,6 +443,22 @@ spec:
         - name: modelstorage-vol 
           mountPath: /models
 ---    
+### tensorflow service
+apiVersion: v1
+kind: Service
+metadata:
+  name: tensorflow
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 8500
+    protocol: TCP
+    targetPort: 8500 
+  selector:
+    app: tensorflow
+---   
 ## tensorflow
 apiVersion: apps/v1
 kind: Deployment
@@ -474,3 +492,51 @@ spec:
         volumeMounts:
         - name: punctuationstorage-vol 
           mountPath: /models
+---
+### punctuation service
+apiVersion: v1
+kind: Service
+metadata:
+  name: punctuation
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 8080
+    protocol: TCP
+    targetPort: 8080 
+  selector:
+    app: punctuation
+---    
+## punctuation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: punctuation
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: punctuation
+  template:
+    metadata:
+      labels:
+        app: punctuation
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: punctuationstorage-vol
+        persistentVolumeClaim:
+          claimName: punctuationstorage
+      containers:
+      - name: punctuation
+        image: airenas/list-punctuation-service:v0.1beta
+        env:
+        - name: TF_URL
+          value: tensorflow:8500  
+        volumeMounts:
+        - name: punctuationstorage-vol 
+          mountPath: /model
