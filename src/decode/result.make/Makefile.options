@@ -4,4 +4,6 @@ INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
 APPS_ROOT=/home/airenas/projects/list/volumes/apps/kaldi
 #MODELS_ROOT=/home/airenas/projects/list/volumes/models/kaldi
 MODELS_ROOT=/home/airenas/hdd/list/graph_w63g
+PR_EXEC=/home/airenas/projects/list/src/tools/punct.file/punct.file
+PR_URL=http://airenas.eu/punctuation/punctuation
 

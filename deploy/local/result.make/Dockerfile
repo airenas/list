@@ -8,6 +8,7 @@ VOLUME ["/models"]
 WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
+COPY deploy/punct.file /app/
 COPY config.yaml /app/
 
 COPY deploy/cmd/Makefile /cmd/

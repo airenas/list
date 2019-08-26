@@ -1,8 +1,8 @@
 worker:
     taskName: ResultMake
-    command: make /data/results/{ID}/result.txt /data/results/{ID}/lat.txt /data/results/{ID}/lat.nb10.txt
+    command: make /data/results/{ID}/resultFinal.txt /data/results/{ID}/lat.txt /data/results/{ID}/lat.nb10.txt
     workingDir: /cmd/
-    resultFile: /data/results/{ID}/result.txt
+    resultFile: /data/results/{ID}/resultFinal.txt
 
 # messageServer: 
 #     broker: amqp://list:list@rabbitmq:5672/

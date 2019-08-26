@@ -43,6 +43,9 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cat $^ > $@	
 
+$(RESULTS_ROOT)/%/resultFinal.txt: $(RESULTS_ROOT)/%/result.txt
+	$(PR_EXEC) -f $^ -u $(PR_URL) -o $@		
+
 $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $^ $@		
@@ -57,6 +60,6 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
 
-test: $(RESULTS_ROOT)/a/result.txt
+test: $(RESULTS_ROOT)/a/resultFinal.txt
 
-r1: $(RESULTS_ROOT)/a/lat.gz $(RESULTS_ROOT)/a/lat.nb10.txt $(RESULTS_ROOT)/a/lat.txt $(RESULTS_ROOT)/a/result.txt
+r1: $(RESULTS_ROOT)/a/lat.gz $(RESULTS_ROOT)/a/lat.nb10.txt $(RESULTS_ROOT)/a/lat.txt $(RESULTS_ROOT)/a/resultFinal.txt
