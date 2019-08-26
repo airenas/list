@@ -102,3 +102,13 @@ task copy_models_words(group: project.name, description: "Copies models data") {
         }
     }
 }
+
+task copy_punct_models(group: project.name, description: "Copies punctuation models data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: LOCAL_PUNCTUATION_MODELS_DIR, into: VOLUMES_DIR
+            }
+        }
+    }
+}

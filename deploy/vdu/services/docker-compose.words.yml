@@ -108,6 +108,7 @@ services:
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
       MESSAGESERVER_PREFIX: words
+      PR_URL: http://punctuation-service:8080/punctuation
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -125,6 +126,26 @@ services:
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MAIL_URL: ${MAIL_URL_WORDS}     
+  
+  tensorflow:
+    image: tensorflow/serving:1.14.0
+    environment:
+      MODEL_NAME: punctuation
+      MODEL_BASE_PATH: /models/model
+    volumes:
+      - punctModelsStorage:/models
+    restart: unless-stopped 
+  
+  punctuation-service:
+    image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - punctModelsStorage:/model
+    environment:
+      TF_URL: tensorflow:8500
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
+     - "traefik.port=8080"        
 
 # ########### volumes 
 volumes:
@@ -144,6 +165,12 @@ volumes:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models
+      o: bind
+  
+  punctModelsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}h256_w200k
       o: bind      
 
   modelsStorageWords:
