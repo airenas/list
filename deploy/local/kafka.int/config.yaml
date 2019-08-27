@@ -16,8 +16,8 @@ transcriber:
 ids:
     path: /idsmap
 
-# logger:
-#     level: debug
+logger:
+    level: debug
 #     formatter:
 #         name: text
 #         options: 
