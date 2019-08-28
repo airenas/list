@@ -540,3 +540,63 @@ spec:
         volumeMounts:
         - name: punctuationstorage-vol 
           mountPath: /model
+### clean service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clean
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 8000
+    protocol: TCP
+    targetPort: 8000 
+  selector:
+    app: clean
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clean
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clean
+  template:
+    metadata:
+      labels:
+        app: clean
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      containers:
+      - name: clean
+        image: airenas/list-clean-service:v0.1
+        ports:
+        - containerPort: 8000
+          name: client
+        env:
+        - name: MONGO_USER
+          valueFrom:
+            secretKeyRef:
+              name: mongo-login
+              key: username  
+        - name: MONGO_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mongo-login
+              key: password      
+        - name: MONGO_URL
+          value: mongodb://$(MONGO_USER):$(MONGO_PASS)@mongo:27017
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
