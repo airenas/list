@@ -145,7 +145,15 @@ services:
       TF_URL: tensorflow:8500
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
-     - "traefik.port=8080"        
+     - "traefik.port=8080"  
+  
+  clean-service:
+    image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
 
 # ########### volumes 
 volumes:
