@@ -216,7 +216,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: manager
-        image: airenas/list-manager-service:v0.4beta
+        image: airenas/list-manager-service:v0.5
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
