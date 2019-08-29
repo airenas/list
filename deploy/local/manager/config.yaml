@@ -1,8 +1,10 @@
 # messageServer: 
-#     broker: amqp://list:list@rabbitmq:5672/
+#     url: amqp://list:list@rabbitmq:5672/
     
 # mongo:
-#     url: mongo  
+#     url: mongo 
+
+# sendInformMessages: false
 
 # logger:
 #     level: info
