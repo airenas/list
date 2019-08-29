@@ -58,7 +58,8 @@ services:
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MESSAGESERVER_PREFIX: words
-      MONGO_URL: ${LIST_MONGO_URL}  
+      MONGO_URL: ${LIST_MONGO_URL} 
+      SENDINFORMMESSAGES: "true"
 
   audio-prepare-service:
     image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
