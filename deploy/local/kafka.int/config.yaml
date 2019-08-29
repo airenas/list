@@ -12,12 +12,13 @@ transcriber:
 #        upload: http://airenas.eu/ausis.1/transcriber/upload    
 #        status: http://airenas.eu/ausis.1/status.service/status
 #        result: http://airenas.eu/ausis.1/result.service
+#        clean:  http://airenas.eu/ausis.1/clean.service
 
 ids:
     path: /idsmap
 
-logger:
-    level: debug
+# logger:
+#     level: debug
 #     formatter:
 #         name: text
 #         options: 
