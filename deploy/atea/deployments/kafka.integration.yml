@@ -4,7 +4,7 @@ metadata:
   name: kafka-integration
   namespace: aft  
 spec:
-  replicas: 1
+  replicas: 5
   selector:
     matchLabels:
       app: kafka-integration
@@ -36,7 +36,7 @@ spec:
         - name: TRANSCRIBER_URL_CLEAN
           value: http://clean:8000/   
         - name: LOGGER_LEVEL
-          value: debug
+          value: trace
         volumeMounts:
         - name: kafkaintegration-vol 
           mountPath: /idsmap
