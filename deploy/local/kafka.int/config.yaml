@@ -1,8 +1,8 @@
 kafka:
 #    brokers: aserver:9092
-    group: gr1
-    input_topic: NewAudioAvailable
-    result_topic: TranscriptionFinished  
+    group: Transcriber.Service.Group
+    inputTopic: NewAudioAvailable
+    resultTopic: TranscriptionFinished  
     
 # fs:
 #    url: http://127.0.0.1:9010
