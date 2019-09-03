@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-tmp
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-tmp
+  template:
+    metadata:
+      labels:
+        app: kafka-tmp
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      containers:
+      - name: kafka-tmp
+        image: confluentinc/cp-kafka:4.0.0
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do echo hello; sleep 10;done"]
