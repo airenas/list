@@ -21,7 +21,7 @@ spec:
           claimName: kafkaintegrationstorage
       containers:
       - name: kafka-integration
-        image: airenas/list-kafka-integration-service:v0.9
+        image: airenas/list-kafka-integration-service:v0.10
         env:
         - name: KAFKA_BROKERS
           value: kafka-svc.atea.svc.cluster.local:9092
@@ -38,7 +38,7 @@ spec:
         - name: TRANSCRIBER_URL_CLEAN
           value: http://clean:8000/   
         - name: LOGGER_LEVEL
-          value: trace
+          value: info
         volumeMounts:
         - name: kafkaintegration-vol 
           mountPath: /idsmap
