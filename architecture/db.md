@@ -9,6 +9,8 @@ Saugomos užklausos
 | ID[*pk*] | string | Transkripcijos ID |
 | email| string | Vart. el. paštas |
 | date | dateTime | Užklausos laikas |
+| file | string | Pradinis failo pavadinimas |
+
 
 *pk* - raktinis laukas
 
@@ -22,6 +24,7 @@ Saugomas dabartinis transkripcijos statusas
 | ID[*pk*] | string | Transkripcijos ID |
 | status | string | Statusas |
 | error  | string | Klaida |
+| errorCode  | string | Klaidos kodas |
 | date   | dateTime | Statuso laikas |
 
 ---
