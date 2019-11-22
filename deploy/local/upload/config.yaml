@@ -3,6 +3,9 @@ port: 8000
 fileStorage:
     path: /data/audio.in/
 
+recognizerConfig:
+    path: /models/
+
 # messageServer: 
 #     url: rabbitmq:5672/
 #     user: list

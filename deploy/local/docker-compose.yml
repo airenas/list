@@ -21,10 +21,10 @@ services:
     build: web
     restart: unless-stopped
     environment:
-      BASE_HREF: /${URL_PHONES}/
+      BASE_HREF: /${URL_WORDS}/
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL_PHONES}/"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL_WORDS}/"
      - "traefik.http.port=8000"
 
   upload-service:
@@ -32,6 +32,7 @@ services:
     restart: unless-stopped
     volumes:
       - fileStorage:/data
+      - modelsStorage:/models  
     depends_on: 
       - rabbitmq  
       - mongo
@@ -41,7 +42,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/transcriber/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_WORDS}/transcriber/"
      - "traefik.port=8000" 
   
   result-service:
@@ -54,7 +55,7 @@ services:
     environment:
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/result.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_WORDS}/result.service/"
      - "traefik.port=8000"  
 
   status-service:
@@ -69,7 +70,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}    
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/status.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL_WORDS}/status.service/"
      - "traefik.port=8000" 
   
   manager-service:
@@ -217,7 +218,7 @@ volumes:
   modelsStorage:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}models/kaldi
+      device: ${LIST_VOLUMES_DIR}models
       o: bind              
 
   rabbitmq:

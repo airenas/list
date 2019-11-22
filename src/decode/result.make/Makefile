@@ -44,7 +44,11 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 	cat $^ > $@	
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(RESULTS_ROOT)/%/result.txt
-	$(PR_EXEC) -f $^ -u $(PR_URL) -o $@		
+ifeq ($(PUNCTUATE), true)
+	$(PR_EXEC) -f $^ -u $(PR_URL) -o $@
+else
+	cat $^ > $@	
+endif
 
 $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz
 	mkdir -p $(RESULTS_ROOT)/$*/
