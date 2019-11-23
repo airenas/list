@@ -3,6 +3,7 @@ LABEL Description="This image is used to host the LiST audio prepare worker serv
       Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
 
 VOLUME ["/data"]
+VOLUME ["/models"]
 WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/

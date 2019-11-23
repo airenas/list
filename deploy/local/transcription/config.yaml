@@ -3,6 +3,9 @@ worker:
     command: make /data/decoded/trans/{ID}/1-pass/decode/log
     workingDir: /cmd/
 
+recognizerConfig:
+    path: /models/config/
+    
 # messageServer: 
 #     broker: amqp://list:list@rabbitmq:5672/
 

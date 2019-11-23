@@ -4,6 +4,9 @@ worker:
     workingDir: /cmd/
     resultFile: /data/results/{ID}/resultFinal.txt
 
+recognizerConfig:
+    path: /models/config/
+    
 # messageServer: 
 #     broker: amqp://list:list@rabbitmq:5672/
 

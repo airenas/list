@@ -106,6 +106,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data
+      - modelsStorage:/models  
 
   diarization-service:
     build: diarization
@@ -119,7 +120,7 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - dModelsStorage:/models    
+      - modelsStorage:/models
   
   transcription-service:
     build: transcription

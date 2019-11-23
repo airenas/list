@@ -3,6 +3,9 @@ worker:
     command: make /data/audio.prepared/{ID}.wav
     workingDir: /cmd/
 
+recognizerConfig:
+    path: /models/config/    
+
 # messageServer: 
 #     broker: amqp://list:list@rabbitmq:5672/
 

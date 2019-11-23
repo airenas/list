@@ -4,7 +4,7 @@ fileStorage:
     path: /data/audio.in/
 
 recognizerConfig:
-    path: /models/
+    path: /models/config/
 
 # messageServer: 
 #     url: rabbitmq:5672/
