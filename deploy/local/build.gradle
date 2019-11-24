@@ -4,7 +4,9 @@ ext.src_dir = ext.main_dir + 'src/'
 ext.cmd_src_dir = ext.src_dir + 'decode/'
 ext.local_compose_dir = ext.main_dir + 'deploy/local/'
 ext.project_name_words = 'list-words'
-ext.compose_file_words = 'docker-compose.words.yml'
+
+def commitCount = 'git rev-list --count HEAD'.execute().text.trim()
+ext.commitCountExt = '.' + commitCount
 
 ext.docker_container_prefix='list-'
 

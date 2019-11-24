@@ -39,14 +39,6 @@ task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service")
     mustRunAfter('copy')
 }
 
-task ddeploy_words(type: DCRedeploy, group: group, description: "Deploys web service") {
-    serviceName = 'web'
-    composePath = './..'
-    projectName = project_name_words
-    fileName = compose_file_words
-    mustRunAfter('copy')
-}
-
 task dbuild(type: DBuild, group: group) {
     tag = 'airenas/ear-app:' + EAR_APP_VERSION
     mustRunAfter('copy')
@@ -61,10 +53,6 @@ task dall(group: group) {
     dependsOn 'copy'
     dependsOn 'dbuild'
     dependsOn 'dpush'
-}
-
-task rd_words(group: group) {
-    dependsOn copy, dbuild, ddeploy_words
 }
 
 task rd(group: group) {
