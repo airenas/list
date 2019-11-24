@@ -38,14 +38,12 @@ task dall(group: project.name) {
     dependsOn copy, dbuild, dpush
 }
 
-task ddeploy_words(type: DCRedeploy, group: project.name) {
+task ddeploy(type: DCRedeploy, group: project.name) {
     serviceName = service
     composePath = './..'
-    projectName = project_name_words
-    fileName = compose_file_words
     mustRunAfter('copy')
 }
 
-task rd_words(group: project.name) {
-    dependsOn copy, ddeploy_words
+task rd(group: project.name) {
+    dependsOn copy, ddeploy
 }

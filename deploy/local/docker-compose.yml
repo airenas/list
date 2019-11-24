@@ -84,6 +84,7 @@ services:
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}  
+      SENDINFORMMESSAGES: "true"
 
   # kafka-integration-service:
   #   build: kafka.int
@@ -134,7 +135,8 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models      
+      - modelsStorage:/models 
+      - modelsStorageWords:/models-word       
   
   result-make-service:
     build: result.make
@@ -149,6 +151,7 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models  
+      - modelsStorageWords:/models-word  
 
   inform-service:
     build: inform
@@ -164,6 +167,37 @@ services:
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MAIL_URL: ${MAIL_URL}
+
+  tensorflow:
+    image: tensorflow/serving:1.14.0
+    environment:
+      MODEL_NAME: punctuation
+      MODEL_BASE_PATH: /models/model
+    volumes:
+      - punctRestorationStorage:/models
+    ports:
+      - ${LIST_TF_GRPC_EXT_PORT}:8500
+      - ${LIST_TF_EXT_PORT}:8501
+    restart: unless-stopped 
+  
+  punctuation-service:
+    build: punctuation
+    restart: unless-stopped
+    volumes:
+      - punctRestorationStorage:/model
+    environment:
+      TF_URL: tensorflow:8500
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
+     - "traefik.port=8080"
+  
+  clean-service:
+    build: clean
+    restart: unless-stopped
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
+    volumes:
+      - fileStorage:/data    
 
 ########### db & broker
   mongo:
@@ -220,7 +254,19 @@ volumes:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models
-      o: bind              
+      o: bind  
+  
+  modelsStorageWords:
+    driver_opts:
+      type: none
+      device: ${MODEL_DIR_WORDS}
+      o: bind                   
+
+  punctRestorationStorage:
+    driver_opts:
+      type: none
+      device: ${PUNCT_RESTORATION_DIR_WORDS}
+      o: bind      
 
   rabbitmq:
     driver_opts:
