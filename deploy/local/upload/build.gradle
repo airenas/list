@@ -31,12 +31,12 @@ task ddeploy(type: DCRedeploy, group: group, description: "Deploys upload servic
 }
 
 task dbuild(type: DBuild, group: group) {
-    tag = 'airenas/list-upload-service:' + UPLOAD_SERVICE_VERSION
+    tag = 'airenas/list-upload-service:' + UPLOAD_SERVICE_VERSION + commitCountExt
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: group) {
-    tag = 'airenas/list-upload-service:' + UPLOAD_SERVICE_VERSION
+    tag = 'airenas/list-upload-service:' + UPLOAD_SERVICE_VERSION + commitCountExt
     mustRunAfter('dbuild')
 }
 

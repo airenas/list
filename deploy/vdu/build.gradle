@@ -4,6 +4,7 @@ plugins {
 
 def servicesDir = projectDir.getAbsolutePath() + "/services"
 def distDir = servicesDir + "/data/"
+def configDir = projectDir.getAbsolutePath() + "/models/config"
 
 remotes {
     server1 {
@@ -58,21 +59,6 @@ task deploy(group: project.name, description: "Deploys services to server") {
     }
 }
 
-task deploy_words(group: project.name, description: "Deploys services to server") {
-    dependsOn('copy_remote')
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                def dCompose = 'cd services && docker-compose -p list-words -f docker-compose.words.yml --compatibility '
-                execute dCompose + 'stop'
-                execute dCompose + 'rm -f'
-                execute dCompose + 'pull'
-                execute dCompose + 'up -d'
-            }
-        }
-    }
-}
-
 task copy_apps(group: project.name, description: "Copies apps to volume") {
     doLast {
         ssh.run {
@@ -84,10 +70,22 @@ task copy_apps(group: project.name, description: "Copies apps to volume") {
 }
 
 task copy_models(group: project.name, description: "Copies models data") {
+    dependsOn('copy_config')
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: LOCAL_MODELS_DIR, into: VOLUMES_DIR
+                put from: LOCAL_MODELS_DIR + "/phones_v0", into: VOLUMES_DIR + "/models/"
+                put from: LOCAL_MODELS_DIR + "/diarization", into: VOLUMES_DIR + "/models/"
+            }
+        }
+    }
+}
+
+task copy_config(group: project.name, description: "Copies models config data") {
+    doLast {
+        ssh.run {
+            session(remotes.server1) {
+                put from: configDir, into: VOLUMES_DIR + "/models/"
             }
         }
     }
