@@ -1,0 +1,7 @@
+name: words_v0
+description: Initial words model for testing
+date_created: 2019-04-01
+settings:
+  models_root: /models/graph_w63g/
+  punctuate: true
+  

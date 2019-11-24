@@ -113,6 +113,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
     volumes:
       - fileStorage:/data
+      - modelsStorage:/models 
 
   diarization-service:
     image: airenas/list-diarization-service:${DIARIZATION_SERVICE_VERSION}
