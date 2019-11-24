@@ -38,12 +38,12 @@ task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys transc
 }
 
 task dbuild(type: DBuild, group: project.name) {
-    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION
+    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION + commitCountExt
     mustRunAfter('copy')
 }
 
 task dpush(type: DPush, group: project.name) {
-    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION
+    tag = 'airenas/' + docker_container_prefix + service + ':' + TRANSCRIPTION_SERVICE_VERSION + commitCountExt
     mustRunAfter('dbuild')
 }
 
