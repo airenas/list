@@ -37,10 +37,10 @@ services:
     image: airenas/ear-app:${EAR_APP_VERSION}
     restart: unless-stopped
     environment:
-      BASE_HREF: /${URL_PHONES}/
+      BASE_HREF: /${URL}/
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL_PHONES}/"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
      - "traefik.http.port=8000"
 
   upload-service:
@@ -48,6 +48,7 @@ services:
     restart: unless-stopped
     volumes:
       - fileStorage:/data
+      - modelsStorage:/models
     depends_on: 
       - rabbitmq  
       - mongo
@@ -57,7 +58,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/transcriber/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/transcriber/"
      - "traefik.port=8000"  
   
   result-service:
@@ -70,7 +71,7 @@ services:
     environment:
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/result.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/result.service/"
      - "traefik.port=8000"     
 
   status-service:
@@ -85,7 +86,7 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}    
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL_PHONES}/status.service/"
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/status.service/"
      - "traefik.port=8000" 
   
   manager-service:
@@ -98,7 +99,8 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-      MONGO_URL: ${LIST_MONGO_URL}  
+      MONGO_URL: ${LIST_MONGO_URL} 
+      SENDINFORMMESSAGES: "true" 
 
   audio-prepare-service:
     image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
@@ -124,7 +126,7 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - dModelsStorage:/models    
+      - modelsStorage:/models    
   
   transcription-service:
     image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
@@ -149,6 +151,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      PR_URL: http://punctuation-service:8080/punctuation
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -167,7 +170,35 @@ services:
       MONGO_URL: ${LIST_MONGO_URL}
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-      MAIL_URL: ${MAIL_URL}     
+      MAIL_URL: ${MAIL_URL} 
+
+  tensorflow:
+    image: tensorflow/serving:1.14.0
+    environment:
+      MODEL_NAME: punctuation
+      MODEL_BASE_PATH: /models/model
+    volumes:
+      - punctModelsStorage:/models
+    restart: unless-stopped 
+  
+  punctuation-service:
+    image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - punctModelsStorage:/model
+    environment:
+      TF_URL: tensorflow:8500
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
+     - "traefik.port=8080"  
+  
+  clean-service:
+    image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
+    restart: unless-stopped
+    volumes:
+      - fileStorage:/data
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}        
 
 # ########### db & broker
   mongo:
@@ -214,19 +245,19 @@ volumes:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}apps
-      o: bind
-
-  dModelsStorage:
-    driver_opts:
-      type: none
-      device: ${LIST_VOLUMES_DIR}models
-      o: bind          
+      o: bind      
 
   modelsStorage:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}models/kaldi
-      o: bind          
+      device: ${LIST_VOLUMES_DIR}models
+      o: bind  
+
+  punctModelsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}h256_w200k
+      o: bind                
 
   rabbitmq:
     driver_opts:

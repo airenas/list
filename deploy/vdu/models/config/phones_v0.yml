@@ -1,0 +1,7 @@
+name: phones_v0
+description: Initial phones model for testing
+date_created: 2019-03-01
+settings:
+  models_root: /models/phones_v0
+  punctuate: false
+  
