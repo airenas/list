@@ -136,7 +136,7 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models 
-      - modelsStorageWords:/models-word       
+      - modelsStorage2:/models2        
   
   result-make-service:
     build: result.make
@@ -152,7 +152,7 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models  
-      - modelsStorageWords:/models-word  
+      - modelsStorage2:/models2  
 
   inform-service:
     build: inform
@@ -245,22 +245,16 @@ volumes:
       device: ${LIST_VOLUMES_DIR}apps
       o: bind
 
-  dModelsStorage:
-    driver_opts:
-      type: none
-      device: ${LIST_VOLUMES_DIR}models
-      o: bind
-
   modelsStorage:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}models
       o: bind  
   
-  modelsStorageWords:
+  modelsStorage2:
     driver_opts:
       type: none
-      device: ${MODEL_DIR_WORDS}
+      device: ${MODEL_DIR_2}
       o: bind                   
 
   punctRestorationStorage:
