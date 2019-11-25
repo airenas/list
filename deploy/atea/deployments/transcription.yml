@@ -36,9 +36,12 @@ spec:
       - name: filestorage-vol
         persistentVolumeClaim:
           claimName: filestorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage-2    
       containers:
       - name: upoad
-        image: airenas/list-upload-service:v0.8beta
+        image: airenas/list-upload-service:1.0.201
         ports:
         - containerPort: 8000
           name: client
@@ -70,6 +73,8 @@ spec:
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
+        - name: modelstorage-vol 
+          mountPath: /models  
 ---
 ### status service
 apiVersion: v1
@@ -216,7 +221,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: manager
-        image: airenas/list-manager-service:v0.5
+        image: airenas/list-manager-service:1.0.203
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -265,9 +270,12 @@ spec:
       - name: filestorage-vol
         persistentVolumeClaim:
           claimName: filestorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage-2    
       containers:
       - name: audio-prepare
-        image: airenas/list-audio-prepare-service:v0.4beta
+        image: airenas/list-audio-prepare-service:1.0.203
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -284,6 +292,8 @@ spec:
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
+        - name: modelstorage-vol 
+          mountPath: /models  
 ---    
 ## diarization service
 apiVersion: apps/v1
@@ -310,12 +320,12 @@ spec:
       - name: appstorage-vol
         persistentVolumeClaim:
           claimName: appstorage
-      - name: diarizationstorage-vol
+      - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: diarizationstorage        
+          claimName: modelstorage-2       
       containers:
       - name: diarization
-        image: airenas/list-diarization-service:v0.3beta
+        image: airenas/list-diarization-service:1.0.203
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -334,7 +344,7 @@ spec:
           mountPath: /data
         - name: appstorage-vol 
           mountPath: /apps
-        - name: diarizationstorage-vol 
+        - name: modelstorage-vol 
           mountPath: /models
 ---    
 ## transcription service
@@ -364,10 +374,10 @@ spec:
           claimName: appstorage
       - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: modelstorage        
+          claimName: modelstorage-2        
       containers:
       - name: transcription
-        image: airenas/list-transcription-service:v0.4beta
+        image: airenas/list-transcription-service:1.1.209
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -416,10 +426,10 @@ spec:
           claimName: appstorage
       - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: modelstorage        
+          claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:v0.5beta
+        image: airenas/list-result-make-service:1.0.203
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
