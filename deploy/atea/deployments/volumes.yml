@@ -114,35 +114,6 @@ spec:
      requests:
        storage: 1Gi  
 ---       
-## diarization model persistence volumes
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: diarizationstorage
-  namespace: aft
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: "/aft/diarizationstorage"
-    type: DirectoryOrCreate
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: diarizationstorage
-  namespace: aft
-spec:
-  accessModes:
-  - ReadWriteOnce
-  volumeName: diarizationstorage
-  resources:
-     requests:
-       storage: 1Gi   
----       
 ## punctuation model persistence volumes
 apiVersion: v1
 kind: PersistentVolume
@@ -172,34 +143,34 @@ spec:
      requests:
        storage: 2Gi   
 ---       
-## kaldi model persistence volumes
+## models persistence volumes
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: modelstorage
+  name: modelstorage-2
   namespace: aft
 spec:
   capacity:
-    storage: 25Gi
+    storage: 200Gi
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   hostPath:
-    path: "/aft/modelstorage"
+    path: "/aft/modelstorage-2"
     type: DirectoryOrCreate
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: modelstorage
+  name: modelstorage-2
   namespace: aft
 spec:
   accessModes:
   - ReadWriteOnce
-  volumeName: modelstorage
+  volumeName: modelstorage-2
   resources:
      requests:
-       storage: 25Gi   
+       storage: 200Gi   
 
 ---       
 ## kafka integration persistence storage
