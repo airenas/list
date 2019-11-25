@@ -9,7 +9,6 @@
 ###########################################################################################
 # slashes at the end required!
 diarizationModels=diarization_models/
-kaldiModels=kaldi_models/
 punctuationModels=punctuation_models/
 apps=kaldi_apps/
 ###########################################################################################
@@ -19,16 +18,12 @@ if [ "$podName" == "" ] ; then
    echo -e "No pod found!!!\nDid you run: \n\nkubectl apply -f helper.yml ?\n"
    exit 1
 fi
-
 ###########################################################################################
 echo -e "\n\ncopy diarization models = $diarizationModels"
-rsync -avurP --blocking-io --rsync-path=/dmodels --rsh="kubectl exec $podName -i -- " $diarizationModels rsync:/dmodels
+./copyModel.sh $diarizationModels diarization
 ###########################################################################################
 echo -e "\n\ncopy apps = $apps"
 rsync -avurP --blocking-io --rsync-path=/apps --rsh="kubectl exec $podName -i -- " $apps rsync:/apps
-###########################################################################################
-echo -e "\n\ncopy kaldi models = $kaldiModels"
-rsync -avurP --blocking-io --rsync-path=/models --rsh="kubectl exec $podName -i -- " $kaldiModels rsync:/models
 ###########################################################################################
 echo -e "\n\ncopy punctuation models = $punctuationModels"
 rsync -avurP --blocking-io --rsync-path=/pmodels --rsh="kubectl exec $podName -i -- " $punctuationModels rsync:/pmodels

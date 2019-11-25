@@ -21,10 +21,7 @@ spec:
           claimName: appstorage
       - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: modelstorage
-      - name: diarizationstorage-vol
-        persistentVolumeClaim:
-          claimName: diarizationstorage
+          claimName: modelstorage-2
       - name: rabbitmq-vol
         persistentVolumeClaim:
           claimName: rabbitmq   
@@ -45,8 +42,6 @@ spec:
           mountPath: /apps
         - name: modelstorage-vol 
           mountPath: /models
-        - name: diarizationstorage-vol 
-          mountPath: /dmodels  
         - name: rabbitmq-vol 
           mountPath: /rabbitmq
         - name: mongo-vol

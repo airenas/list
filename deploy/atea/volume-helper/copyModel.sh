@@ -1,13 +1,14 @@
 #!/bin/bash
 ###########################################################################################
-# Helper script to delete all data from kubernetes enviromnment
+# Helper script to upload one model to kubernetes enviromnment
 ###########################################################################################
 # first: run the script to volume helper container
 # : kubectl apply -f helper.yml
 # after: run the script to destroy volume helper container
 # : kubectl delete deployment vh
 ###########################################################################################
-# no slash at the end!
+localDir=$1
+remoteDir="/models/$2"
 ###########################################################################################
 podName=$(kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $1}')
 echo "Pod name = $podName"
@@ -15,21 +16,23 @@ if [ "$podName" == "" ] ; then
    echo -e "No pod found!!!\nDid you run: \n\nkubectl apply -f helper.yml ?\n"
    exit 1
 fi
-###########################################################################################
-read -p "Delete all transcription data/model files [no/yes]: " confirm
-confirm=${confirm:-no}
-if [ "$confirm" != "yes" ] ; then
-   echo -e "Skip deletion!\nYou pressed $confirm\n"
+echo "From     = $localDir"
+if [ "$localDir" == "" ] ; then
+   echo -e "No local dir provided! Usage: copyModel.sh <localDir> <remoteDir>"
+   exit 1
+fi
+echo "To       = $remoteDir"
+if [ "$2" == "" ] ; then
+   echo -e "No local dir provided! Usage: copyModel.sh <localDir> <remoteDir>"
    exit 1
 fi
 
-kubectl exec $podName -i -- rm -r /apps
-kubectl exec $podName -i -- rm -rf /rabbitmq
-kubectl exec $podName -i -- rm -rf /mongo
-kubectl exec $podName -i -- rm -rf /models
-kubectl exec $podName -i -- rm -rf /filestorage
-kubectl exec $podName -i -- rm -rf /pmodels
-
+###########################################################################################
+echo -e "\n\ncreating remote dir = $remoteDir"
+kubectl exec $podName -i -- mkdir -p $remoteDir
+###########################################################################################
+echo -e "\n\ncopy kaldi models = $localDir"
+rsync -avurP --blocking-io --rsync-path=$remoteDir --rsh="kubectl exec $podName -i -- " $localDir rsync:$remoteDir
 ###########################################################################################
 echo -e "\n\nDone.\n\nNow unload helper container:\nkubectl delete deployment vh\n"
 ###########################################################################################
