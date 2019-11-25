@@ -28,7 +28,7 @@ decodedir=$4
 echo "============= execute real decoding script ==================="
 steps/nnet3/decode.sh --num-threads $num_threads --nj $nj \
     --acwt 1.0  --post-decode-acwt 10.0 \
-	--config conf/decode.conf \
+	--config $graphdir/conf/decode.conf \
 	--skip-scoring true --cmd "$cmd" --nj 1 \
 	--skip-diagnostics true \
 	--extra-left-context 40  \

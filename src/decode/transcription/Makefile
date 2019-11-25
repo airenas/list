@@ -20,17 +20,14 @@ steps:
 utils:
 	ln -s $(APPS_ROOT)/utils
 
-conf:
-	ln -s $(MODELS_ROOT)/conf
-
 .SECONDARY:
 .DELETE_ON_ERROR:	
 
 # MFCC calculation
-$(OUTPUT_ROOT)/trans/%/mfcc: $(INPUT_ROOT)/trans/%/spk2utt steps utils conf
+$(OUTPUT_ROOT)/trans/%/mfcc: $(INPUT_ROOT)/trans/%/spk2utt steps utils
 	rm -rf $@
 	rm -f $(OUTPUT_ROOT)/trans/$*/cmvn.scp
-	steps/make_mfcc.sh --mfcc-config conf/mfcc_hires.conf --cmd "$$train_cmd" --nj $(njobs) \
+	steps/make_mfcc.sh --mfcc-config $(MODELS_ROOT)/conf/mfcc_hires.conf --cmd "$$train_cmd" --nj $(njobs) \
 		$(INPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
 	steps/compute_cmvn_stats.sh $(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
 
