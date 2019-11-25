@@ -1,0 +1,7 @@
+name: words_v1
+description: Words model 2 prepared on 2019 11 18
+date_created: 2019-11-18
+settings:
+  models_root: /models/19_11_18-3g/
+  punctuate: true
+  

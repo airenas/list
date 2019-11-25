@@ -91,11 +91,12 @@ task copy_config(group: project.name, description: "Copies models config data") 
     }
 }
 
-task copy_models_words(group: project.name, description: "Copies models data") {
+task copy_models2(group: project.name, description: "Copies models data") {
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: LOCAL_MODELS_WORDS_DIR, into: VOLUMES_DIR + "/models"
+                put from: LOCAL_MODELS_DIR2 + "/graph_w63g", into: VOLUMES_DIR + "/models"
+                put from: LOCAL_MODELS_DIR2 + "/19_11_18-3g", into: VOLUMES_DIR + "/models"
             }
         }
     }

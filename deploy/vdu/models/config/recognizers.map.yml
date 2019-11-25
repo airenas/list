@@ -1,3 +1,4 @@
-default: words_v0
+default: words_v1
 phones: phones_v0
 words: words_v0
+words2: words_v1
