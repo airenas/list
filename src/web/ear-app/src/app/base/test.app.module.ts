@@ -18,7 +18,7 @@ import { TranscriptionResult } from '../api/transcription-result';
 import { ActivatedRoute } from '@angular/router';
 import { ParamsProviderService } from '../service/params-provider.service';
 import { ResultSubscriptionService } from '../service/result-subscription.service';
-import { EMPTY } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import { AudioPlayerFactory } from '../utils/audio.player';
 import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
@@ -27,7 +27,7 @@ import { Recognizer } from '../api/recognizer';
 
 export class MockTestService implements TranscriptionService {
   getRecognizers(): Observable<Recognizer[]> {
-    return EMPTY;
+    return of<Recognizer[]>([{id: 'rID', name: 'rName', description: 'rDescr'}]);
   }
   sendFile(fileData: FileData): Observable<SendFileResult> {
     return EMPTY;

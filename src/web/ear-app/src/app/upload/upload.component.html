@@ -71,7 +71,7 @@
       <div>
         <div class="stepper-title">Atpažintuvas</div>
         <mat-form-field class="full-width" class="upload-input-width">
-          <mat-select id="recognizerInput" name="recognizer" matInput [(ngModel)]="recognizer"
+          <mat-select id="recognizerSelect" name="recognizer" matInput [(ngModel)]="recognizer"
             matTooltip="Pasirinkite atpažintuvą">
             <mat-option *ngFor="let rec of recognizers" [value]="rec.id" matTooltip="{{rec.description}}">{{rec.name}}
             </mat-option>

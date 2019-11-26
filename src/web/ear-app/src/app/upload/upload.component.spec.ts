@@ -209,6 +209,13 @@ describe('UploadComponent', () => {
     expect(component.openInput).toHaveBeenCalled();
   }));
 
+  it('should have loaded recognizers', async(() => {
+    component = fixture.debugElement.componentInstance;
+    fixture.whenStable().then(() => {
+      expect(component.recognizers.length).toBe(1);
+    });
+  }));
+
 });
 
 describe('UploadComponent Own Mock', () => {
@@ -263,6 +270,30 @@ describe('UploadComponent Own Mock', () => {
       const input = fixture.debugElement.query(By.css('#emailInput'));
       const el = input.nativeElement;
       expect(el.value).toBe('olia');
+    });
+  }));
+
+  it('should read recognizer value from provider', async(() => {
+    const params = new TestParamsProviderService();
+    params.setRecognizer('rID');
+
+    TestBed.configureTestingModule({
+      declarations: [UploadComponent],
+      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      providers: [{ provide: ParamsProviderService, useValue: params },
+      { provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
+      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
+    })
+      .compileComponents();
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.recognizer).toBe('rID');
     });
   }));
 });
