@@ -38,6 +38,9 @@ export class HttpTranscriptionService implements TranscriptionService {
       if (value.includes('No file')) {
         return 'Nenurodytas failas';
       }
+      if (value.includes('No recognizer') || value.includes('Unknown recognizer:')) {
+        return 'Nepavyko parinkti atpažintuvą';
+      }
     }
     return 'Serviso klaida';
   }

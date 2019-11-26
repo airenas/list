@@ -49,7 +49,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this._email = this.paramsProviderService.getEmail();
     this.initRecognizer();
   }
-  
+
   initRecognizer() {
     this.transcriptionService.getRecognizers().subscribe(
       result => {
