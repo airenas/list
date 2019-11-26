@@ -7,9 +7,7 @@ import com.aireno.gradle.DPush
 def main_dir = "../../../src/web/ear-app/"
 def dist_dir = "deploy/"
 
-def group = "Web.production"
-
-task clean(type: Delete, group: group, description: "Deletes copied resources") {
+task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
     delete dist_dir
 }
 
@@ -21,40 +19,38 @@ task updateVersion() {
     ts.write(text, "UTF-8")
 }
 
-task build(type: Exec, group: group, description: "Compiles angular site") {
+task build(type: Exec, group: project.name, description: "Compiles angular site") {
     commandLine 'ng', 'build', '--prod'
     workingDir main_dir
     dependsOn 'updateVersion'
 }
 
-task copy(type: Copy, group: group, description: "Copies htmls") {
+task copy(type: Copy, group: project.name, description: "Copies htmls") {
     from main_dir + 'dist/ear-app/'
     into dist_dir + 'html/'
     dependsOn 'build'
 }
 
-task ddeploy(type: DCRedeploy, group: group, description: "Deploys web service") {
+task ddeploy(type: DCRedeploy, group: project.name, description: "Deploys web service") {
     serviceName = 'web'
     composePath = './..'
     mustRunAfter('copy')
 }
 
-task dbuild(type: DBuild, group: group) {
-    tag = 'airenas/ear-app:' + EAR_APP_VERSION
+task dbuild(type: DBuild, group: project.name) {
+    tag = 'airenas/ear-app:' + EAR_APP_VERSION + commitCountExt
     mustRunAfter('copy')
 }
 
-task dpush(type: DPush, group: group) {
-    tag = 'airenas/ear-app:' + EAR_APP_VERSION
+task dpush(type: DPush, group: project.name) {
+    tag = 'airenas/ear-app:' + EAR_APP_VERSION + commitCountExt
     mustRunAfter('dbuild')
 }
 
-task dall(group: group) {
-    dependsOn 'copy'
-    dependsOn 'dbuild'
-    dependsOn 'dpush'
+task dall(group: project.name) {
+    dependsOn copy, dbuild, dpush
 }
 
-task rd(group: group) {
+task rd(group: project.name) {
     dependsOn copy, dbuild, ddeploy
 }
