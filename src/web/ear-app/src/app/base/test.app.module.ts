@@ -1,5 +1,5 @@
 import { MicrophoneFactory } from './../utils/microphone';
-import { MatProgressSpinnerModule } from '@angular/material';
+import { MatProgressSpinnerModule, MatSelectModule, MatTooltipModule } from '@angular/material';
 import { Config } from './../config';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -23,8 +23,12 @@ import { AudioPlayerFactory } from '../utils/audio.player';
 import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
+import { Recognizer } from '../api/recognizer';
 
 export class MockTestService implements TranscriptionService {
+  getRecognizers(): Observable<Recognizer[]> {
+    return EMPTY;
+  }
   sendFile(fileData: FileData): Observable<SendFileResult> {
     return EMPTY;
   }
@@ -71,7 +75,7 @@ export class TestHelper {
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
-    MatCardModule, FileSizeModule,
+    MatCardModule, FileSizeModule, MatSelectModule,
     ReactiveFormsModule
   ],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' },
@@ -86,7 +90,7 @@ export class TestHelper {
   bootstrap: [],
   exports: [
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule
+    MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatTooltipModule
   ],
 })
 

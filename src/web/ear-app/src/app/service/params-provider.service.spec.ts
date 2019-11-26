@@ -58,6 +58,10 @@ describe('ParamsProviderService', () => {
     service.setTranscriptionID('id');
     expect(service.getTranscriptionID()).toBe('id');
   }));
+  it('should remember recognizer', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setRecognizer('rolia');
+    expect(service.getRecognizer()).toBe('rolia');
+  }));
   it('should remember email from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setEmail('olia2');
     expect(new LocalStorageParamsProviderService().getEmail()).toBe('olia2');
@@ -65,5 +69,9 @@ describe('ParamsProviderService', () => {
   it('should remember ID from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setTranscriptionID('id2');
     expect(new LocalStorageParamsProviderService().getTranscriptionID()).toBe('id2');
+  }));
+  it('should remember recognizer from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setRecognizer('rec');
+    expect(service.getRecognizer()).toBe('rec');
   }));
 });
