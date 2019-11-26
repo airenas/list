@@ -55,7 +55,7 @@ export class HttpTranscriptionService implements TranscriptionService {
     const formData = new FormData();
     formData.append('file', fileData.file, fileData.fileName);
     formData.append('email', fileData.email);
-    formData.append('recognizer', fileData.recognizer);
+    formData.append('recognizer', fileData.recognizer == null ? '' : fileData.recognizer);
     const httpOptions = {
       headers: new HttpHeaders({
         'Accept': 'application/json'
