@@ -9,6 +9,7 @@ import { FormControl, FormGroupDirective, NgForm } from '@angular/forms';
 import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 import { Microphone, MicrophoneFactory } from '../utils/microphone';
 import { environment } from 'src/environments/environment';
+import { Recognizer } from '../api/recognizer';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -38,11 +39,27 @@ export class UploadComponent extends BaseComponent implements OnInit {
   sending = false;
   versionClick = 0;
 
+  private _recognizer: string;
+  recognizers: Recognizer[];
+
   ngOnInit() {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.recorder = this.microphoneFactory.create('#micWaveDiv', (ev, data) => this.recordEvent(ev, data));
     this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.getEmail();
+    this.initRecognizer();
+  }
+  initRecognizer() {
+    this.transcriptionService.getRecognizers().subscribe(
+      result => {
+        this.recognizers = result;
+        this.recognizers.sort((a, b) => (a.name > b.name) ? 1 : -1);
+      },
+      error => {
+        this.showError('Nepavyko gauti atpažintuvų sąrašo.', error);
+      }
+    );
+    this._recognizer = this.paramsProviderService.getRecognizer();
   }
 
   recordEvent(ev: string, data: any): void {
@@ -91,7 +108,10 @@ export class UploadComponent extends BaseComponent implements OnInit {
   upload() {
     console.log('sending this to server', this.selectedFile);
     this.sending = true;
-    this.transcriptionService.sendFile({ file: this.selectedFile, fileName: this.selectedFileName, email: this.email })
+    this.transcriptionService.sendFile({
+      file: this.selectedFile, fileName: this.selectedFileName, email: this.email,
+      recognizer: this.recognizer
+    })
       .subscribe(
         result => {
           this.sending = false;
@@ -117,6 +137,15 @@ export class UploadComponent extends BaseComponent implements OnInit {
   set email(email: string) {
     this._email = email;
     this.paramsProviderService.setEmail(email);
+  }
+
+  get recognizer(): string {
+    return this._recognizer;
+  }
+
+  set recognizer(recognizer: string) {
+    this._recognizer = recognizer;
+    this.paramsProviderService.setRecognizer(recognizer);
   }
 
   isValid() {

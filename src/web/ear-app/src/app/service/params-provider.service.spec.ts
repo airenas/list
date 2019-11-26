@@ -8,6 +8,8 @@ export class TestParamsProviderService implements ParamsProviderService {
   private _transcriptionID: string;
   lastSelectedFile: File;
   private _email: string;
+  private _recognizer: string;
+
 
   constructor() {
   }
@@ -26,6 +28,14 @@ export class TestParamsProviderService implements ParamsProviderService {
 
   getTranscriptionID(): string {
     return this._transcriptionID;
+  }
+
+  setRecognizer(recognizer: string): void {
+    this._recognizer = recognizer;
+  }
+
+  getRecognizer(): string {
+    return this._recognizer;
   }
 }
 

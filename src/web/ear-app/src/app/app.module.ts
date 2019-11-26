@@ -9,7 +9,7 @@ import { AppComponent } from './app.component';
 import { UploadComponent } from './upload/upload.component';
 import { ResultsComponent } from './results/results.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatTooltipModule } from '@angular/material';
+import { MatTabsModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatTooltipModule, MatSelectModule } from '@angular/material';
 import { ShowOnDirtyErrorStateMatcher, ErrorStateMatcher, MatProgressSpinnerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -38,7 +38,7 @@ import { ErrorPipe } from './pipes/error.pipe';
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
-    MatCardModule, FileSizeModule,
+    MatCardModule, FileSizeModule, MatSelectModule,
     ReactiveFormsModule, MatTooltipModule
   ],
   providers: [Config,

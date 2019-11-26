@@ -5,14 +5,17 @@ import { FileData } from './file-data';
 import { SendFileResult } from './../api/send-file-result';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import { throwError } from 'rxjs';
+import { Recognizer } from '../api/recognizer';
 
 @Injectable()
 export abstract class TranscriptionService {
   abstract sendFile(fileData: FileData): Observable<SendFileResult>;
   abstract getResult(id: string): Observable<TranscriptionResult>;
+  abstract getRecognizers(): Observable<Recognizer[]>;
 }
 
 @Injectable()
@@ -20,6 +23,7 @@ export class HttpTranscriptionService implements TranscriptionService {
 
   sendFileUrl: string;
   statusUrl: string;
+  recognizersUrl: string;
   private socket;
 
   static asString(error: HttpErrorResponse): string {
@@ -41,12 +45,14 @@ export class HttpTranscriptionService implements TranscriptionService {
   constructor(public _http: HttpClient, _config: Config) {
     this.sendFileUrl = _config.sendFileUrl;
     this.statusUrl = _config.statusUrl;
+    this.recognizersUrl = _config.recognizersUrl;
   }
 
   sendFile(fileData: FileData): Observable<SendFileResult> {
     const formData = new FormData();
     formData.append('file', fileData.file, fileData.fileName);
     formData.append('email', fileData.email);
+    formData.append('recognizer', fileData.recognizer);
     const httpOptions = {
       headers: new HttpHeaders({
         'Accept': 'application/json'
@@ -61,8 +67,6 @@ export class HttpTranscriptionService implements TranscriptionService {
   }
 
   getResult(id: string): Observable<TranscriptionResult> {
-    const headers = new Headers();
-    headers.append('Accept', 'application/json');
     const httpOptions = {
       headers: new HttpHeaders({
         'Accept': 'application/json'
@@ -71,6 +75,19 @@ export class HttpTranscriptionService implements TranscriptionService {
     return this._http.get(this.statusUrl + id, httpOptions)
       .map(res => {
         return <TranscriptionResult>res;
+      })
+      .catch(e => this.handleError(e));
+  }
+
+  getRecognizers(): Observable<Recognizer[]> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Accept': 'application/json'
+      })
+    };
+    return this._http.get(this.recognizersUrl, httpOptions)
+      .map(res => {
+        return <Recognizer[]>res;
       })
       .catch(e => this.handleError(e));
   }

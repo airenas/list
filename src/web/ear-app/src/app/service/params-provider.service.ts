@@ -7,6 +7,8 @@ export abstract class ParamsProviderService {
   abstract getEmail(): string;
   abstract setTranscriptionID(id: string): void;
   abstract getTranscriptionID(): string;
+  abstract setRecognizer(recognizer: string): void;
+  abstract getRecognizer(): string;
 }
 
 export class LocalStorageParamsProviderService implements ParamsProviderService {
@@ -14,6 +16,7 @@ export class LocalStorageParamsProviderService implements ParamsProviderService 
   private _transcriptionID: string;
   lastSelectedFile: File;
   private _email: string;
+  private _recognizer: string;
 
   constructor() {
   }
@@ -40,5 +43,17 @@ export class LocalStorageParamsProviderService implements ParamsProviderService 
       this._transcriptionID = localStorage.getItem('transcriptionID');
     }
     return this._transcriptionID;
+  }
+
+  setRecognizer(recognizer: string): void {
+    this._recognizer = recognizer;
+    localStorage.setItem('recognizer', recognizer);
+  }
+
+  getRecognizer(): string {
+    if (this._recognizer == null) {
+      this._recognizer = localStorage.getItem('recognizer');
+    }
+    return this._recognizer;
   }
 }

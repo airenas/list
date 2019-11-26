@@ -57,3 +57,4 @@ src/tools/go.sum
 src/tools/punct.file/**
 deploy/local/clean/deploy/**
 deploy/atea/ki/**
+testavimas/20191125/**
