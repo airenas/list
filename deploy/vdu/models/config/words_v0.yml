@@ -1,5 +1,5 @@
-name: Žodžių atpažintuvas (v0)
-description: Apie 2019-04-01
+name: x AŽ v0
+description: Žodžių atpažintuvas. Paruoštas apie 2019-04-01
 date_created: 2019-04-01
 settings:
   models_root: /models/graph_w63g/

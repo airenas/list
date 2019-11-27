@@ -1,5 +1,5 @@
-name: Garsų atpažintuvas (v0)
-description: Pradinis testavimo modelis
+name: x AG v0
+description: Garsų atpažintuvas. Pradinis testavimo modelis
 date_created: 2019-03-01
 settings:
   models_root: /models/phones_v0

@@ -1,5 +1,5 @@
-name: Žodžių atpažintuvas (v1)
-description: Gailiaus paruoštas 2019 11 18
+name: AŽ v1
+description: Žodžių atpažintuvas. Gailiaus paruoštas 2019 11 18
 date_created: 2019-11-18
 settings:
   models_root: /models/19_11_18-3g/
