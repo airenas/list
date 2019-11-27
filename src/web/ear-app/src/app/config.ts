@@ -13,7 +13,7 @@ export class Config {
     constructor() {
         const prefix = '';
         this.sendFileUrl = prefix + environment.sendFileUrl + 'upload';
-        this.recognizersUrl = prefix + environment.sendFileUrl + 'recognizers/';
+        this.recognizersUrl = prefix + environment.sendFileUrl + 'recognizers';
         this.statusUrl = prefix + environment.statusUrl + 'status/';
         this.subscribeUrl = prefix + environment.statusUrl + 'subscribe';
         this.audioUrl = prefix + environment.resultUrl + 'audio/';
