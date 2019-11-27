@@ -1,5 +1,5 @@
-name: words_v0
-description: Initial words model for testing
+name: Žodžių atpažintuvas (v0)
+description: Apie 2019-04-01
 date_created: 2019-04-01
 settings:
   models_root: /models/graph_w63g/
