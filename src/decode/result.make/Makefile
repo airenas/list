@@ -25,7 +25,7 @@ utils:
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/decode/lat.1.gz: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
 	mkdir -p `dirname $@`
 	## run rescore script from model dir
-	$(MODELS_ROOT)/scripts/rescore.sh $(MODELS_ROOT) $< $@
+	LM_DIR=$(LM_DIR) $(MODELS_ROOT)/scripts/rescore.sh $(MODELS_ROOT) $< $@
 
 $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/decode/lat.1.gz
 	gunzip -c $^ | lattice-1best ark:- ark:- | \
