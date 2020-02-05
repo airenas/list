@@ -17,12 +17,6 @@ task clean(type: Delete, group: project.name, description: "Deletes copied resou
     delete dist_dir
 }
 
-task build(type: Exec, group: project.name) {
-    commandLine 'go', 'build', '-installsuffix', 'cgo' 
-    workingDir main_dir
-    environment CGO_ENABLED:0
-}
-
 task buildPRWrapper(type: Exec, group: project.name) {
     commandLine 'go', 'build', '-installsuffix', 'cgo' 
     workingDir pRWrapperDir
