@@ -1,0 +1,8 @@
+GO_SRC_DIR=/home/airenas/projects/listgo/
+
+TRANSCRIPTION_SERVICE_VERSION=1.2
+
+
+## non configurable
+docker_container_prefix=list-
+commit_count=$(shell git rev-list --count HEAD)

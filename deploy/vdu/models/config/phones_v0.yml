@@ -3,5 +3,6 @@ description: Garsų atpažintuvas. Pradinis testavimo modelis
 date_created: 2019-03-01
 settings:
   models_root: /models/ac/phones_v0
+  scripts_dir: /models/ac/phones_v0/scripts/
   punctuate: false
   

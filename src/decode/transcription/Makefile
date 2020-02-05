@@ -39,7 +39,7 @@ $(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
         $(OUTPUT_ROOT)/trans/$* $(MODELS_ROOT)/ivector_extractor $(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; for f in $(MODELS_ROOT)/*; do ln -s $$f; done)
 	## run decode script from model dir
-	echo Scripts dir = $(SCRIPTS_DIR)
+	echo Scripts dir=$(SCRIPTS_DIR)
 	$(SCRIPTS_DIR)/decode.sh $(MODELS_ROOT) \
 		$(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors \
 		$(OUTPUT_ROOT)/trans/$* `dirname $@` || exit 1
