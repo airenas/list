@@ -31,7 +31,6 @@ $(OUTPUT_ROOT)/trans/%/mfcc: $(INPUT_ROOT)/trans/%/spk2utt steps utils
 		$(INPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
 	steps/compute_cmvn_stats.sh $(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
 
-
 ### Do 1-pass decoding using chain online models
 $(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
 	rm -rf $(OUTPUT_ROOT)/trans/$*/1-pass
@@ -40,7 +39,8 @@ $(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
         $(OUTPUT_ROOT)/trans/$* $(MODELS_ROOT)/ivector_extractor $(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; for f in $(MODELS_ROOT)/*; do ln -s $$f; done)
 	## run decode script from model dir
-	$(MODELS_ROOT)/scripts/decode.sh $(MODELS_ROOT) \
+	echo Scripts dir = $(SCRIPTS_DIR)
+	$(SCRIPTS_DIR)/decode.sh $(MODELS_ROOT) \
 		$(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors \
 		$(OUTPUT_ROOT)/trans/$* `dirname $@` || exit 1
 
