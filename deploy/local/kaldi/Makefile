@@ -10,7 +10,8 @@ kaldi_utils=$(dist_dir)/kaldi/utils
 bin_files=apply-cmvn arpa-to-const-arpa compute-cmvn-stats compute-mfcc-feats compute-wer \
 	copy-feats ivector-extract-online2 lattice-1best lattice-add-penalty lattice-align-words-lexicon \
 	lattice-best-path lattice-copy lattice-lmrescore lattice-lmrescore-const-arpa lattice-minimize \
-	lattice-prune lattice-scale lattice-to-nbest nbest-to-ctm nnet3-latgen-faster nnet3-latgen-faster-parallel
+	lattice-prune lattice-scale lattice-to-nbest nbest-to-ctm nnet3-latgen-faster nnet3-latgen-faster-parallel \
+	lattice-lmrescore-kaldi-rnnlm-pruned
 #####################################################################################
 d_bin_files=$(patsubst %, $(dist_dir)/kaldi/bin/%, $(bin_files))
 #####################################################################################
@@ -38,7 +39,10 @@ $(dist_dir)/kaldi/steps: $(dist_dir)/kaldi
 $(dist_dir)/kaldi/utils: $(dist_dir)/kaldi
 	$(RSYNC_CMD) $(KALDI_ROOT)/egs/wsj/s5/utils $(dist_dir)/kaldi/	
 
-copy: $(dist_dir)/kaldi/utils $(dist_dir)/kaldi/steps $(d_bin_files)
+$(dist_dir)/kaldi/utils/run.pl: $(dist_dir)/kaldi/utils/parallel/run.pl
+	cp $< $@	
+
+copy: $(dist_dir)/kaldi/utils $(dist_dir)/kaldi/steps $(d_bin_files) $(dist_dir)/kaldi/utils/run.pl
 ########### END #####################################################################
 clean:
 	rm -rf $(dist_dir)
