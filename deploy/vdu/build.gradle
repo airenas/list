@@ -6,31 +6,6 @@ def servicesDir = projectDir.getAbsolutePath() + "/services"
 def distDir = servicesDir + "/data/"
 def configDir = projectDir.getAbsolutePath() + "/models/config"
 
-remotes {
-    server1 {
-        host = '193.219.38.47'
-        user = 'airenas'
-        identity = file(System.getProperty("user.home") + '/.ssh/id_rsa')
-        port=7022
-    }
-}
-
-task clean(type: Delete, group: project.name, description: "Deletes copied resources") {
-    delete distDir
-}
-
-task copy_remote(group: project.name, description: "Copies all data to server") {
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                put from: servicesDir, into: HOME_DIR
-                execute 'cp -n ' + ACME_FILE + '.sample ' + ACME_FILE
-                execute 'chmod 600 ' + ACME_FILE 
-            }
-        }
-    }
-}
-
 task init_volumes(group: project.name, description: "Init volumes dir on server") {
     doLast {
         ssh.run {
@@ -48,49 +23,17 @@ task init_volumes(group: project.name, description: "Init volumes dir on server"
     }
 }
 
-task deploy(group: project.name, description: "Deploys services to server") {
-    dependsOn('copy_remote')
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                execute 'cd services && docker-compose stop && docker-compose rm -f && docker-compose pull && docker-compose up -d'
-            }
-        }
-    }
-}
-
-task copy_apps(group: project.name, description: "Copies apps to volume") {
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                put from: LOCAL_APPS_DIR, into: VOLUMES_DIR
-            }
-        }
-    }
-}
-
 task copy_models(group: project.name, description: "Copies models data") {
     dependsOn('copy_config')
     doLast {
         ssh.run {
             session(remotes.server1) {
-                put from: LOCAL_MODELS_DIR + "/phones_v0", into: VOLUMES_DIR + "/models/"
                 put from: LOCAL_MODELS_DIR + "/diarization", into: VOLUMES_DIR + "/models/"
             }
         }
     }
 }
 
-task copy_models2(group: project.name, description: "Copies models data") {
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                put from: LOCAL_MODELS_DIR2 + "/graph_w63g", into: VOLUMES_DIR + "/models"
-                put from: LOCAL_MODELS_DIR2 + "/19_11_18-3g", into: VOLUMES_DIR + "/models"
-            }
-        }
-    }
-}
 
 task copy_punct_models(group: project.name, description: "Copies punctuation models data") {
     doLast {
