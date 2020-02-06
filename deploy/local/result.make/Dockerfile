@@ -1,6 +1,6 @@
-FROM airenas/ubuntu.make:1.0
+FROM airenas/ubuntu.make:2.0
 LABEL Description="This image is used to host the LiST result prepare worker service" \ 
-      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
+      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="2.0" 
 
 VOLUME ["/data"]
 VOLUME ["/apps"]
