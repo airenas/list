@@ -11,7 +11,7 @@ bin_files=apply-cmvn arpa-to-const-arpa compute-cmvn-stats compute-mfcc-feats co
 	copy-feats ivector-extract-online2 lattice-1best lattice-add-penalty lattice-align-words-lexicon \
 	lattice-best-path lattice-copy lattice-lmrescore lattice-lmrescore-const-arpa lattice-minimize \
 	lattice-prune lattice-scale lattice-to-nbest nbest-to-ctm nnet3-latgen-faster nnet3-latgen-faster-parallel \
-	lattice-lmrescore-kaldi-rnnlm-pruned
+	lattice-lmrescore-kaldi-rnnlm-pruned rnnlm-get-word-embedding
 #####################################################################################
 d_bin_files=$(patsubst %, $(dist_dir)/kaldi/bin/%, $(bin_files))
 #####################################################################################
@@ -31,7 +31,9 @@ $(dist_dir)/kaldi/bin/%: $(KALDI_ROOT)/src/online2bin/%  | $(dist_dir)/kaldi/bin
 $(dist_dir)/kaldi/bin/%: $(KALDI_ROOT)/src/latbin/%  | $(dist_dir)/kaldi/bin
 	cp $< $@			
 $(dist_dir)/kaldi/bin/%: $(KALDI_ROOT)/src/nnet3bin/%  | $(dist_dir)/kaldi/bin
-	cp $< $@			
+	cp $< $@
+$(dist_dir)/kaldi/bin/%: $(KALDI_ROOT)/src/rnnlmbin/%  | $(dist_dir)/kaldi/bin
+	cp $< $@				
 ########### STEPS ###################################################################
 $(dist_dir)/kaldi/steps: $(dist_dir)/kaldi
 	$(RSYNC_CMD) $(KALDI_ROOT)/egs/wsj/s5/steps $(dist_dir)/kaldi/

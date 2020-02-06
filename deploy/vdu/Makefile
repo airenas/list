@@ -9,7 +9,7 @@ SSH_CMD=ssh -p $(SSH_PORT) $(USER)@$(SERVER_URL)
 RSYNC_S_CMD=rsync -r --size-only -e 'ssh -p $(SSH_PORT)' -P 
 RSYNC_CMD=rsync -r -e 'ssh -p $(SSH_PORT)' -P 
 #####################################################################################
-src_dir=../../
+src_dir=../../src
 apps_dir=../local/kaldi/apps
 #####################################################################################
 remote_service_dir=services
@@ -45,6 +45,10 @@ copy_models:
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/phones_v0 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/graph_w63g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/19_11_18-3g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
+copy_rnnlm: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/rnnlm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/rnnlm/
+copy_lm: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
 ########### END #####################################################################
 ########### APPS ####################################################################
 copy_apps: 
