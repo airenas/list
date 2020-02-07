@@ -23,13 +23,13 @@ utils:
 
 #rescore lattice
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
-	mkdir -p `dirname $@`
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode
 	## run rescore script from model dir
 	LM_DIR=$(LM_DIR) $(SCRIPTS_DIR)/rescore.sh $(MODELS_ROOT) $< $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz || exit 1
 	touch $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/done 
 
 $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/done
-	gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
+	gunzip -c $(OUTPUT_ROOT)/trans/$*/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
