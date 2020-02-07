@@ -27,19 +27,29 @@ define checkAudioLen
     }
 endef
 
+log=@echo $$(date +'%Y-%m-%d %T')
+logb=$(log): START
+loge=$(log): END
+
 $(OUTPUT_ROOT):
 	mkdir $(OUTPUT_ROOT)
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.wav $(OUTPUT_ROOT)
+	$(logb) $@
 	sox $< -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
+	$(loge) $@
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 $(OUTPUT_ROOT)
+	$(logb) $@
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
+	$(loge) $@
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 $(OUTPUT_ROOT)
+	$(logb) $@
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
+	$(loge) $@
 
 test: $(OUTPUT_ROOT)/a.wav
