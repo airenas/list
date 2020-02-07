@@ -34,6 +34,15 @@ copy:
 	$(SSH_CMD) "cp -n $(remote_acme_file).sample $(remote_acme_file)"
 	$(SSH_CMD) "chmod 600 $(remote_acme_file)"
 
+init_volumes: 
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/mongo"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/rabbitmq"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/fileStorage"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/fileStorage/decoded/audio"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/fileStorage/decoded/trans"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/fileStorage/results"
+	$(SSH_CMD) "mkdir -p $(remote_volumes_dir)/fileStorage/logs"
+
 deploy: copy
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop && docker-compose build && docker-compose pull && docker-compose up -d"
 

@@ -11,6 +11,10 @@ FINAL_PASS=2-pass
 
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
+log=@echo $$(date +'%Y-%m-%d %T')
+logb=$(log): START
+loge=$(log): END
+
 # init symbolic directories
 steps:
 	ln -s $(APPS_ROOT)/steps
@@ -23,16 +27,20 @@ utils:
 
 #rescore lattice
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
+	$(logb) $@
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode
 	## run rescore script from model dir
 	LM_DIR=$(LM_DIR) $(SCRIPTS_DIR)/rescore.sh $(MODELS_ROOT) $< $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz || exit 1
 	touch $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/done 
+	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/done
+	$(logb) $@
 	gunzip -c $(OUTPUT_ROOT)/trans/$*/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
+	$(loge) $@  
 
 %.synced.ctm: %.selected.ctm
 	cat $^ | LC_ALL=C sort -k 1,1 -k 3,3n -k 4,4n > $@
@@ -46,24 +54,32 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(RESULTS_ROOT)/%/result.txt
 ifeq ($(PUNCTUATE), true)
+	$(logb) $@
 	$(PR_EXEC) -f $^ -u $(PR_URL) -o $@
+	$(loge) $@
 else
 	cat $^ > $@	
 endif
 
 $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done
+	$(logb) $@
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz $@		
+	$(loge) $@
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz
+	$(logb) $@
 	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
+	$(loge) $@	
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
+	$(logb) $@
 	gunzip -c $^ | \
 	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
+	$(loge) $@	
 
 test: $(RESULTS_ROOT)/a/resultFinal.txt
 

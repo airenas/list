@@ -6,23 +6,6 @@ def servicesDir = projectDir.getAbsolutePath() + "/services"
 def distDir = servicesDir + "/data/"
 def configDir = projectDir.getAbsolutePath() + "/models/config"
 
-task init_volumes(group: project.name, description: "Init volumes dir on server") {
-    doLast {
-        ssh.run {
-            session(remotes.server1) {
-                execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage && mkdir -p ' + VOLUMES_DIR + 'mongo && ' + 'mkdir -p ' + VOLUMES_DIR + 'rabbitmq' 
-            }
-        }
-
-        ssh.run {
-            session(remotes.server1) {
-                execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage/decoded/audio && mkdir -p ' + VOLUMES_DIR + 'fileStorage/decoded/trans' 
-                execute 'mkdir -p ' + VOLUMES_DIR + 'fileStorage/results' 
-            }
-        }
-    }
-}
-
 task copy_models(group: project.name, description: "Copies models data") {
     dependsOn('copy_config')
     doLast {
