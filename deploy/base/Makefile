@@ -1,5 +1,5 @@
 d_make=airenas/ubuntu.make:2.0
-d_java=airenas/ubuntu.make.java8:1.0
+d_java=airenas/ubuntu.make.java8:2.0
 
 #####################################################################################
 dbuild_make: 

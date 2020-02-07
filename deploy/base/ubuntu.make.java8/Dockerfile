@@ -1,4 +1,4 @@
-FROM airenas/ubuntu.make:1.0
+FROM airenas/ubuntu.make:2.0
 LABEL Description="This image is used as base with Ubuntu, Make and Java 8 installed" \ 
       Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
 
