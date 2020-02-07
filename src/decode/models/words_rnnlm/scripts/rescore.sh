@@ -34,13 +34,15 @@ oldlm=$LM_DIR/G.fst
 special_symbol_opts=$(cat $RNNLM_DIR/special_symbol_opts.txt)
 word_embedding="rnnlm-get-word-embedding $RNNLM_DIR/word_feats.txt $RNNLM_DIR/feat_embedding.final.mat -|"
 
+outdir=$(dirname $outputfile)
+mkdir -p $outdir/log
 lattice-lmrescore-kaldi-rnnlm-pruned --lm-scale=0.45 $special_symbol_opts \
     --lattice-compose-beam=4 --acoustic-scale=0.1 --max-ngram-order=4 --normalize-probs=false \
     --use-const-arpa=false $oldlm "$word_embedding" "$RNNLM_DIR/final.raw" \
-    "ark:gunzip -c $inputfile|" "ark,t:|gzip -c>$outputfile.rnnlm_rescored" || exit 1;  
+    "ark:gunzip -c $inputfile|" "ark,t:|gzip -c>$outdir/rnnlm_rescored.gz" 2> $outdir/log/lmrescore.log || exit 1;  
 
 echo "============= scale rescore ================================="
-lattice-scale --inv-acoustic-scale=12.0 "ark:gunzip -c $outputfile.rnnlm_rescored|" ark:- | \
+lattice-scale --inv-acoustic-scale=12.0 "ark:gunzip -c $outdir/rnnlm_rescored.gz|" ark:- | \
   lattice-add-penalty --word-ins-penalty=3.0 ark:- "ark:| gzip -c > $outputfile" || exit 1
 echo "============= done ==================="
 exit 0;
