@@ -57,7 +57,9 @@ $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz
 	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
-		utils/int2sym.pl -f $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gzxt: $(RESULTS_ROOT)/%/lat.gz
+		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
+
+$(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 	gunzip -c $^ | \
 	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
