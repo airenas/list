@@ -3,6 +3,7 @@ worker:
     command: make /data/results/{ID}/resultFinal.txt /data/results/{ID}/lat.txt /data/results/{ID}/lat.nb10.txt
     workingDir: /cmd/
     resultFile: /data/results/{ID}/resultFinal.txt
+    logFile: /data/logs/{ID}.log
 
 recognizerConfig:
     path: /models/config/

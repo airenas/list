@@ -2,6 +2,7 @@ worker:
     taskName: AudioConvert
     command: make /data/audio.prepared/{ID}.wav
     workingDir: /cmd/
+    logFile: /data/logs/{ID}.log
 
 recognizerConfig:
     path: /models/config/    

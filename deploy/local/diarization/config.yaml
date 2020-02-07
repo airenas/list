@@ -2,6 +2,7 @@ worker:
     taskName: Diarization
     command: make /data/decoded/trans/{ID}/spk2utt
     workingDir: /cmd/
+    logFile: /data/logs/{ID}.log
 
 recognizerConfig:
     path: /models/config/
