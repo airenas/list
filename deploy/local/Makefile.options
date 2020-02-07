@@ -1,9 +1,10 @@
+## Local machine dirs
 GO_SRC_DIR=/home/airenas/projects/listgo
 SRC_DIR=/home/airenas/projects/list/src
 
-
-TRANSCRIPTION_SERVICE_VERSION=2.0
-TR_RESULT_SERVICE_VERSION=2.0
+## Services
+TRANSCRIPTION_SERVICE_VERSION=2.1
+TR_RESULT_SERVICE_VERSION=2.1
 
 
 ## non configurable

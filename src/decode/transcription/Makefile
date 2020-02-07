@@ -24,17 +24,18 @@ utils:
 .DELETE_ON_ERROR:	
 
 # MFCC calculation
-$(OUTPUT_ROOT)/trans/%/mfcc: $(INPUT_ROOT)/trans/%/spk2utt steps utils
-	rm -rf $@
+$(OUTPUT_ROOT)/trans/%/mfcc/done: $(INPUT_ROOT)/trans/%/spk2utt steps utils
+	rm -rf $(OUTPUT_ROOT)/trans/$*/mfcc
 	rm -f $(OUTPUT_ROOT)/trans/$*/cmvn.scp
 	steps/make_mfcc.sh --mfcc-config $(MODELS_ROOT)/conf/mfcc_hires.conf --cmd "$$train_cmd" --nj $(njobs) \
-		$(INPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
-	steps/compute_cmvn_stats.sh $(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $@ || exit 1
+		$(INPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $(OUTPUT_ROOT)/trans/$*/mfcc || exit 1
+	steps/compute_cmvn_stats.sh $(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $(OUTPUT_ROOT)/trans/$*/mfcc || exit 1
+	touch $(OUTPUT_ROOT)/trans/$*/mfcc/done	
 
 ### Do 1-pass decoding using chain online models
-$(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
+$(OUTPUT_ROOT)/trans/%/1-pass/done: $(OUTPUT_ROOT)/trans/%/mfcc/done
 	rm -rf $(OUTPUT_ROOT)/trans/$*/1-pass
-	mkdir -p $(OUTPUT_ROOT)/trans/$*/1-pass
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/1-pass/decode
 	steps/online/nnet2/extract_ivectors_online.sh --cmd "$$decode_cmd" --nj $(njobs) \
         $(OUTPUT_ROOT)/trans/$* $(MODELS_ROOT)/ivector_extractor $(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; for f in $(MODELS_ROOT)/*; do ln -s $$f; done)
@@ -42,8 +43,9 @@ $(OUTPUT_ROOT)/trans/%/1-pass/decode/log: $(OUTPUT_ROOT)/trans/%/mfcc
 	echo Scripts dir=$(SCRIPTS_DIR)
 	$(SCRIPTS_DIR)/decode.sh $(MODELS_ROOT) \
 		$(OUTPUT_ROOT)/trans/$*/nnet2_online/ivectors \
-		$(OUTPUT_ROOT)/trans/$* `dirname $@` || exit 1
+		$(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/1-pass/decode || exit 1
 
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; ln -s ../../../fst/model)
+	touch $(OUTPUT_ROOT)/trans/$*/1-pass/done	
 
-test: $(OUTPUT_ROOT)/trans/a/1-pass/decode/log
+test: $(OUTPUT_ROOT)/trans/a/1-pass/done

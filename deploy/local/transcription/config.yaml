@@ -1,6 +1,6 @@
 worker:
     taskName: Transcription
-    command: make /data/decoded/trans/{ID}/1-pass/decode/log
+    command: make /data/decoded/trans/{ID}/1-pass/done
     workingDir: /cmd/
 
 recognizerConfig:
