@@ -2,6 +2,14 @@ port: 8000
 
 fileStorage:
     path: /data
+    patterns: |
+        audio.in/{ID}.*
+        audio.prepared/{ID}.*
+        decoded/audio/segmented/{ID}
+        decoded/diarization/{ID}
+        decoded/trans/{ID}
+        results/{ID}
+        logs/{ID}.*
 
 # mongo:
 #     url: mongo 
