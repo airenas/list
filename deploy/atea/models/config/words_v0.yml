@@ -2,6 +2,7 @@ name: words_v0
 description: Initial words model for testing
 date_created: 2019-04-01
 settings:
-  models_root: /models/graph_w63g
+  models_root: /models/ac/graph_w63g/
+  scripts_dir: /models/ac/graph_w63g/scripts/
   punctuate: true
   

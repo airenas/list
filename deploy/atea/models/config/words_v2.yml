@@ -1,0 +1,10 @@
+name: AŽ v2 (RNNLM)
+description: Žodžių atpažintuvas. Gailiaus paruoštas 2019 11 18. Su RNNLM
+date_created: 2020-02-05
+settings:
+  models_root: /models/ac/19_11_18-3g/
+  scripts_dir: /models/config/words_v2/scripts/
+  lm_dir: /models/lm/v1/
+  rnnlm_dir: /models/rnnlm/v1/
+  punctuate: true
+  
