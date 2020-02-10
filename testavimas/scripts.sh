@@ -43,9 +43,9 @@ play out.wav
 play testdata/wav/t_aft_11.wav
 
 ## 4.1
-ls -1 testdata/wav/t_aft_4*.wav | xargs -n1 -P10 ./bin/send.sh > fl
-cat fl | xargs -n2 -P20 ./bin/status.sh | sort
-cat fl | xargs -n2 -P20 ./bin/result.sh
+ls -1 testdata/wav/t_aft_4*.wav | xargs -n1 -P10 ../scripts/send.sh words_v1 > fl
+cat fl | xargs -n2 -P20 ../scripts/status.sh | sort
+cat fl | xargs -n2 -P20 ../scripts/result.sh
 ./bin/test_wer.sh 
 vimdiff testdata/txt/ref.txt recognized.txt 
 

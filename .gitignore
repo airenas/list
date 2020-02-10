@@ -62,3 +62,5 @@ deploy/vdu/Makefile.options
 deploy/local/kaldi/apps/**
 testavimas/20200206/**
 deploy/atea/Makefile.options
+testavimas/2020**/**
+testavimas/scripts/compute-wer
