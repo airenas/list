@@ -1,4 +1,4 @@
-default: words_v1
+default: words_v2
 words_v0: words_v0
 words_v1: words_v1
 words_v2: words_v2
