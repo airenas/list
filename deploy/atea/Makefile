@@ -65,6 +65,8 @@ copy_lm:
 copy_apps: 
 	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
 #####################################################################################
+redeploy:
+	kubectl apply -f deployments/
 
 clean:
 
