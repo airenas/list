@@ -8,7 +8,7 @@
 # : kubectl delete deployment vh
 ###########################################################################################
 localDir=$1
-remoteDir="/models/$2"
+remoteDir=$2
 ###########################################################################################
 podName=$(kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $1}')
 echo "Pod name = $podName"
