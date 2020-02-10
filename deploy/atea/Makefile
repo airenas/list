@@ -63,7 +63,7 @@ copy_lm:
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v1 /models/lm/
 ########### APPS ####################################################################
 copy_apps: 
-	$(RSYNC_S_CMD) $(apps_dir) $(USER)@$(SERVER_URL):$(remote_volumes_dir)/
+	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
 #####################################################################################
 
 clean:
