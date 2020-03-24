@@ -1,7 +1,7 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
 LABEL Description="This image is used to start the LiST kafka integration service" \ 
-      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
+      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" 
 
 WORKDIR /app
 

@@ -14,11 +14,15 @@ INFORM_SERVICE_VERSION=v0.3beta
 RESULT_SERVICE_VERSION=v0.6beta
 STATUS_SERVICE_VERSION=v0.6beta
 MANAGER_SERVICE_VERSION=1.0
-KAFKA_INTEGRATION_SERVICE_VERSION=v0.10
+KAFKA_INTEGRATION_SERVICE_VERSION=0.11
 PUNCTUATION_SERVICE_VERSION=v0.1beta
 
 
 ## non configurable
 docker_container_prefix=list-
-commit_count=$(shell git rev-list --count HEAD)
 go_build_cmd=CGO_ENABLED=0 go build -installsuffix -cgo
+
+## select git commits from go src dir and current dir
+_current_commit_count=$(shell git rev-list --count HEAD)
+_go_commit_count=$(shell cd $(GO_SRC_DIR) && git rev-list --count HEAD)
+commit_count=$(shell echo $$(($(_current_commit_count) + $(_go_commit_count))))
