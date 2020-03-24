@@ -21,6 +21,7 @@ loge=$(log): END
 # Speaker diarization
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 	$(logb) $@
+	@echo "Number of speakers = $(NUMBER_OF_SPEAKERS)"
 	rm -rf `dirname $@`
 	mkdir -p `dirname $@`
 	echo "$* 1 0 1000000000 U U U 1" >  `dirname $@`/show.uem.seg;
