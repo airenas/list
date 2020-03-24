@@ -4,7 +4,7 @@ metadata:
   name: kafka-integration
   namespace: aft  
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: kafka-integration
@@ -21,7 +21,7 @@ spec:
           claimName: kafkaintegrationstorage
       containers:
       - name: kafka-integration
-        image: airenas/list-kafka-integration-service:v0.10
+        image: airenas/list-kafka-integration-service:0.11.448
         env:
         - name: KAFKA_BROKERS
           value: kafka-svc.atea.svc.cluster.local:9092

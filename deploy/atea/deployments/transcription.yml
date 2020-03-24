@@ -41,7 +41,7 @@ spec:
           claimName: modelstorage-2    
       containers:
       - name: upoad
-        image: airenas/list-upload-service:1.1.223
+        image: airenas/list-upload-service:1.2.443
         ports:
         - containerPort: 8000
           name: client
