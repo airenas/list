@@ -35,6 +35,7 @@ dbuild: copy
 
 dpush: dbuild
 	docker push $(tag)
+	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
 ########### END #####################################################################
 clean:
 	rm -rf $(dist_dir)

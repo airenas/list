@@ -24,7 +24,12 @@ dbuild: $(dist_dir)/$(executable_name)
 
 dpush: dbuild
 	docker push $(tag)
+	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
 ########### END #####################################################################
+#####################################################################################
+redeploy: build copy
+	$(call dc-deploy,..,$(service))	
+#####################################################################################
 clean:
 	rm -rf $(dist_dir)
 	rm -f $(main_dir)/$(executable_name)
