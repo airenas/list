@@ -34,7 +34,7 @@ services:
      - "traefik.http.port=80"
 
   web:
-    image: airenas/ear-app:${EAR_APP_VERSION}
+    image: airenas/list-ear-app:${EAR_APP_VERSION}
     restart: unless-stopped
     environment:
       BASE_HREF: /${URL}/

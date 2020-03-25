@@ -58,6 +58,10 @@ copy_rnnlm:
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/rnnlm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/rnnlm/
 copy_lm: 
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
+copy_diarization: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/diarization/v1/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/diarization/	
+copy_punctuation: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/punctuation/h256_w200k/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/h256_w200k/		
 ########### END #####################################################################
 ########### APPS ####################################################################
 copy_apps: 
