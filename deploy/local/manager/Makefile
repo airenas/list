@@ -1,10 +1,10 @@
 -include ../Makefile.options
 #####################################################################################
 dist_dir=deploy
-executable_name=informService
+executable_name=managerService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
-service=inform-service
-version=$(INFORM_SERVICE_VERSION)
+service=manager-service
+version=$(MANAGER_SERVICE_VERSION)
 #####################################################################################
 $(main_dir)/$(executable_name): $(GO_SRC_DIR)
 	(cd $(main_dir) && $(go_build_cmd))
@@ -36,4 +36,3 @@ clean:
 
 .PHONY:
 	clean copy build dbuild dpush redeploy
-

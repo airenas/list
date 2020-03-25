@@ -27,7 +27,7 @@ PUNCTUATION_SERVICE_VERSION=v0.1beta
 ## non configurable
 docker_container_prefix=list-
 go_build_cmd=CGO_ENABLED=0 go build -installsuffix -cgo
-dc-deploy=cd $(1) && docker-compose stop $(2) \
+dc-deploy=@cd $(1) && docker-compose stop $(2) \
 		&& docker-compose rm -f $(2) \
 		&& docker-compose build $(2) \
 		&& docker-compose up -d $(2); echo "$(GREEN)REDEPLOYED$(C_NC) $(2)"
