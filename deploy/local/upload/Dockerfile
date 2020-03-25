@@ -1,7 +1,7 @@
 FROM iron/base
 
 LABEL Description="This image is used to start the LiST upload service" \ 
-      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="1.0" 
+      Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas"
 
 VOLUME ["/data"]
 VOLUME ["/models"]

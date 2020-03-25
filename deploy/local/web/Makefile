@@ -1,25 +1,27 @@
 -include ../Makefile.options
 #####################################################################################
-dist_dir=deploy
-executable_name=statusProviderService
-main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
-service=status-service
-version=$(STATUS_SERVICE_VERSION)
+dist_dir=$(CURDIR)/deploy
+main_dir=../../../src/web/ear-app
+service=ear-app
+version=$(EAR_APP_VERSION)
 #####################################################################################
-$(main_dir)/$(executable_name): $(GO_SRC_DIR)
-	(cd $(main_dir) && $(go_build_cmd))
+$(dist_dir):
+	mkdir -p $(dist_dir)
 
-build: $(main_dir)/$(executable_name)
-#####################################################################################
-$(dist_dir)/$(executable_name): $(main_dir)/$(executable_name)
-	mkdir -p $(@D)
-	cp $< $@
+updateVersion: | $(dist_dir)
+	cat $(main_dir)/src/environments/environment.prod.sample \
+		| sed 's/BUILD_VERSION/$(version).$(commit_count)/g' > $(dist_dir)/environment.prod.ts
+	rsync --checksum $(dist_dir)/environment.prod.ts $(main_dir)/src/environments/environment.prod.ts	
 
-copy: $(dist_dir)/$(executable_name)
+$(dist_dir)/.build: $(main_dir) $(main_dir)/src $(main_dir)/src/environments/environment.prod.ts
+	cd $(main_dir) && ng build --prod --output-path=$(dist_dir)/html
+	touch $(dist_dir)/.build
+
+build: updateVersion $(dist_dir)/.build
 ########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
 
-dbuild: $(dist_dir)/$(executable_name)
+dbuild: build
 	docker build -t $(tag) ./
 
 dpush: dbuild
@@ -27,12 +29,11 @@ dpush: dbuild
 	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
 ########### END #####################################################################
 #####################################################################################
-redeploy: build copy
-	$(call dc-deploy,..,$(service))
+redeploy: build
+	$(call dc-deploy,..,web)
 #####################################################################################
 clean:
 	rm -rf $(dist_dir)
-	rm -f $(main_dir)/$(executable_name)
 
 .PHONY:
-	clean copy build dbuild dpush redeploy
+	clean dbuild dpush build redeploy updateVersion
