@@ -1,3 +1,9 @@
+## Colors
+C_NC=\033[0m
+RED=\033[0;31m
+GREEN=\033[0;32m
+YELLOW=\033[0;33m
+
 ## Local machine dirs
 GO_SRC_DIR=/home/airenas/projects/listgo
 SRC_DIR=/home/airenas/projects/list/src
@@ -21,8 +27,14 @@ PUNCTUATION_SERVICE_VERSION=v0.1beta
 ## non configurable
 docker_container_prefix=list-
 go_build_cmd=CGO_ENABLED=0 go build -installsuffix -cgo
+dc-deploy=cd $(1) && docker-compose stop $(2) \
+		&& docker-compose rm -f $(2) \
+		&& docker-compose build $(2) \
+		&& docker-compose up -d $(2); echo "$(GREEN)REDEPLOYED$(C_NC) $(2)"
 
 ## select git commits from go src dir and current dir
 _current_commit_count=$(shell git rev-list --count HEAD)
 _go_commit_count=$(shell cd $(GO_SRC_DIR) && git rev-list --count HEAD)
 commit_count=$(shell echo $$(($(_current_commit_count) + $(_go_commit_count))))
+
+
