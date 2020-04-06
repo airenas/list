@@ -48,6 +48,8 @@ deploy: copy
 
 status:
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose ps"
+ssh:
+	$(SSH_CMD)
 ########### END SERVICES ############################################################
 ########### MODELS ##################################################################
 copy_models: 
