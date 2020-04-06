@@ -27,7 +27,7 @@ copy: $(dist_dir)/cmd/Makefile
 ########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(TRANSCRIPTION_SERVICE_VERSION).$(commit_count)
 
-dbuild: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name)
+dbuild: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name) $(dist_dir)/$(pipe_runner_name)
 	docker build -t $(tag) ./
 
 dpush: dbuild
