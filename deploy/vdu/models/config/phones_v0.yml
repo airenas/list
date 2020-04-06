@@ -5,4 +5,6 @@ settings:
   models_root: /models/ac/phones_v0
   scripts_dir: /models/ac/phones_v0/scripts/
   punctuate: false
+  transcription-preload_key: 
+  transcription-preload_cmd: 
   

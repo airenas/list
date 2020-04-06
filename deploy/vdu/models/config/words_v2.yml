@@ -7,4 +7,7 @@ settings:
   lm_dir: /models/lm/v1/
   rnnlm_dir: /models/rnnlm/v1/
   punctuate: true
+  transcription-preload_key: words_v1
+  transcription-preload_cmd: /models/config/words_v2/scripts/decode.preload.sh
+
   

@@ -5,4 +5,7 @@ settings:
   models_root: /models/ac/graph_w63g/
   scripts_dir: /models/ac/graph_w63g/scripts/
   punctuate: true
+  transcription-preload_key: 
+  transcription-preload_cmd: 
+
   
