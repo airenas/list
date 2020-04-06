@@ -27,9 +27,17 @@ log=@echo $$(date +'%Y-%m-%d %T')
 logb=$(log): START
 loge=$(log): END
 
+info:
+	@echo "=====================INFO=========================="
+	@echo "OUTPUT_ROOT=$(OUTPUT_ROOT)"
+	@echo "INPUT_ROOT= $(INPUT_ROOT)"
+	@echo "SCRIPTS_DIR=$(SCRIPTS_DIR)"
+	@echo "MODELS_ROOT=$(MODELS_ROOT)"
+	@echo "APPS_ROOT=  $(APPS_ROOT)"
+	@echo "==================================================="
 
 # MFCC calculation
-$(OUTPUT_ROOT)/trans/%/mfcc/done: $(INPUT_ROOT)/trans/%/spk2utt steps utils
+$(OUTPUT_ROOT)/trans/%/mfcc/done: info $(INPUT_ROOT)/trans/%/spk2utt steps utils
 	$(logb) $@
 	rm -rf $(OUTPUT_ROOT)/trans/$*/mfcc
 	rm -f $(OUTPUT_ROOT)/trans/$*/cmvn.scp
@@ -40,7 +48,7 @@ $(OUTPUT_ROOT)/trans/%/mfcc/done: $(INPUT_ROOT)/trans/%/spk2utt steps utils
 	$(loge) $@
 
 ### Do 1-pass decoding using chain online models
-$(OUTPUT_ROOT)/trans/%/1-pass/done: $(OUTPUT_ROOT)/trans/%/mfcc/done
+$(OUTPUT_ROOT)/trans/%/1-pass/done: info $(OUTPUT_ROOT)/trans/%/mfcc/done
 	$(logb) $@
 	rm -rf $(OUTPUT_ROOT)/trans/$*/1-pass
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/1-pass/decode
@@ -58,4 +66,5 @@ $(OUTPUT_ROOT)/trans/%/1-pass/done: $(OUTPUT_ROOT)/trans/%/mfcc/done
 	touch $(OUTPUT_ROOT)/trans/$*/1-pass/done	
 	$(loge) $@
 
-test: $(OUTPUT_ROOT)/trans/a/1-pass/done
+.PHONY:
+	info
