@@ -32,7 +32,7 @@ lat_wspecifier="'ark:|lattice-scale --acoustic-scale=10.0 ark:- ark:- | gzip -c 
 
 ## execute decoding
 echo "============= execute real decoding script ==================="
-./pipe.runner -i pipe_input -o pipe_output -t 3m $online_ivectors $feats $lat_wspecifier || exit 1;
+/app/pipe.runner -i pipe_input -o pipe_output -t 5m $online_ivectors $feats $lat_wspecifier || exit 1;
   # nnet3-latgen-faster-parallel \
   #    --num-threads=$num_threads \
   #    --online-ivectors=scp:"$ivectorsdir"/ivector_online.scp \

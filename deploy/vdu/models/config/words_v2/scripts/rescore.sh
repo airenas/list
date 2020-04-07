@@ -19,27 +19,14 @@ model_dir=$1
 inputfile=$2
 outputfile=$3
 
-if [ -z "${LM_DIR}" ]; then
-  echo "NO LM_DIR env variable!"
-  exit 1
-fi
-if [ -z "${RNNLM_DIR}" ]; then
-  echo "NO RNNLM_DIR env variable!"
-  exit 1
-fi
 ## execute
 echo "============= execute real rescore script ==================="
 echo "============= rnnlm rescore ================================="
-oldlm=$LM_DIR/G.fst
-special_symbol_opts=$(cat $RNNLM_DIR/special_symbol_opts.txt)
-word_embedding="rnnlm-get-word-embedding $RNNLM_DIR/word_feats.txt $RNNLM_DIR/feat_embedding.final.mat -|"
-
 outdir=$(dirname $outputfile)
 mkdir -p $outdir/log
-lattice-lmrescore-kaldi-rnnlm-pruned --lm-scale=0.45 $special_symbol_opts \
-    --lattice-compose-beam=4 --acoustic-scale=0.1 --max-ngram-order=4 --normalize-probs=false \
-    --use-const-arpa=false $oldlm "$word_embedding" "$RNNLM_DIR/final.raw" \
-    "ark:gunzip -c $inputfile|" "ark,t:|gzip -c>$outdir/rnnlm_rescored.gz" 2> $outdir/log/lmrescore.log || exit 1;  
+lat_rspecifier="'ark:gunzip -c $inputfile|'"
+lat_wspecifier="'ark,t:|gzip -c>$outdir/rnnlm_rescored.gz'"
+/app/pipe.runner -i pipe_input -o pipe_output -t 10m $lat_rspecifier $lat_wspecifier || exit 1;
 
 echo "============= scale rescore ================================="
 lattice-scale --inv-acoustic-scale=12.0 "ark:gunzip -c $outdir/rnnlm_rescored.gz|" ark:- | \

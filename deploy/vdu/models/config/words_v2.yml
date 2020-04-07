@@ -9,5 +9,8 @@ settings:
   punctuate: true
   transcription-preload_key: words_v1
   transcription-preload_cmd: /models/config/words_v2/scripts/decode.preload.sh
+  rescore-preload_key: words_v1
+  rescore-preload_cmd: /models/config/words_v2/scripts/rescore.preload.sh
+  
 
   

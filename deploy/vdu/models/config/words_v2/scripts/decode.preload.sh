@@ -15,6 +15,11 @@ if [ ! -p pipe_output ]; then
     mkfifo pipe_output
 fi
 
+if [ -z "${MODELS_ROOT}" ]; then
+  echo "NO MODELS_ROOT env variable!"
+  exit 1
+fi
+
 # Run preload cmd
 nnet3-latgen-faster-parallel-pipe \
      --num-threads=4 \

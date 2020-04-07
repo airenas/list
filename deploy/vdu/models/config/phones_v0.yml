@@ -7,4 +7,5 @@ settings:
   punctuate: false
   transcription-preload_key: 
   transcription-preload_cmd: 
+  rescore-preload_key: 
   
