@@ -4,6 +4,7 @@ worker:
     workingDir: /cmd/
     resultFile: /data/results/{ID}/resultFinal.txt
     logFile: /data/logs/{ID}.log
+    preloadKeyPrefix: rescore-preload
 
 recognizerConfig:
     path: /models/config/

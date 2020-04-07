@@ -40,7 +40,6 @@ redeploy: build copy
 #####################################################################################
 clean:
 	rm -rf $(dist_dir)
-	rm -f $(main_dir)/$(executable_name)
 
 .PHONY:
 	clean copy build dbuild dpush

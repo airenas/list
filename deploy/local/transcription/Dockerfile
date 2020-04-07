@@ -9,8 +9,8 @@ WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
 COPY config.yaml /app/
+COPY deploy/pipe.runner /app/
 
-COPY deploy/pipe.runner /cmd/
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/
 

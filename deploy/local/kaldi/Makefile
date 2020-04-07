@@ -12,7 +12,8 @@ bin_files=apply-cmvn arpa-to-const-arpa compute-cmvn-stats compute-mfcc-feats co
 	lattice-best-path lattice-copy lattice-lmrescore lattice-lmrescore-const-arpa lattice-minimize \
 	lattice-prune lattice-scale lattice-to-nbest nbest-to-ctm nnet3-latgen-faster nnet3-latgen-faster-parallel \
 	nnet3-latgen-faster-parallel-pipe \
-	lattice-lmrescore-kaldi-rnnlm-pruned rnnlm-get-word-embedding
+	lattice-lmrescore-kaldi-rnnlm-pruned rnnlm-get-word-embedding \
+	lattice-lmrescore-kaldi-rnnlm-pruned-pipe
 #####################################################################################
 d_bin_files=$(patsubst %, $(dist_dir)/kaldi/bin/%, $(bin_files))
 #####################################################################################

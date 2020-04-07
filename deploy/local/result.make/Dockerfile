@@ -9,6 +9,7 @@ WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
 COPY deploy/punct.file /app/
+COPY deploy/pipe.runner /app/
 COPY config.yaml /app/
 
 COPY deploy/cmd/Makefile /cmd/
