@@ -32,5 +32,4 @@ nnet3-latgen-faster-parallel-pipe \
      --extra-right-context-final=0 \
      --minimize=false --max-active=7000 --min-active=200 --beam=15 \
      --lattice-beam=8 --acoustic-scale=1.0 --allow-partial=true \
-     --word-symbol-table=$MODELS_ROOT/words.txt $MODELS_ROOT/final.mdl \
-     $MODELS_ROOT/HCLG.fst pipe_input
+     $MODELS_ROOT/final.mdl $MODELS_ROOT/HCLG.fst pipe_input
