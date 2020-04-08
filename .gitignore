@@ -57,10 +57,9 @@ src/tools/go.sum
 src/tools/punct.file/**
 deploy/local/clean/deploy/**
 deploy/atea/ki/**
-testavimas/20191125/**
 deploy/vdu/Makefile.options
 deploy/local/kaldi/apps/**
-testavimas/20200206/**
 deploy/atea/Makefile.options
-testavimas/2020**/**
-testavimas/scripts/compute-wer
+testing/2020**/**
+testing/scripts/compute-wer
+testing/2019**/**
