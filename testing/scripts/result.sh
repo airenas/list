@@ -8,8 +8,10 @@
 ### change the url to the correct one
 url=$RESULT_SERVICE
 ###############################################################
-id=$1
-file=$2
+result_dir=$1
+id=$2
+file=${3##*/}
+file=${file%.*}.txt
 ###############################################################
 resultURL="$url/result"
 ###############################################################
@@ -20,12 +22,12 @@ NC='\033[0m' # No Color
 ###############################################################
 echo "File: $file"
 echo "Getting result..."
-code=$(curl -X GET -k $resultURL/$id/result.txt -o "$file.txt" 2>/dev/null -w '%{http_code}')
+code=$(curl -X GET -k $resultURL/$id/result.txt -o "$result_dir/$file" 2>/dev/null -w '%{http_code}')
 res=$?
 echo $code
 if [ "$code" == "404" ] || [ "$code" == "000" ] || [ $res -gt "0" ]; then
    echo -e "${RED}FAILED $file\t\tCan't get file.${NC}"
-   rm -f $file.txt
+   rm -f "$result_dir/$file"
    exit 1
 fi
 echo -e "${GREEN}DONE $file${NC}"
