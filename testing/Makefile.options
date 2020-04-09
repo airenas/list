@@ -1,6 +1,3 @@
-test_dir=20200408
-UPLOAD_SERVICE?=http://localhost:8001
-STATUS_SERVICE?=http://localhost:8002
-RESULT_SERVICE?=http://localhost:8003
-
-model?=words_v2
+test_dir=20200409_vdu
+config=vdu.config
+model=words_v2

@@ -1,4 +1,5 @@
 -include Makefile.options
+-include $(config)
 #####################################################################################
 file?=1.wav
 upload: 
@@ -52,6 +53,7 @@ info:
 	@echo "UPLOAD: $(UPLOAD_SERVICE)"
 	@echo "STATUS: $(STATUS_SERVICE)"
 	@echo "RESULT: $(RESULT_SERVICE)"
+	@echo "Dir:    $(test_dir)"
 	
 #####################################################################################
 clean: clean_send
