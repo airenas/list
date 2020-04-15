@@ -19,6 +19,57 @@ $(test_dir)/.data.done: | $(test_dir)
 	touch $(test_dir)/.data.done
 prepare: $(test_dir)/.data.done
 #####################################################################################
+t1.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F file=@$(test_dir)/testdata/wav/t_aft_11.wav
+t1.2.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data'
+t1.2.2: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F recognizer=fake-model-for-tc-1.1.2 \
+		-F file=@$(test_dir)/testdata/wav/t_aft_11.wav
+t2.1.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F file=@$(test_dir)/testdata/wav/t_aft_11.wav
+_tr_status: $(test_dir)/.data.done
+	echo "tr id = $(tr_id)"
+	curl -X GET -i -k $(STATUS_SERVICE)/status/$(tr_id) -H "accept: application/json"
+t2.1.2: _tr_status
+t2.2.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F file=@$(test_dir)/testdata/wav/t_aft_22.wav	
+t2.2.2: _tr_status	
+t3.1: $(test_dir)/.data.done | $(test_dir)/result
+	echo "tr id = $(tr_id)"
+	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/resultFinal.txt -o $(test_dir)/result/t_aft_11.txt
+	cat $(test_dir)/result/t_aft_11.txt
+	diff $(test_dir)/testdata/txt/t_aft_11.txt $(test_dir)/result/t_aft_11.txt
+t3.2: $(test_dir)/.data.done | $(test_dir)/result
+	echo "tr id = $(tr_id)"
+	curl -X GET -k $(RESULT_SERVICE)/audio/$(tr_id) -o $(test_dir)/result/t_aft_11.wav
+	play $(test_dir)/result/t_aft_11.wav
+	diff $(test_dir)/testdata/wav/t_aft_11.wav $(test_dir)/result/t_aft_11.wav
+
+t4.1.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F file=@$(test_dir)/testdata/wav/t_aft_12.wav
+t4.1.2: _tr_status	
+t4.1.3: $(test_dir)/.data.done | $(test_dir)/result
+	echo "tr id = $(tr_id)"
+	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/resultFinal.txt -o $(test_dir)/result/t_aft_12.txt
+	cat $(test_dir)/result/t_aft_12.txt
+	diff $(test_dir)/testdata/txt/t_aft_12.txt $(test_dir)/result/t_aft_12.txt
+t4.2.1: $(test_dir)/.data.done
+	curl -X POST -i -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' \
+		-H 'content-type: multipart/form-data' -F file=@$(test_dir)/testdata/wav/t_aft_13.wav
+t4.2.2: _tr_status	
+t4.2.3: $(test_dir)/.data.done | $(test_dir)/result
+	echo "tr id = $(tr_id)"
+	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/resultFinal.txt -o $(test_dir)/result/t_aft_13.txt
+	cat $(test_dir)/result/t_aft_13.txt
+	diff $(test_dir)/testdata/txt/t_aft_13.txt $(test_dir)/result/t_aft_13.txt
+#####################################################################################
 $(test_dir)/.upload.done: $(test_dir)/.data.done
 	@echo "Sending data to server $(UPLOAD_SERVICE)"
 	ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list
@@ -56,7 +107,7 @@ info:
 	@echo "Dir:    $(test_dir)"
 	
 #####################################################################################
-clean: clean_send
+clean: clean_upload
 	rm -rf $(test_dir)
 
 clean_upload:
