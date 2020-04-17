@@ -63,3 +63,4 @@ deploy/atea/Makefile.options
 testing/2020**/**
 testing/scripts/compute-wer
 testing/2019**/**
+deploy/local/dispatcher/deploy/**

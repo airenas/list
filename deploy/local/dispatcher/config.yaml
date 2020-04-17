@@ -1,0 +1,16 @@
+dispatcher:
+    # registrationQueue: "TranscriptionWorkerRegistry"
+    # workQueue: "Transcription"
+    preload: 50
+
+duration:
+    pathPattern: /data/decoded/diarization/{ID}/show.seg 
+
+recognizerConfig:
+    path: /models/config/
+    # key: transcription-preload_key
+
+strategy:
+    modelLoadDuration: 2m
+    realTimeFactor: 1
+    delayCostPerSecond: 0.01    

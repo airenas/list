@@ -123,6 +123,24 @@ services:
       - appsStorage:/apps
       - modelsStorage:/models
   
+  transcription-dispatcher-service:
+    build: dispatcher
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorkerRegistry
+      DISPATCHER_WORKQUEUE: Transcription
+      RECOGNIZERCONFIG_KEY: transcription-preload_key
+
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models 
+      - modelsStorage2:/models2
+
   transcription-service:
     build: transcription
     restart: unless-stopped

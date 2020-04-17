@@ -1,5 +1,5 @@
 worker:
-    taskName: Transcription
+    name: TranscriptionService
     command: make /data/decoded/trans/{ID}/1-pass/done
     logFile: /data/logs/{ID}.log
     workingDir: /cmd/
@@ -7,7 +7,11 @@ worker:
 
 recognizerConfig:
     path: /models/config/
-    
+
+registry:
+    queue: TranscriptionWorkerRegistry
+    heartbeat: 30s  
+
 # messageServer: 
 #     broker: amqp://list:list@rabbitmq:5672/
 
