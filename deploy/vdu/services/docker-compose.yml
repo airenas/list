@@ -127,7 +127,23 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models    
+      - modelsStorage:/models 
+
+  transcription-dispatcher-service:
+    image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorkerRegistry
+      DISPATCHER_WORKQUEUE: Transcription
+      RECOGNIZERCONFIG_KEY: transcription-preload_key
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models      
   
   transcription-service:
     image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
@@ -229,7 +245,7 @@ services:
       NAME: "rabbitmq"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
-    restart: unless-stopped  
+    restart: unless-stopped
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
      - "traefik.port=15672"  

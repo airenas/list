@@ -135,7 +135,6 @@ services:
       DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorkerRegistry
       DISPATCHER_WORKQUEUE: Transcription
       RECOGNIZERCONFIG_KEY: transcription-preload_key
-
     volumes:
       - fileStorage:/data    
       - modelsStorage:/models 
