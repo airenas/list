@@ -9,7 +9,7 @@ recognizerConfig:
     path: /models/config/
 
 registry:
-    queue: TranscriptionWorkerRegistry
+    queue: TranscriptionWorker_Registry
     heartbeat: 30s  
 
 # messageServer: 
