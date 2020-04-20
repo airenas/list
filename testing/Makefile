@@ -72,19 +72,19 @@ t4.2.3: $(test_dir)/.data.done | $(test_dir)/result
 #####################################################################################
 $(test_dir)/.upload.done: $(test_dir)/.data.done
 	@echo "Sending data to server $(UPLOAD_SERVICE)"
-	ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list
+	export UPLOAD_SERVICE=$(UPLOAD_SERVICE); ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list
 	touch $(test_dir)/.upload.done
 	
 upload_to_server: $(test_dir)/.upload.done
 #####################################################################################
 transcription_status: $(test_dir)/file.list
-	cat $(test_dir)/file.list | xargs -n2 -P20 scripts/status.sh | sort	
+	export STATUS_SERVICE=$(STATUS_SERVICE); cat $(test_dir)/file.list | xargs -n2 -P20 scripts/status.sh | sort	
 #####################################################################################
 $(test_dir)/result:
 	mkdir -p $@
 
 $(test_dir)/result/.done: $(test_dir)/file.list | $(test_dir)/result
-	cat $(test_dir)/file.list | xargs -n2 -P20 scripts/result.sh $(test_dir)/result
+	export RESULT_SERVICE=$(RESULT_SERVICE); cat $(test_dir)/file.list | xargs -n2 -P20 scripts/result.sh $(test_dir)/result
 	touch $(test_dir)/result/.done
 get_result: $(test_dir)/result/.done	
 #####################################################################################

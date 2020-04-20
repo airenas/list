@@ -1,3 +1,3 @@
-test_dir=20200409_vdu
+test_dir=20200420
 config=vdu.config
 model=words_v2
