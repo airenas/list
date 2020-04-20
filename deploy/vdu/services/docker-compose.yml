@@ -138,7 +138,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorkerRegistry
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorker_Registry
       DISPATCHER_WORKQUEUE: Transcription
       RECOGNIZERCONFIG_KEY: transcription-preload_key
     volumes:
@@ -157,7 +157,26 @@ services:
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models      
+      - modelsStorage:/models
+  
+  result-make-dispatcher-service:
+    image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: ResultMakeWorker_Registry
+      DISPATCHER_WORKQUEUE: ResultMake
+      RECOGNIZERCONFIG_KEY: rescore-preload_key
+      STRATEGY_MODELLOADDURATION: 3m
+      STRATEGY_REALTIMEFACTOR: 3
+
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models    
   
   result-make-service:
     image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
