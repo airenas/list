@@ -46,6 +46,15 @@ init_volumes:
 deploy: copy
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop && docker-compose build && docker-compose pull && docker-compose up -d"
 
+deploy-one: copy
+	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop $(service) && docker-compose pull $(service) && docker-compose up -d $(service)"
+
+log-one:
+	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose logs $(service)"
+
+
 status:
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose ps"
 ssh:
