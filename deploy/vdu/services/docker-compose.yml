@@ -141,6 +141,7 @@ services:
       DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorker_Registry
       DISPATCHER_WORKQUEUE: Transcription
       RECOGNIZERCONFIG_KEY: transcription-preload_key
+      LOGGER_LEVEL: debug 
     volumes:
       - fileStorage:/data    
       - modelsStorage:/models      
@@ -153,7 +154,7 @@ services:
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS} 
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
