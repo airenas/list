@@ -5,7 +5,7 @@ SERVER_URL?=list.airenas.eu
 SSH_PORT?=7022
 HOME_DIR?=/home/airenas
 
-SSH_CMD=ssh -p $(SSH_PORT) $(USER)@$(SERVER_URL)
+SSH_CMD=ssh -t -p $(SSH_PORT) $(USER)@$(SERVER_URL)
 RSYNC_S_CMD=rsync -r --size-only -e 'ssh -p $(SSH_PORT)' -P 
 RSYNC_CMD=rsync -r -e 'ssh -p $(SSH_PORT)' -P 
 #####################################################################################
@@ -54,6 +54,10 @@ log-one:
 	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose logs $(service)"
 
+exec-into:
+	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose exec $(service) /bin/bash"
+
 
 status:
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose ps"
@@ -78,6 +82,8 @@ copy_punctuation:
 copy_apps: 
 	$(RSYNC_S_CMD) $(apps_dir) $(USER)@$(SERVER_URL):$(remote_volumes_dir)/
 ########### END #####################################################################
+copy_tmp: 
+	$(RSYNC_S_CMD) ../../../listgo/example/cmd.run/cmd.run $(USER)@$(SERVER_URL):$(remote_volumes_dir)/apps/kaldi/bin
 
 clean:
 	rm -rf $(dist_dir)
