@@ -374,7 +374,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: transcription-dispatcher
-        image: airenas/list-dispatcher-service:0.1.563
+        image: airenas/list-dispatcher-service:0.1.565
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -485,7 +485,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make-dispatcher
-        image: airenas/list-dispatcher-service:0.1.563
+        image: airenas/list-dispatcher-service:0.1.565
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
