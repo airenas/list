@@ -302,7 +302,7 @@ metadata:
   name: diarization
   namespace: aft  
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: diarization
@@ -374,7 +374,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: transcription-dispatcher
-        image: airenas/list-dispatcher-service:0.1.557
+        image: airenas/list-dispatcher-service:0.1.563
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -394,6 +394,10 @@ spec:
           value: Transcription
         - name: RECOGNIZERCONFIG_KEY
           value: transcription-preload_key
+        - name: STRATEGY_MODELLOADDURATION
+          value: 30s
+        - name: STRATEGY_REALTIMEFACTOR
+          value: "2"  
         - name: LOGGER_LEVEL
           value: debug
         volumeMounts:
@@ -481,7 +485,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make-dispatcher
-        image: airenas/list-dispatcher-service:0.1.557
+        image: airenas/list-dispatcher-service:0.1.563
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -502,7 +506,7 @@ spec:
         - name: RECOGNIZERCONFIG_KEY
           value: rescore-preload_key
         - name: STRATEGY_MODELLOADDURATION
-          value: 3m
+          value: 1m
         - name: STRATEGY_REALTIMEFACTOR
           value: "5"  
         - name: LOGGER_LEVEL
@@ -520,7 +524,7 @@ metadata:
   name: result-make
   namespace: aft  
 spec:
-  replicas: 3
+  replicas: 4
   selector:
     matchLabels:
       app: result-make
