@@ -66,12 +66,14 @@ ssh:
 ########### END SERVICES ############################################################
 ########### MODELS ##################################################################
 copy_models: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/20_04_17-2g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/phones_v0 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/graph_w63g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/19_11_18-3g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
 copy_rnnlm: 
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/rnnlm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/rnnlm/
 copy_lm: 
+	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v3 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
 copy_diarization: 
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/diarization/v1/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/diarization/	
