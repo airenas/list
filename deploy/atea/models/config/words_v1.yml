@@ -5,4 +5,5 @@ settings:
   models_root: /models/ac/19_11_18-3g/
   scripts_dir: /models/ac/19_11_18-3g/scripts/
   punctuate: true
-  
+  transcription-preload_key: 
+  rescore-preload_key: 

@@ -2,5 +2,6 @@ default: words_v2
 words_v0: words_v0
 words_v1: words_v1
 words_v2: words_v2
+words_v3: words_v3
 general: words_v2
 medicine: words_v2

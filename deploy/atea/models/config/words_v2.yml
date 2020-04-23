@@ -7,4 +7,6 @@ settings:
   lm_dir: /models/lm/v1/
   rnnlm_dir: /models/rnnlm/v1/
   punctuate: true
+  transcription-preload_key: 
+  rescore-preload_key: 
   

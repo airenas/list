@@ -41,7 +41,7 @@ spec:
           claimName: modelstorage-2    
       containers:
       - name: upoad
-        image: airenas/list-upload-service:1.2.449
+        image: airenas/list-upload-service:1.2.463
         ports:
         - containerPort: 8000
           name: client
@@ -111,7 +111,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: status
-        image: airenas/list-status-service:v0.6beta
+        image: airenas/list-status-service:1.0.463
         ports:
         - containerPort: 8000
           name: client
@@ -221,7 +221,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: manager
-        image: airenas/list-manager-service:1.0.203
+        image: airenas/list-manager-service:1.0.463
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -275,7 +275,7 @@ spec:
           claimName: modelstorage-2    
       containers:
       - name: audio-prepare
-        image: airenas/list-audio-prepare-service:2.0.243
+        image: airenas/list-audio-prepare-service:2.0.463
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -325,7 +325,7 @@ spec:
           claimName: modelstorage-2       
       containers:
       - name: diarization
-        image: airenas/list-diarization-service:2.0.449
+        image: airenas/list-diarization-service:2.0.463
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -346,7 +346,62 @@ spec:
           mountPath: /apps
         - name: modelstorage-vol 
           mountPath: /models
----    
+---  
+#transcription dispatcher      
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transcription-dispatcher
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: transcription-dispatcher
+  template:
+    metadata:
+      labels:
+        app: transcription-dispatcher
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage-2        
+      containers:
+      - name: transcription-dispatcher
+        image: airenas/list-dispatcher-service:0.1.557
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        - name: DISPATCHER_REGISTRATIONQUEUE
+          value: TranscriptionWorker_Registry
+        - name: DISPATCHER_WORKQUEUE
+          value: Transcription
+        - name: RECOGNIZERCONFIG_KEY
+          value: transcription-preload_key
+        - name: LOGGER_LEVEL
+          value: debug
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: modelstorage-vol 
+          mountPath: /models    
+---
 ## transcription service
 apiVersion: apps/v1
 kind: Deployment
@@ -354,7 +409,7 @@ metadata:
   name: transcription
   namespace: aft  
 spec:
-  replicas: 5
+  replicas: 3
   selector:
     matchLabels:
       app: transcription
@@ -377,7 +432,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: transcription
-        image: airenas/list-transcription-service:2.1.244
+        image: airenas/list-transcription-service:3.0.537
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -398,6 +453,65 @@ spec:
           mountPath: /apps
         - name: modelstorage-vol 
           mountPath: /models
+---  
+#resultmake dispatcher      
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: result-make-dispatcher
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: result-make-dispatcher
+  template:
+    metadata:
+      labels:
+        app: result-make-dispatcher
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage-2        
+      containers:
+      - name: result-make-dispatcher
+        image: airenas/list-dispatcher-service:0.1.557
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        - name: DISPATCHER_REGISTRATIONQUEUE
+          value: ResultMakeWorker_Registry
+        - name: DISPATCHER_WORKQUEUE
+          value: ResultMake
+        - name: RECOGNIZERCONFIG_KEY
+          value: rescore-preload_key
+        - name: STRATEGY_MODELLOADDURATION
+          value: 3m
+        - name: STRATEGY_REALTIMEFACTOR
+          value: "5"  
+        - name: LOGGER_LEVEL
+          value: debug
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: modelstorage-vol 
+          mountPath: /models    
 ---    
 ## resultmake service
 apiVersion: apps/v1
@@ -429,7 +543,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:2.1.240
+        image: airenas/list-result-make-service:3.0.537
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -590,7 +704,7 @@ spec:
           claimName: filestorage
       containers:
       - name: clean
-        image: airenas/list-clean-service:1.0.244
+        image: airenas/list-clean-service:1.0.463
         ports:
         - containerPort: 8000
           name: client

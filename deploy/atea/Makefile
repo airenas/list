@@ -53,13 +53,15 @@ init_filestorage: vh_cmd
 	$(vh_cmd) -- mkdir -p /filestorage/logs
 #####################################################################################
 copy_models: 
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/graph_w63g /models/ac/
+	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/20_04_17-2g /models/ac/
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/19_11_18-3g /models/ac/
+	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/graph_w63g /models/ac/
 
 copy_rnnlm: 
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/rnnlm/v1 /models/rnnlm/
 
 copy_lm: 
+	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v3 /models/lm/
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v1 /models/lm/
 ########### APPS ####################################################################
 copy_apps: 
