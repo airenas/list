@@ -5,7 +5,7 @@ settings:
   models_root: /models/ac/phones_v0
   scripts_dir: /models/ac/phones_v0/scripts/
   punctuate: false
-  transcription-preload_key: 
-  transcription-preload_cmd: 
+  transcription-preload_key: phones
+  transcription-preload_cmd: /models/ac/phones_v0/scripts/decode.preload.sh
   rescore-preload_key: 
   
