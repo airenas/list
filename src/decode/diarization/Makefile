@@ -7,6 +7,7 @@
 OUTPUT_ROOT?=/decoded
 INPUT_ROOT?=/audio.prepared
 APPS_ROOT?=/diarization
+KALDI_ROOT?=/kaldi
 LOCALCLASSPATH?=$(APPS_ROOT)/lib/LIUM_SpkDiarization-4.2.jar
 DO_MUSIC_DETECTION=no
 JAVA_BIN?=java
@@ -29,31 +30,37 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 	(export LOCALCLASSPATH=$(LOCALCLASSPATH); export JAVA_BIN=$(JAVA_BIN); export MODELS_ROOT=$(MODELS_ROOT); $(APPS_ROOT)/diarization.sh $$diarization_opts $^ `dirname $@`/show.uem.seg)
 	$(loge) $@
 
-$(OUTPUT_ROOT)/audio/segmented/%: $(OUTPUT_ROOT)/diarization/%/show.seg
-	$(logb) $@
-	rm -rf $@
+$(OUTPUT_ROOT)/trans/%:
 	mkdir -p $@
-	cat $^ | cut -f 3,4,8 -d " " | \
-	while read LINE ; do \
-		start=`echo $$LINE | cut -f 1 -d " " | perl -npe '$$_=$$_/100.0'`; \
-		len=`echo $$LINE | cut -f 2 -d " " | perl -npe '$$_=$$_/100.0'`; \
-		sp_id=`echo $$LINE | cut -f 3 -d " "`; \
-		timeformatted=`echo "$$start $$len" | perl -ne '@t=split(); $$start=$$t[0]; $$len=$$t[1]; $$end=$$start+$$len; printf("%08.3f-%08.3f\n", $$start,$$end);'` ; \
-		sox $(INPUT_ROOT)/$*.wav --norm $@/$*_$${timeformatted}_$${sp_id}.wav trim $$start $$len ; \
-	done
+
+$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
+	$(logb) $@
+	# mkdir -p `dirname $@`
+	cat $@ | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/audio/segmented/%
+$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
 	$(logb) $@
-	mkdir -p `dirname $@`
-	/bin/ls $</*.wav  | \
-		perl -npe 'chomp; $$orig=$$_; s/.*\/(.*)_(\d+\.\d+-\d+\.\d+)_(S\d+)\.wav/\1-\3---\2/; $$_=$$_ .  " $$orig\n";' | LC_ALL=C sort > $@
+	cat $@ | \
+		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s-S%04d\n", \
+			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, substr($$8,2)}' | \
+		LC_ALL=C sort > $@
 	$(loge) $@		
 
-$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/trans/%/wav.scp
-	cat $^ | perl -npe 's/\s+.*//; s/((.*)---.*)/\1 \2/' > $@
+$(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
+	$(logb) $@
+	cat $@ | \
+		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s %.3f %.3f\n", \
+			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, $$3/100.0, ($$3+$$4)/100.0}' | \
+		LC_ALL=C sort > $@
+	$(loge) $@		
 
 $(OUTPUT_ROOT)/trans/%/spk2utt: $(OUTPUT_ROOT)/trans/%/utt2spk
-	$(APPS_ROOT)/utt2spk_to_spk2utt.pl $^ > $@
+	$(logb) $@
+	$(KALDI_ROOT)/utils/utt2spk_to_spk2utt.pl $^ > $@
+	$(loge) $@
 
-test: $(OUTPUT_ROOT)/trans/a/spk2utt
+$(OUTPUT_ROOT)/trans/%/.diarization.done: $(OUTPUT_ROOT)/trans/%/utt2spk $(OUTPUT_ROOT)/trans/%/segments \
+											$(OUTPUT_ROOT)/trans/%/wav.scp
+	touch $@
+

@@ -1,6 +1,6 @@
 worker:
     taskName: Diarization
-    command: make /data/decoded/trans/{ID}/spk2utt
+    command: make /data/decoded/trans/{ID}/.diarization.done
     workingDir: /cmd/
     logFile: /data/logs/{ID}.log
 
