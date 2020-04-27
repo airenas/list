@@ -1,5 +1,6 @@
 worker:
-    taskName: Diarization
+    name: Diarization
+    queue: Diarization
     command: make /data/decoded/trans/{ID}/.diarization.done
     workingDir: /cmd/
     logFile: /data/logs/{ID}.log

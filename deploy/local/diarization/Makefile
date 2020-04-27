@@ -1,24 +1,20 @@
 -include ../Makefile.options
 #####################################################################################
-dist_dir=deploy
+dist_dir=$(CURDIR)/deploy
 executable_name=cmdWorkerService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=diarization-service
 version=$(DIARIZATION_SERVICE_VERSION)
 #####################################################################################
-$(main_dir)/$(executable_name): $(GO_SRC_DIR)
-	(cd $(main_dir) && CGO_ENABLED=0 $(go_build_cmd))
-
-build: $(main_dir)/$(executable_name)
+$(dist_dir):
+	mkdir -p $@
+$(dist_dir)/$(executable_name): $(GO_SRC_DIR) | $(dist_dir)
+	cd $(main_dir) && CGO_ENABLED=0 $(go_build_cmd) -o $(dist_dir)/$(executable_name)
+build: $(dist_dir)/$(executable_name)
 #####################################################################################
-$(dist_dir)/$(executable_name): $(main_dir)/$(executable_name)
-	mkdir -p $(@D)
-	cp $< $@
-
 $(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/diarization/Makefile
 	mkdir -p $(@D)
 	cp $< $@
-
 copy: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name)
 ########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)

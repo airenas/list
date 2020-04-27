@@ -30,25 +30,24 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 	(export LOCALCLASSPATH=$(LOCALCLASSPATH); export JAVA_BIN=$(JAVA_BIN); export MODELS_ROOT=$(MODELS_ROOT); $(APPS_ROOT)/diarization.sh $$diarization_opts $^ `dirname $@`/show.uem.seg)
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%:
-	mkdir -p $@
-
-$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
+$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
-	# mkdir -p `dirname $@`
+	@mkdir -p `dirname $@`
 	cat $@ | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
+$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
+	@mkdir -p `dirname $@`
 	cat $@ | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s-S%04d\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, substr($$8,2)}' | \
 		LC_ALL=C sort > $@
 	$(loge) $@		
 
-$(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg | $(OUTPUT_ROOT)/trans/%
+$(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg
 	$(logb) $@
+	@mkdir -p `dirname $@`
 	cat $@ | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s %.3f %.3f\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, $$3/100.0, ($$3+$$4)/100.0}' | \
