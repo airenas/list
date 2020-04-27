@@ -33,13 +33,13 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 $(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
 	@mkdir -p `dirname $@`
-	cat $@ | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
+	cat $< | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
 	@mkdir -p `dirname $@`
-	cat $@ | \
+	cat $< | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s-S%04d\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, substr($$8,2)}' | \
 		LC_ALL=C sort > $@
@@ -48,7 +48,7 @@ $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg
 $(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg
 	$(logb) $@
 	@mkdir -p `dirname $@`
-	cat $@ | \
+	cat $< | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s %.3f %.3f\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, $$3/100.0, ($$3+$$4)/100.0}' | \
 		LC_ALL=C sort > $@
@@ -59,7 +59,7 @@ $(OUTPUT_ROOT)/trans/%/spk2utt: $(OUTPUT_ROOT)/trans/%/utt2spk
 	$(KALDI_ROOT)/utils/utt2spk_to_spk2utt.pl $^ > $@
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%/.diarization.done: $(OUTPUT_ROOT)/trans/%/utt2spk $(OUTPUT_ROOT)/trans/%/segments \
+$(OUTPUT_ROOT)/trans/%/.diarization.done: $(OUTPUT_ROOT)/trans/%/spk2utt $(OUTPUT_ROOT)/trans/%/segments \
 											$(OUTPUT_ROOT)/trans/%/wav.scp
 	touch $@
 

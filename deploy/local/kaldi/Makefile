@@ -11,6 +11,7 @@ bin_files=apply-cmvn arpa-to-const-arpa compute-cmvn-stats compute-mfcc-feats co
 	copy-feats ivector-extract-online2 lattice-1best lattice-add-penalty lattice-align-words-lexicon \
 	lattice-best-path lattice-copy lattice-lmrescore lattice-lmrescore-const-arpa lattice-minimize \
 	lattice-prune lattice-scale lattice-to-nbest nbest-to-ctm nnet3-latgen-faster nnet3-latgen-faster-parallel \
+	extract-segments \
 	nnet3-latgen-faster-parallel-pipe \
 	lattice-lmrescore-kaldi-rnnlm-pruned rnnlm-get-word-embedding \
 	lattice-lmrescore-kaldi-rnnlm-pruned-pipe
