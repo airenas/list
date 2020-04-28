@@ -160,7 +160,7 @@ services:
       - appsStorage:/apps
       - modelsStorage:/models
   
-  result-make-dispatcher-service:
+  rescore-dispatcher-service:
     image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
@@ -169,15 +169,28 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-      DISPATCHER_REGISTRATIONQUEUE: ResultMakeWorker_Registry
-      DISPATCHER_WORKQUEUE: ResultMake
+      DISPATCHER_REGISTRATIONQUEUE: RescoreWorker_Registry
+      DISPATCHER_WORKQUEUE: Rescore
       RECOGNIZERCONFIG_KEY: rescore-preload_key
       STRATEGY_MODELLOADDURATION: 3m
       STRATEGY_REALTIMEFACTOR: 3
-
     volumes:
       - fileStorage:/data    
-      - modelsStorage:/models    
+      - modelsStorage:/models
+
+  rescore-service:
+    image: airenas/list-rescore-service:${TR_RESCORE_SERVICE_VERSION}
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS} 
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models        
   
   result-make-service:
     image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
