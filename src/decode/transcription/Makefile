@@ -37,18 +37,18 @@ info:
 	@echo "==================================================="
 
 # MFCC calculation
-$(OUTPUT_ROOT)/trans/%/mfcc/done: info $(INPUT_ROOT)/trans/%/spk2utt steps utils
+$(OUTPUT_ROOT)/trans/%/mfcc/.done: info $(INPUT_ROOT)/trans/%/spk2utt steps utils
 	$(logb) $@
 	rm -rf $(OUTPUT_ROOT)/trans/$*/mfcc
 	rm -f $(OUTPUT_ROOT)/trans/$*/cmvn.scp
 	steps/make_mfcc.sh --mfcc-config $(MODELS_ROOT)/conf/mfcc_hires.conf --cmd "$$train_cmd" --nj $(njobs) \
 		$(INPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $(OUTPUT_ROOT)/trans/$*/mfcc || exit 1
 	steps/compute_cmvn_stats.sh $(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/exp/make_mfcc $(OUTPUT_ROOT)/trans/$*/mfcc || exit 1
-	touch $(OUTPUT_ROOT)/trans/$*/mfcc/done	
+	touch $@
 	$(loge) $@
 
 ### Do 1-pass decoding using chain online models
-$(OUTPUT_ROOT)/trans/%/1-pass/done: info $(OUTPUT_ROOT)/trans/%/mfcc/done
+$(OUTPUT_ROOT)/trans/%/1-pass/.done: info $(OUTPUT_ROOT)/trans/%/mfcc/.done
 	$(logb) $@
 	rm -rf $(OUTPUT_ROOT)/trans/$*/1-pass
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/1-pass/decode
@@ -63,7 +63,7 @@ $(OUTPUT_ROOT)/trans/%/1-pass/done: info $(OUTPUT_ROOT)/trans/%/mfcc/done
 		$(OUTPUT_ROOT)/trans/$* $(OUTPUT_ROOT)/trans/$*/1-pass/decode || exit 1
 
 	(cd $(OUTPUT_ROOT)/trans/$*/1-pass; ln -s ../../../fst/model)
-	touch $(OUTPUT_ROOT)/trans/$*/1-pass/done	
+	touch $@	
 	$(loge) $@
 
 .PHONY:

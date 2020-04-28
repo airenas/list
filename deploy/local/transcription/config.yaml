@@ -1,6 +1,6 @@
 worker:
     name: TranscriptionService
-    command: make /data/decoded/trans/{ID}/1-pass/done
+    command: make /data/decoded/trans/{ID}/1-pass/.done
     logFile: /data/logs/{ID}.log
     workingDir: /cmd/
     preloadKeyPrefix: transcription-preload
