@@ -155,6 +155,38 @@ services:
       - modelsStorage:/models 
       - modelsStorage2:/models2        
   
+  rescore-dispatcher-service:
+    build: dispatcher
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: RescoreWorker_Registry
+      DISPATCHER_WORKQUEUE: Rescore
+      RECOGNIZERCONFIG_KEY: rescore-preload_key
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models 
+      - modelsStorage2:/models2      
+
+  rescore-service:
+    build: rescore
+    restart: unless-stopped
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models  
+      - modelsStorage2:/models2  
+
   result-make-service:
     build: result.make
     restart: unless-stopped
