@@ -9,10 +9,11 @@ WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
 COPY deploy/punct.file /app/
-COPY deploy/pipe.runner /app/
 COPY config.yaml /app/
 
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/
+COPY deploy/cmd/restore /cmd/restore
+
 
 ENTRYPOINT ["./cmdWorkerService"]

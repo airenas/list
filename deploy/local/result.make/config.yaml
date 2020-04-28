@@ -1,17 +1,13 @@
 worker:
     name: ResultMakeWorker
-    command: make /data/results/{ID}/resultFinal.txt /data/results/{ID}/lat.txt /data/results/{ID}/lat.nb10.txt
+    queue: ResultMake
+    command: make /data/results/{ID}/.done
     workingDir: /cmd/
     resultFile: /data/results/{ID}/resultFinal.txt
     logFile: /data/logs/{ID}.log
-    preloadKeyPrefix: rescore-preload
 
 recognizerConfig:
     path: /models/config/
-
-registry:
-    queue: ResultMakeWorker_Registry
-    heartbeat: 30s  
 
 # logger:
 #     level: info
