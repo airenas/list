@@ -25,9 +25,9 @@ utils:
 .SECONDARY:
 .DELETE_ON_ERROR:	
 
-$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
 	$(logb) $@
-	gunzip -c $(OUTPUT_ROOT)/trans/$*$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
+	gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
@@ -52,19 +52,19 @@ else
 	cat $^ > $@	
 endif
 
-$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done
+$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(logb) $@
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz $@		
 	$(loge) $@
 
-$(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz
+$(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	$(logb) $@
 	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
 	$(loge) $@	
 
-$(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
+$(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	$(logb) $@
 	gunzip -c $^ | \
 	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
@@ -73,7 +73,7 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 	$(loge) $@	
 
 #restore lattice
-$(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
+$(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
 	$(logb) $@
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
 		
@@ -111,8 +111,11 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(loge) $@
 
 $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/resultFinal.txt $(RESULTS_ROOT)/%/lat.txt \
-			$(RESULTS_ROOT)/%/lat.nb10.txt
+			$(RESULTS_ROOT)/%/lat.nb10.txt 
+			# $(OUTPUT_ROOT)/trans/%/restore/.done
 	touch $@
 
-test: $(RESULTS_ROOT)/488e94a9-8308-4eaf-ac64-fc005b661e70/lat.txt
+test: $(RESULTS_ROOT)/488e94a9-8308-4eaf-ac64-fc005b661e70/.done
+clean:
+	rm $(RESULTS_ROOT)/488e94a9-8308-4eaf-ac64-fc005b661e70/.done
 
