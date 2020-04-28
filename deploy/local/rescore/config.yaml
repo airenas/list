@@ -1,0 +1,21 @@
+worker:
+    name: RescoreWorker
+    command: make /data/decoded/trans/{ID}/2-pass/.done
+    workingDir: /cmd/
+    logFile: /data/logs/{ID}.log
+    preloadKeyPrefix: rescore-preload
+
+recognizerConfig:
+    path: /models/config/
+
+registry:
+    queue: RescoreWorker_Registry
+    heartbeat: 30s  
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

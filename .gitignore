@@ -65,3 +65,4 @@ testing/scripts/compute-wer
 testing/2019**/**
 deploy/local/dispatcher/deploy/**
 tmp/**
+deploy/local/rescore/deploy/**
