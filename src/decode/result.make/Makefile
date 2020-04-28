@@ -26,17 +26,17 @@ utils:
 .DELETE_ON_ERROR:	
 
 #rescore lattice
-$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done: $(OUTPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz steps utils
 	$(logb) $@
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode
 	## run rescore script from model dir
 	LM_DIR=$(LM_DIR) $(SCRIPTS_DIR)/rescore.sh $(MODELS_ROOT) $< $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz || exit 1
-	touch $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/done 
+	touch $@ 
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%.selected.ctm: $(OUTPUT_ROOT)/trans/%/done
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done
 	$(logb) $@
-	gunzip -c $(OUTPUT_ROOT)/trans/$*/decode/lat.1.gz | lattice-1best ark:- ark:- | \
+	gunzip -c $(OUTPUT_ROOT)/trans/$*$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
@@ -61,7 +61,7 @@ else
 	cat $^ > $@	
 endif
 
-$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/done
+$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done
 	$(logb) $@
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz $@		
@@ -81,6 +81,42 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
 	$(loge) $@	
 
-test: $(RESULTS_ROOT)/a/resultFinal.txt
+#restore lattice
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.restore.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.rescore.done
+	$(logb) $@
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore
+		
+	# optimum rescaling parameters (estimated on ARM6)
+	opt_lmwt=$(cat "$(MODELS_ROOT)/lmwt"); \
+	opt_wip=$(cat "$(MODELS_ROOT)/wip"); \
+	unk_id=$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	sil_id=$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
+		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
+	lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- ark:- | \
+	lattice-prune --beam=7 ark:- ark:- | \
+	lattice-push ark:- ark:- | \
+	lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
+	$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L1.lat
 
-r1: $(RESULTS_ROOT)/a/lat.gz $(RESULTS_ROOT)/a/lat.nb10.txt $(RESULTS_ROOT)/a/lat.txt $(RESULTS_ROOT)/a/resultFinal.txt
+	# Extract 1-best lattice
+	# negalima naudoti lattice-to-nbest --n=1 ark,t:L1.lat ark,t:L2.lat
+	# lattice-to-nbest ne tik papildo '-1' utt_id, bet ir prijungia tylas prie þodþiø pabaigos
+	# taip desinchronizuodama L1 ir L2
+	lattice-1best ark,t:$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L1.lat \
+		ark,t:$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L2.lat
+
+	# Replace transition-ids by phone-ids (timing is lost)
+	lattice-to-phone-lattice --replace-words=false $(MODELS_ROOT)/final.mdl \
+		ark,t:$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L1.lat \
+		ark,t:$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L3.lat
+
+	# Perform processing 
+	./restore/lat_restore.pl $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L1.lat \
+		$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L2.lat \
+		$(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L3.lat $(MODELS_ROOT)/words.txt \
+		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/lat.restored.1.txt
+	touch $@ 
+	$(loge) $@
+
+test: $(RESULTS_ROOT)/a/resultFinal.txt

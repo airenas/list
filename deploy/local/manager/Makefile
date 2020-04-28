@@ -1,21 +1,19 @@
 -include ../Makefile.options
 #####################################################################################
-dist_dir=deploy
+dist_dir=$(CURDIR)/deploy
 executable_name=managerService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=manager-service
 version=$(MANAGER_SERVICE_VERSION)
 #####################################################################################
-$(main_dir)/$(executable_name): $(GO_SRC_DIR)
-	(cd $(main_dir) && $(go_build_cmd))
+$(dist_dir):
+	mkdir -p $@
 
-build: $(main_dir)/$(executable_name)
+$(dist_dir)/$(executable_name): $(GO_SRC_DIR) | $(dist_dir)
+	cd $(main_dir) && $(go_build_cmd) -o $@
+
+build: $(dist_dir)/$(executable_name)
 #####################################################################################
-$(dist_dir)/$(executable_name): $(main_dir)/$(executable_name)
-	mkdir -p $(@D)
-	cp $< $@
-
-copy: $(dist_dir)/$(executable_name)
 ########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
 
@@ -27,12 +25,11 @@ dpush: dbuild
 	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
 ########### END #####################################################################
 #####################################################################################
-redeploy: build copy
+redeploy: build
 	$(call dc-deploy,..,$(service))
 #####################################################################################
 clean:
 	rm -rf $(dist_dir)
-	rm -f $(main_dir)/$(executable_name)
 
 .PHONY:
 	clean copy build dbuild dpush redeploy
