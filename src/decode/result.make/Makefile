@@ -78,12 +78,12 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
 		
 	# optimum rescaling parameters (estimated on ARM6)
-	opt_lmwt=$(cat "$(MODELS_ROOT)/lmwt"); \
-	opt_wip=$(cat "$(MODELS_ROOT)/wip"); \
-	unk_id=$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
-	sil_id=$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
+	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
+	unk_id=$$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	sil_id=$$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
 	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
-		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
+		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
 	lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- ark:- | \
 	lattice-prune --beam=7 ark:- ark:- | \
 	lattice-push ark:- ark:- | \
@@ -103,7 +103,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L3.lat
 
 	# Perform processing 
-	./restore/lat_restore.pl $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/restore/L1.lat \
+	cd restore && ./lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
 		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt
@@ -111,11 +111,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(loge) $@
 
 $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/resultFinal.txt $(RESULTS_ROOT)/%/lat.txt \
-			$(RESULTS_ROOT)/%/lat.nb10.txt 
-			# $(OUTPUT_ROOT)/trans/%/restore/.done
+			$(RESULTS_ROOT)/%/lat.nb10.txt $(OUTPUT_ROOT)/trans/%/restore/.done
 	touch $@
 
-test: $(RESULTS_ROOT)/488e94a9-8308-4eaf-ac64-fc005b661e70/.done
-clean:
-	rm $(RESULTS_ROOT)/488e94a9-8308-4eaf-ac64-fc005b661e70/.done
 
