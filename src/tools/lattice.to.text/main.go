@@ -57,7 +57,7 @@ func getText(data []*lattice.Part) string {
 		for _, w := range p.Words {
 			if w.Main == lattice.MainInd {
 				if w.Word == lattice.SilWord {
-					if lattice.Duration(w) > (time.Second * 2) {
+					if lattice.WordDuration(w) > (time.Second * 2) {
 						sep = newLine(&res, sep)
 					}
 				} else {
@@ -65,7 +65,6 @@ func getText(data []*lattice.Part) string {
 					sep = writePunct(&res, w.Punct)
 				}
 			}
-
 		}
 	}
 	return res.String()

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 	"time"
@@ -107,15 +108,16 @@ func Write(data []*Part, writer io.Writer) error {
 	return nil
 }
 
-//Duration return duration from word line
-func Duration(w *Word) time.Duration {
-	return duration(w.To) - duration(w.From)
+//WordDuration return duration from word line
+func WordDuration(w *Word) time.Duration {
+	return Duration(w.To) - Duration(w.From)
 }
 
-func duration(str string) time.Duration {
-	res, err := strconv.ParseFloat(str, 32)
+//Duration return duration from string as seconds (eg.: "2.50")
+func Duration(str string) time.Duration {
+	res, err := strconv.ParseFloat(str, 64)
 	if err != nil {
 		return 0
 	}
-	return time.Duration(int64(res*1000)) * time.Millisecond
+	return time.Duration(math.Round(res*1000)) * time.Millisecond
 }

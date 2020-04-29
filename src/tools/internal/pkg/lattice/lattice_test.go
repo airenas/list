@@ -75,18 +75,19 @@ func TestRead_Fail(t *testing.T) {
 	assert.Nil(t, p)
 }
 
-func TestDuration(t *testing.T) {
+func TestWordDuration(t *testing.T) {
 	w := &Word{From: "0.00", To: "10.00"}
-	d := Duration(w)
+	d := WordDuration(w)
 	assert.Equal(t, 10*time.Second, d)
 }
 
 func TestDurationParse(t *testing.T) {
-	d := duration("10.05")
-	assert.Equal(t, 10*time.Second+50*time.Millisecond, d)
+	assert.Equal(t, 10*time.Second+50*time.Millisecond, Duration("10.05"))
+	assert.Equal(t, 10*time.Millisecond, Duration("0.01"))
+	assert.Equal(t, 100*time.Millisecond, Duration("0.10"))
 }
 
 func TestDurationDefault(t *testing.T) {
-	d := duration("apoa")
+	d := Duration("apoa")
 	assert.Equal(t, 0*time.Second, d)
 }
