@@ -9,19 +9,9 @@ import (
 	"os"
 	"strings"
 
+	"bitbucket.org/airenas/list/src/tools/internal/pkg/punctuation"
 	"github.com/pkg/errors"
 )
-
-//Request is json input
-type Request struct {
-	Text string `json:"text"`
-}
-
-//Response is json result
-type Response struct {
-	Original       []string `json:"original"`
-	PunctuatedText string   `json:"punctuatedText"`
-}
 
 func main() {
 	filePtr := flag.String("f", "", "file in")
@@ -55,7 +45,7 @@ func punctuate(str string, url string) (string, error) {
 	if strings.TrimSpace(str) == "" {
 		return "", nil
 	}
-	inp := Request{Text: str}
+	inp := punctuation.Request{Text: str}
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(inp)
 	resp, err := http.Post(url, "application/json; charset=utf-8", b)
@@ -65,7 +55,7 @@ func punctuate(str string, url string) (string, error) {
 	if !(resp.StatusCode >= 200 && resp.StatusCode <= 299) {
 		return "", errors.Errorf("Wrong response code from server. Code: %d", resp.StatusCode)
 	}
-	var res Response
+	var res punctuation.Response
 	err = json.NewDecoder(resp.Body).Decode(&res)
 	if err != nil {
 		return "", errors.Wrap(err, "Can't decode json")
