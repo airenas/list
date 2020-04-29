@@ -12,10 +12,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-type punctuator interface {
-	Punctuate(words []string) (*punctuation.Response, error)
-}
-
 func main() {
 	filePtr := flag.String("f", "", "file in")
 	urlPtr := flag.String("u", "", "punctuation URL")
@@ -44,7 +40,7 @@ func main() {
 		panic(errors.Wrap(err, "Can't read file "+*filePtr))
 	}
 	log.Printf("Punctuating")
-	data, err = punctuate(data, punctuation.NewPunctuator(*urlPtr))
+	data, err = punctuate(data, punctuation.NewWrapper(*urlPtr))
 	if err != nil {
 		panic(errors.Wrap(err, "Can't punctuate"))
 	}
@@ -55,7 +51,7 @@ func main() {
 	log.Print("Done punctuation")
 }
 
-func punctuate(data []*lattice.Part, p punctuator) ([]*lattice.Part, error) {
+func punctuate(data []*lattice.Part, p punctuation.Punctuator) ([]*lattice.Part, error) {
 	l := len(data)
 	i := 0
 	var wg sync.WaitGroup
@@ -79,7 +75,7 @@ func punctuate(data []*lattice.Part, p punctuator) ([]*lattice.Part, error) {
 	return data, nil
 }
 
-func invokePunc(data []*lattice.Part, i, ni int, p punctuator, wg *sync.WaitGroup, errCh chan error) {
+func invokePunc(data []*lattice.Part, i, ni int, p punctuation.Punctuator, wg *sync.WaitGroup, errCh chan error) {
 	defer wg.Done()
 	words := getWords(data, i, ni)
 	if (len(words)) > 0 {
