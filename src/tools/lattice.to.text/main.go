@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
 	"github.com/pkg/errors"
@@ -56,7 +57,9 @@ func getText(data []*lattice.Part) string {
 		for _, w := range p.Words {
 			if w.Main == lattice.MainInd {
 				if w.Word == lattice.SilWord {
-					sep = newLine(&res, sep)
+					if lattice.Duration(w) > (time.Second * 2) {
+						sep = newLine(&res, sep)
+					}
 				} else {
 					sep = writeWord(&res, w.Word, sep)
 					sep = writePunct(&res, w.Punct)

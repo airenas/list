@@ -70,11 +70,22 @@ func TestGetText_NewLineSil(t *testing.T) {
 	lat, _ := lattice.Read(strings.NewReader(
 		`# 1 S1
 1 fr to w
-1 fr to <eps>
+1 0.02 3.02 <eps>
 1 fr1 to2 w2
 `))
 	text := getText(lat)
 	assert.Equal(t, "w\nw2", text)
+}
+
+func TestGetText_ShhorSil_NoNewLine(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 fr to w
+1 2.02 3.03 <eps>
+1 fr1 to2 w2
+`))
+	text := getText(lat)
+	assert.Equal(t, "w w2", text)
 }
 
 func TestGetText_Sep(t *testing.T) {

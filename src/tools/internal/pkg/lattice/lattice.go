@@ -6,6 +6,7 @@ import (
 	"io"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
 )
@@ -104,4 +105,17 @@ func Write(data []*Part, writer io.Writer) error {
 		}
 	}
 	return nil
+}
+
+//Duration return duration from word line
+func Duration(w *Word) time.Duration {
+	return duration(w.To) - duration(w.From)
+}
+
+func duration(str string) time.Duration {
+	res, err := strconv.ParseFloat(str, 32)
+	if err != nil {
+		return 0
+	}
+	return time.Duration(int64(res*1000)) * time.Millisecond
 }

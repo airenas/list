@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -72,4 +73,20 @@ func TestRead_Fail(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Nil(t, p)
+}
+
+func TestDuration(t *testing.T) {
+	w := &Word{From: "0.00", To: "10.00"}
+	d := Duration(w)
+	assert.Equal(t, 10*time.Second, d)
+}
+
+func TestDurationParse(t *testing.T) {
+	d := duration("10.05")
+	assert.Equal(t, 10*time.Second+50*time.Millisecond, d)
+}
+
+func TestDurationDefault(t *testing.T) {
+	d := duration("apoa")
+	assert.Equal(t, 0*time.Second, d)
 }
