@@ -2,6 +2,7 @@ package lattice
 
 import (
 	"bytes"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,4 +43,33 @@ func TestWritePunc(t *testing.T) {
 	var b bytes.Buffer
 	Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word ,\n1 fr1 to2 word2 .\n\n", string(b.Bytes()))
+}
+
+func TestRead(t *testing.T) {
+	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n# 2 S2\n1 fr to word\n1 fr1 to2 word2\n\n"))
+
+	assert.Equal(t, 2, len(p))
+	assert.Equal(t, 1, p[0].Num)
+	assert.Equal(t, "S1", p[0].Speaker)
+	assert.Equal(t, 2, len(p[0].Words))
+	assert.Equal(t, "1", p[0].Words[0].Main)
+	assert.Equal(t, "fr", p[0].Words[0].From)
+	assert.Equal(t, "to", p[0].Words[0].To)
+	assert.Equal(t, "word", p[0].Words[0].Word)
+}
+
+func TestReadPunct(t *testing.T) {
+	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to word .\n\n"))
+
+	assert.Equal(t, 1, len(p))
+	assert.Equal(t, 1, len(p[0].Words))
+	assert.Equal(t, ".", p[0].Words[0].Punct)
+	assert.Equal(t, "word", p[0].Words[0].Word)
+}
+
+func TestRead_Fail(t *testing.T) {
+	p, err := Read(strings.NewReader("1 fr to word .\n\n"))
+
+	assert.NotNil(t, err)
+	assert.Nil(t, p)
 }
