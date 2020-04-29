@@ -132,7 +132,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorkerRegistry
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorker_Registry
       DISPATCHER_WORKQUEUE: Transcription
       RECOGNIZERCONFIG_KEY: transcription-preload_key
     volumes:
@@ -149,6 +149,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorker_Registry
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
@@ -280,6 +281,42 @@ services:
     restart: unless-stopped  
     volumes:
       - rabbitmq:/var/lib/rabbitmq
+
+  prometheus:
+    image: prom/prometheus:v2.17.2
+    ports:
+    - 9090:9090
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+    - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ./config/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
+    depends_on:
+    - node-exporter
+    - rabbitmq-exporter
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    restart: unless-stopped 
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter:v1.0.0-RC6.1
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: ${LIST_RABBITMQ_USER}
+      RABBIT_PASSWORD: ${LIST_RABBITMQ_PASS}
+    restart: unless-stopped   
+
+
 ########### volumes 
 volumes:
   fileStorage:
