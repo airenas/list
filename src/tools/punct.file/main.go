@@ -19,8 +19,8 @@ type Request struct {
 
 //Response is json result
 type Response struct {
-	Original   string `json:"original"`
-	Punctuated string `json:"punctuated"`
+	Original       []string `json:"original"`
+	PunctuatedText string   `json:"punctuatedText"`
 }
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 }
 
 func punctuate(str string, url string) (string, error) {
-	if (strings.TrimSpace(str) == ""){
+	if strings.TrimSpace(str) == "" {
 		return "", nil
 	}
 	inp := Request{Text: str}
@@ -70,5 +70,5 @@ func punctuate(str string, url string) (string, error) {
 	if err != nil {
 		return "", errors.Wrap(err, "Can't decode json")
 	}
-	return res.Punctuated, nil
+	return res.PunctuatedText, nil
 }
