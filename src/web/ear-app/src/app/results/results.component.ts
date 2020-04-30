@@ -89,12 +89,12 @@ class FileURLKeeper {
     },
     {
       id: 'dfLatRescore',
-      url: 'lat.rescore.txt',
+      url: 'lat.restored.txt',
       title: 'Grafas redagavimui (.txt)'
     },
     {
       id: 'dfLatRescoreGz',
-      url: 'lat.rescore.gz',
+      url: 'lat.restored.gz',
       title: 'Grafas redagavimui (.gz)'
     },
     {
