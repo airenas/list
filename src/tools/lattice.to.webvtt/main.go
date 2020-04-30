@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"bitbucket.org/airenas/list/src/tools/internal/pkg/ioutil"
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
+	"bitbucket.org/airenas/list/src/tools/internal/pkg/util"
 	"github.com/pkg/errors"
 )
 
@@ -22,13 +22,13 @@ func main() {
 	}
 	flag.Parse()
 
-	f, err := ioutil.NewReadWrapper(flag.Arg(0))
+	f, err := util.NewReadWrapper(flag.Arg(0))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
 
-	destination, err := ioutil.NewWriteWrapper(flag.Arg(1))
+	destination, err := util.NewWriteWrapper(flag.Arg(1))
 	if err != nil {
 		log.Fatal(err)
 	}

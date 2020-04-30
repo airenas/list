@@ -2,45 +2,45 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 	"time"
 
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
+	"bitbucket.org/airenas/list/src/tools/internal/pkg/util"
 	"github.com/pkg/errors"
 )
 
 func main() {
-	filePtr := flag.String("f", "", "file in")
-	outPtr := flag.String("o", "", "file for output")
+	log.SetOutput(os.Stderr)
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s: <input-file or stdin> <output-file or stdout>\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 	flag.Parse()
 
-	if *filePtr == "" || *outPtr == "" {
-		panic(errors.New("Usage: ./lattice.to.text -f <fileIn> -o <output file>"))
-	}
-
-	f, err := os.Open(*filePtr)
+	f, err := util.NewReadWrapper(flag.Arg(0))
 	if err != nil {
-		panic(errors.Wrapf(err, "Can't read file %s ", *filePtr))
+		log.Fatal(err)
 	}
 	defer f.Close()
 
-	destination, err := os.Create(*outPtr)
+	destination, err := util.NewWriteWrapper(flag.Arg(1))
 	if err != nil {
-		panic(errors.Wrap(err, "Can't create file "+*outPtr))
+		log.Fatal(err)
 	}
 	defer destination.Close()
 
-	log.Printf("Reading file %s", *filePtr)
 	data, err := lattice.Read(f)
 	if err != nil {
-		panic(errors.Wrap(err, "Can't read file "+*filePtr))
+		log.Fatal(errors.Wrap(err, "Can't read lattice"))
 	}
 	text := getText(data)
 	_, err = destination.WriteString(text)
 	if err != nil {
-		panic(errors.Wrap(err, "Can't write file "+*outPtr))
+		log.Fatal(errors.Wrap(err, "Can't write text"))
 	}
 	log.Print("Done convertion")
 }
