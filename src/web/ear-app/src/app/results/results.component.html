@@ -23,7 +23,7 @@
           [value]="progress.value" [bufferValue]="progress.buffer">
         </mat-progress-bar>
       </section>
-      <div *ngIf="result?.recognizedText">Atpažinta: <strong>{{result?.recognizedText}}</strong></div>
+      <div *ngIf="result?.recognizedText">Atpažinta: <strong>{{result?.recognizedText | resultText}}</strong></div>
       <div *ngIf="error">Klaida: <strong><span style="color:red">{{error}}</span></strong></div>
     </mat-card-content>
   </mat-card>

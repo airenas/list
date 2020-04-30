@@ -1,3 +1,4 @@
+import { ResultTextPipe } from './../pipes/result-text.pipe';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ResultsComponent, Progress } from './results.component';
@@ -20,7 +21,7 @@ describe('ResultsComponent', () => {
   beforeEach(async(() => {
 
     TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe],
+      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
       imports: [TestAppModule]
     })
       .compileComponents();
@@ -231,7 +232,7 @@ describe('ResultsComponent Own Mock', () => {
     }
 
     TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe],
+      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
       imports: [TestAppModule],
       providers: [{ provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
@@ -258,7 +259,7 @@ describe('ResultsComponent Own Mock', () => {
     params.setTranscriptionID('id2');
 
     TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe],
+      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
       imports: [TestAppModule],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
@@ -281,7 +282,7 @@ describe('ResultsComponent Own Mock', () => {
     const params = new TestParamsProviderService();
     params.setTranscriptionID('id1');
     TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe],
+      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
       imports: [TestAppModule],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },

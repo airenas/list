@@ -1,3 +1,4 @@
+import { ResultTextPipe } from './pipes/result-text.pipe';
 import { AudioPlayerFactory } from './utils/audio.player';
 import { ResultSubscriptionService, WSResultSubscriptionService } from './service/result-subscription.service';
 import { HttpTranscriptionService, TranscriptionService } from './service/transcription.service';
@@ -29,6 +30,7 @@ import { ErrorPipe } from './pipes/error.pipe';
     UploadComponent,
     ResultsComponent,
     StatusHumanPipe,
+    ResultTextPipe,
     ErrorPipe
   ],
   imports: [

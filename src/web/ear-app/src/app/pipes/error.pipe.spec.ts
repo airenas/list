@@ -1,4 +1,3 @@
-import { StatusHumanPipe } from './status-human.pipe';
 import { Status } from '../api/status';
 import { ErrorPipe } from './error.pipe';
 import { ErrorCode } from '../api/error-codes';
