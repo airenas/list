@@ -9,7 +9,7 @@ describe('StatusHumanPipe', () => {
 
   it('transforms knowns types', () => {
     const statuses: string[] = [Status.Uploaded, Status.Completed, Status.AudioConvert,
-      Status.Diarization, Status.Transcription, Status.ResultMake, Status.NOT_FOUND];
+      Status.Diarization, Status.Transcription, Status.Rescore, Status.ResultMake, Status.NOT_FOUND];
     const pipe = new StatusHumanPipe();
     statuses.forEach(function (value) {
       const transformed = pipe.transform(value);

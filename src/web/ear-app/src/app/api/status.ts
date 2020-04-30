@@ -4,6 +4,7 @@ export enum Status {
     AudioConvert = 'AudioConvert',
     Diarization = 'Diarization',
     Transcription = 'Transcription',
+    Rescore = 'Rescore',
     ResultMake = 'ResultMake',
     NOT_FOUND = 'NOT_FOUND',
 }

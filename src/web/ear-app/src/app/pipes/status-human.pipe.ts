@@ -22,6 +22,9 @@ export class StatusHumanPipe implements PipeTransform {
     if (value === Status.Transcription) {
       return 'Transkribuojamas';
     }
+    if (value === Status.Rescore) {
+      return 'Perskaičiuojamas su kalbos modeliu';
+    }
     if (value === Status.ResultMake) {
       return 'Ruošiamas rezultatas';
     }
