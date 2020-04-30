@@ -8,6 +8,7 @@ OUTPUT_ROOT?=/decoded
 RESULTS_ROOT?=/results
 APPS_ROOT?=/kaldi
 FINAL_PASS=2-pass
+APP_DIR?=/app
 
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
@@ -40,17 +41,31 @@ $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINA
 	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@	
 
 $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
-	mkdir -p $(RESULTS_ROOT)/$*/
+	@mkdir -p $(RESULTS_ROOT)/$*/
 	cat $^ > $@	
 
-$(RESULTS_ROOT)/%/resultFinal.txt: $(RESULTS_ROOT)/%/result.txt
-ifeq ($(PUNCTUATE), true)
+$(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
 	$(logb) $@
-	$(PR_EXEC) -f $^ -u $(PR_URL) -o $@
+	@mkdir -p $(RESULTS_ROOT)/$*/
+	$(APP_DIR)/lattice.to.text $^ $@
 	$(loge) $@
-else
-	cat $^ > $@	
-endif
+
+$(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
+	$(logb) $@
+	@mkdir -p $(RESULTS_ROOT)/$*/
+	$(APP_DIR)/lattice.to.webvtt $^ $@
+	$(loge) $@
+
+$(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
+	$(logb) $@
+	@mkdir -p $(RESULTS_ROOT)/$*/
+	cp $^ $@
+	$(loge) $@	
+$(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
+	$(logb) $@
+	@mkdir -p $(RESULTS_ROOT)/$*/
+	gzip -c $^ > $@
+	$(loge) $@		
 
 $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(logb) $@
@@ -110,8 +125,21 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	touch $@ 
 	$(loge) $@
 
-$(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/resultFinal.txt $(RESULTS_ROOT)/%/lat.txt \
-			$(RESULTS_ROOT)/%/lat.nb10.txt $(OUTPUT_ROOT)/trans/%/restore/.done
+$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
+	$(logb) $@
+	@mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
+ifeq ($(PUNCTUATE), true)
+	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt $@
+else
+	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt > $@
+endif
+	$(loge) $@
+
+$(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/result.txt $(RESULTS_ROOT)/%/resultFinal.txt \
+			$(RESULTS_ROOT)/%/lat.txt $(RESULTS_ROOT)/%/lat.nb10.txt  \
+			$(RESULTS_ROOT)/%/webvtt.txt \
+			$(RESULTS_ROOT)/%/lat.restored.txt \
+			$(RESULTS_ROOT)/%/lat.restored.gz
 	touch $@
 
 
