@@ -176,27 +176,58 @@ describe('ResultsComponent', () => {
     });
   }));
 
-  it('should have file buttons', async(() => {
+  it('should have download menu', async(() => {
     const r = { status: Status.Completed, id: 'x', error: '', recognizedText: '', progress: 0 };
     component.onResult(r);
     fixture.detectChanges();
     fixture.whenStable().then(() => {
-      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#resultFileButton')))).toBe(true);
-      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeFileButton')))).toBe(true);
-      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeTxtFileButton')))).toBe(true);
-      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(true);
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#dwnMenu')))).toBe(true);
     });
   }));
 
-  it('should contain id in file buttons', async(() => {
+  it('should show download buttons', async(() => {
+    const r = { status: Status.Completed, id: 'x', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    component.menuTrigger.openMenu();
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      const dfs = ['dfResult', 'dfResultFinal', 'dfLat', 'dfLatGz', 'dfN10', 'dfLatRescore', 'dfLatRescoreGz', 'dfWebVTT'];
+      dfs.forEach(element => {
+        expect(TestHelper.Visible(fixture.debugElement.query(By.css('#' + element)))).toBe(true);
+      });
+    });
+  }));
+
+  it('should call download', async(() => {
     const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
     component.onResult(r);
     fixture.detectChanges();
+    component.menuTrigger.openMenu();
+    let arg: string;
+    const dwnSpy = spyOn(component.fileKeeper, 'download').and.callFake(function (a: string) { arg = a; });
+    fixture.detectChanges();
     fixture.whenStable().then(() => {
-      expect(fixture.debugElement.query(By.css('#resultFileButton')).nativeElement.href).toContain('iddddd');
-      expect(fixture.debugElement.query(By.css('#latticeFileButton')).nativeElement.href).toContain('iddddd');
-      expect(fixture.debugElement.query(By.css('#latticeTxtFileButton')).nativeElement.href).toContain('iddddd');
-      expect(fixture.debugElement.query(By.css('#nBestFileButton')).nativeElement.href).toContain('iddddd');
+      fixture.debugElement.query(By.css('#dfResult')).nativeElement.click();
+      fixture.detectChanges();
+      expect(dwnSpy).toHaveBeenCalledTimes(1);
+      expect(arg).toBe('result.txt');
+    });
+  }));
+
+  it('should call download - WebVTT', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    component.menuTrigger.openMenu();
+    let arg: string;
+    const dwnSpy = spyOn(component.fileKeeper, 'download').and.callFake(function (a: string) { arg = a; });
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      fixture.debugElement.query(By.css('#dfWebVTT')).nativeElement.click();
+      fixture.detectChanges();
+      expect(dwnSpy).toHaveBeenCalledTimes(1);
+      expect(arg).toBe('webvtt.txt');
     });
   }));
 

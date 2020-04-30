@@ -1,7 +1,7 @@
 import { ResultSubscriptionService } from './../service/result-subscription.service';
 import { TranscriptionResult } from './../api/transcription-result';
-import { MatSnackBar } from '@angular/material';
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { MatSnackBar, MatMenuTrigger } from '@angular/material';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { ActivatedRoute } from '@angular/router';
 import { BaseComponent } from '../base/base.component';
@@ -52,9 +52,57 @@ class AudioURLKeeper {
 class FileURLKeeper {
   contains = false;
   result: string;
+  resultFinal: string;
   nbest: string;
-  latticeGz: string;
   lattice: string;
+  latticeGz: string;
+  latticeRestored: string;
+  latticeRestoredGz: string;
+  webVTT: string;
+  URLPrefix: string;
+
+  dwnFiles = [
+    {
+      id: 'dfResult',
+      url: 'result.txt',
+      title: 'Rezultatas - paprastas (.txt)'
+    },
+    {
+      id: 'dfResultFinal',
+      url: 'resultFinal.txt',
+      title: 'Rezultatas (.txt)'
+    },
+    {
+      id: 'dfLat',
+      url: 'lat.txt',
+      title: 'Kaldi grafas (.txt)'
+    },
+    {
+      id: 'dfLatGz',
+      url: 'lat.gz',
+      title: 'Kaldi grafas (.gz)'
+    },
+    {
+      id: 'dfN10',
+      url: 'lat.nb10.txt',
+      title: 'Kaldi 10-geriausių variantų (.txt)'
+    },
+    {
+      id: 'dfLatRescore',
+      url: 'lat.rescore.txt',
+      title: 'Grafas redagavimui (.txt)'
+    },
+    {
+      id: 'dfLatRescoreGz',
+      url: 'lat.rescore.gz',
+      title: 'Grafas redagavimui (.gz)'
+    },
+    {
+      id: 'dfWebVTT',
+      url: 'webvtt.txt',
+      title: 'WebVTT (.txt)'
+    },
+  ];
 
   constructor(private config: Config) {
   }
@@ -62,13 +110,16 @@ class FileURLKeeper {
   setID(result: TranscriptionResult) {
     this.contains = false;
     if (result == null || result.status !== Status.Completed) {
+      this.URLPrefix = '';
       return;
     }
     this.contains = true;
-    this.result = this.config.resultUrl + result.id + '/result.txt';
-    this.lattice = this.config.resultUrl + result.id + '/lat.txt';
-    this.latticeGz = this.config.resultUrl + result.id + '/lat.gz';
-    this.nbest = this.config.resultUrl + result.id + '/lat.nb10.txt';
+    this.URLPrefix = this.config.resultUrl + result.id;
+  }
+
+  download(URLSufix: string) {
+    const URL = this.URLPrefix + '/' + URLSufix;
+    window.open(URL, '_blank');
   }
 }
 
@@ -88,6 +139,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   audioPlayer: AudioPlayer;
   audioURLKeeper: AudioURLKeeper = null;
   fileKeeper: FileURLKeeper = null;
+  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,

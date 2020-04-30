@@ -23,7 +23,8 @@
           [value]="progress.value" [bufferValue]="progress.buffer">
         </mat-progress-bar>
       </section>
-      <div *ngIf="result?.recognizedText" class="result-text">Atpažinta: <strong>{{result?.recognizedText | resultText}}</strong>
+      <div *ngIf="result?.recognizedText" class="result-text">Atpažinta:
+        <strong>{{result?.recognizedText | resultText}}</strong>
       </div>
       <div *ngIf="error">Klaida: <strong><span style="color:red">{{error}}</span></strong></div>
     </mat-card-content>
@@ -58,22 +59,14 @@
     </mat-card-header>
     <mat-card-content>
       <div class="file-control">
-        <a mat-raised-button color="primary" id="resultFileButton" class="file-button" href="{{fileKeeper.result}}"
-          target="_blank">
-          Rezultatas (.txt)
-        </a>
-        <a mat-raised-button color="primary" id="latticeFileButton" class="file-button" href="{{fileKeeper.latticeGz}}"
-          target="_blank">
-          Grafas (.gz)
-        </a>
-        <a mat-raised-button color="primary" id="latticeTxtFileButton" class="file-button" href="{{fileKeeper.lattice}}"
-          target="_blank">
-          Grafas (.txt)
-        </a>
-        <a mat-raised-button color="primary" id="nBestFileButton" class="file-button" href="{{fileKeeper.nbest}}"
-          target="_blank">
-          Grafas 10-geriausių variantų (.txt)
-        </a>
+        <button mat-raised-button color="primary" id="dwnMenu" [matMenuTriggerFor]="menu"
+          #menuTrigger='matMenuTrigger'>Atsisiųsti</button>
+        <mat-menu #menu="matMenu">
+          <div *ngFor="let file of fileKeeper.dwnFiles">
+            <button mat-menu-item class="file-button" id="{{file.id}}"
+              (click)="fileKeeper.download(file.url)">{{ file.title }}</button>
+          </div>
+        </mat-menu>
       </div>
     </mat-card-content>
   </mat-card>

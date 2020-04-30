@@ -1,8 +1,8 @@
 import { MicrophoneFactory } from './../utils/microphone';
-import { MatProgressSpinnerModule, MatSelectModule, MatTooltipModule } from '@angular/material';
+import { MatProgressSpinnerModule, MatSelectModule, MatTooltipModule, MatMenuModule } from '@angular/material';
 import { Config } from './../config';
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { BrowserModule } from '@angular/platform-browser';
@@ -72,10 +72,10 @@ export class TestHelper {
   imports: [
     BrowserModule,
     HttpClientModule,
-    BrowserAnimationsModule,
+    NoopAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
-    MatCardModule, FileSizeModule, MatSelectModule,
+    MatCardModule, FileSizeModule, MatSelectModule, MatMenuModule,
     ReactiveFormsModule
   ],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' },
@@ -90,7 +90,8 @@ export class TestHelper {
   bootstrap: [],
   exports: [
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
-    MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatTooltipModule
+    MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatTooltipModule,
+    MatMenuModule, NoopAnimationsModule
   ],
 })
 
