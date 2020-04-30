@@ -17,7 +17,7 @@ import (
 func main() {
 	log.SetOutput(os.Stderr)
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of %s: <input-file or stdin> <output-file or stdout>\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: [input-file | stdin] [output-file | stdout]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	flag.Parse()
