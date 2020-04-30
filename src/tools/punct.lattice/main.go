@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -9,44 +10,47 @@ import (
 
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/punctuation"
+	"bitbucket.org/airenas/list/src/tools/internal/pkg/util"
 	"github.com/pkg/errors"
 )
 
 func main() {
-	filePtr := flag.String("f", "", "file in")
+	log.SetOutput(os.Stderr)
 	urlPtr := flag.String("u", "", "punctuation URL")
-	outPtr := flag.String("o", "", "file for output")
+	flag.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:[params] [input-file | stdin] [output-file | stdout]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
 	flag.Parse()
-
-	if *filePtr == "" || *urlPtr == "" || *outPtr == "" {
-		panic(errors.New("Usage: ./punct.lattice -f <fileIn> -u <punctuation URL> -o <output file>"))
+	if *urlPtr == "" {
+		flag.Usage()
+		log.Fatal("No punctuation URL provided")
 	}
 
-	f, err := os.Open(*filePtr)
+	f, err := util.NewReadWrapper(flag.Arg(0))
 	if err != nil {
-		panic(errors.Wrapf(err, "Can't read file %s ", *filePtr))
+		log.Fatal(err)
 	}
 	defer f.Close()
 
-	destination, err := os.Create(*outPtr)
+	destination, err := util.NewWriteWrapper(flag.Arg(1))
 	if err != nil {
-		panic(errors.Wrap(err, "Can't create file "+*outPtr))
+		log.Fatal(err)
 	}
 	defer destination.Close()
 
-	log.Printf("Reading file %s", *filePtr)
 	data, err := lattice.Read(f)
 	if err != nil {
-		panic(errors.Wrap(err, "Can't read file "+*filePtr))
+		log.Fatal(errors.Wrap(err, "Can't read lattice"))
 	}
 	log.Printf("Punctuating")
 	data, err = punctuate(data, punctuation.NewWrapper(*urlPtr))
 	if err != nil {
-		panic(errors.Wrap(err, "Can't punctuate"))
+		log.Fatal(errors.Wrap(err, "Can't punctuate"))
 	}
 	err = lattice.Write(data, destination)
 	if err != nil {
-		panic(errors.Wrap(err, "Can't write file "+*outPtr))
+		log.Fatal(errors.Wrap(err, "Can't write lattice"))
 	}
 	log.Print("Done punctuation")
 }
