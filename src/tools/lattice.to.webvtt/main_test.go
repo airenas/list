@@ -9,7 +9,7 @@ import (
 )
 
 func TestHeader(t *testing.T) {
-	assert.Equal(t, "WEBVTT\n", getHeader())
+	assert.True(t, strings.HasPrefix(getHeader(), "WEBVTT"))
 }
 
 func TestGetWebVTT(t *testing.T) {
