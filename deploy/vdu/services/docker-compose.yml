@@ -201,7 +201,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
-      PR_URL: http://punctuation-service:8080/punctuation
+      PR_URL: http://punctuation-service:8080/punctuationArray
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
