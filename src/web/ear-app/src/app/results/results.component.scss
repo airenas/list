@@ -37,6 +37,9 @@
     line-height: 24px; 
     font-weight: bold; }
 
+  .result-text { 
+      white-space: pre-wrap; }  
+
   .result-progress-section {
     display: flex;
     align-content: center;

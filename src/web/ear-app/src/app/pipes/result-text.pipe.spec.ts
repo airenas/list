@@ -21,6 +21,11 @@ describe('ResultTextPipe', () => {
   it('changes new line symbol', () => {
     const pipe = new ResultTextPipe();
     const transformed = pipe.transform('olia\nolia');
-    expect(transformed).toEqual('olia<br/>olia');
+    expect(transformed).toEqual('olia\n  olia');
+  });
+  it('changes several new line symbols', () => {
+    const pipe = new ResultTextPipe();
+    const transformed = pipe.transform('olia\nolia\nooo');
+    expect(transformed).toEqual('olia\n  olia\n  ooo');
   });
 });

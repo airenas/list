@@ -10,6 +10,6 @@ export class ResultTextPipe implements PipeTransform {
       return value;
     }
     const re = /\n/gi;
-    return value.replace(re, '<br/>');
+    return value.replace(re, '\n  ');
   }
 }
