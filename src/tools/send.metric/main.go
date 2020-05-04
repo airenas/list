@@ -18,38 +18,89 @@ type request struct {
 	Timestap int64  `json:"timestamp"`
 	Type     string `json:"type"`
 	Worker   string `json:"worker"`
+	Model    string `json:"model"`
 	Task     string `json:"task"`
+}
+
+type params struct {
+	url    string
+	start  bool
+	id     string
+	worker string
+	model  string
+	task   string
 }
 
 func main() {
 	log.SetOutput(os.Stderr)
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:<start | end> <worker> <task> <ID>\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-	flag.Parse()
-	mURL := os.Getenv("METRICS_URL")
-	if mURL == "" {
-		flag.Usage()
-		log.Printf("Can't send metric: No METRICS_URL environment variable")
+	data := &params{}
+	takeEnvValues(data)
+	fs := flag.CommandLine
+	takeParams(fs, data)
+	fs.Parse(os.Args[1:])
+	err := validateParams(data)
+	if err != nil {
+		log.Printf(err.Error())
+		fs.Usage()
 		return
 	}
-	if len(flag.Args()) != 4 {
-		flag.Usage()
-		log.Printf("Wrong params")
-		return
-	}
-	data := &request{}
-	data.Type = flag.Arg(0)
-	data.Worker = flag.Arg(1)
-	data.Task = flag.Arg(2)
-	data.ID = flag.Arg(3)
-	data.Timestap = time.Now().UnixNano()
-	log.Printf("Sending metric: %s, %s, %s, %s, %d", data.Type, data.Worker, data.Task, data.ID, data.Timestap/1000000)
-	err := post(data, mURL)
+	req := mapRequest(data, time.Now())
+	log.Printf("Sending metric: %s, %s, %s, %s, %d", req.Type, req.Worker, req.Task, req.ID, req.Timestap/1000000)
+	err = post(req, data.url)
 	if err != nil {
 		log.Printf("Can't send metric: %s", err.Error())
 	}
+}
+
+func takeEnvValues(data *params) {
+	data.url = os.Getenv("METRICS_URL")
+	data.model = os.Getenv("MODEL")
+}
+
+func takeParams(fs *flag.FlagSet, data *params) {
+	fs.Usage = func() {
+		fmt.Fprintf(fs.Output(), "Usage of %s: <params>\n", os.Args[0])
+		fs.PrintDefaults()
+	}
+	fs.StringVar(&data.id, "i", "", "Transcription ID")
+	fs.StringVar(&data.worker, "w", "", "Worker")
+	fs.StringVar(&data.task, "t", "", "Task")
+	fs.StringVar(&data.model, "m", "", "Model")
+	fs.StringVar(&data.url, "u", "", "Metrics URL")
+	fs.BoolVar(&data.start, "s", false, "Start if set, else end")
+}
+
+func validateParams(data *params) error {
+	if data.url == "" {
+		return errors.New("No URL")
+	}
+	if data.model == "" {
+		return errors.New("No Model")
+	}
+	if data.id == "" {
+		return errors.New("No ID")
+	}
+	if data.task == "" {
+		return errors.New("No Task")
+	}
+	if data.worker == "" {
+		return errors.New("No Worker")
+	}
+	return nil
+}
+
+func mapRequest(data *params, t time.Time) *request {
+	req := &request{}
+	req.ID = data.id
+	req.Model = data.model
+	req.Task = data.task
+	req.Worker = data.worker
+	req.Timestap = t.UnixNano()
+	req.Type = "end"
+	if data.start {
+		req.Type = "start"
+	}
+	return req
 }
 
 func post(data *request, url string) error {
