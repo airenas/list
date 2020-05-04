@@ -1,0 +1,27 @@
+rule_files:
+  - prometheus_rules.yml
+  
+scrape_configs:
+- job_name: 'node-exporter'
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - node-exporter:9100
+
+- job_name: 'rabbitmq-exporter'
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - rabbitmq-exporter:9419    
+
+# - job_name: 'status-service'
+#   scrape_interval: 30s
+#   static_configs:
+#   - targets:
+#     - status-service:8000    
+
+- job_name: 'metrics-collector'
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - metrics-collector:8000  

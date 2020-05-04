@@ -248,7 +248,49 @@ services:
     volumes:
       - fileStorage:/data
     environment:
-      MONGO_URL: ${LIST_MONGO_URL}        
+      MONGO_URL: ${LIST_MONGO_URL} 
+
+  prometheus:
+    image: prom/prometheus:v2.17.2
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --web.external-url=${HOST_EXTERNAL_URL}/prometheus/
+    - --web.route-prefix=/
+    volumes:
+    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ./prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
+    depends_on:
+    - node-exporter
+    - rabbitmq-exporter
+    - metrics-collector
+    labels:  
+    - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
+    - "traefik.port=9090"   
+
+  metrics-collector:
+    image: airenas/list-metrics-collector:${METRICS_COLLECTOR_VERSION}
+    restart: unless-stopped
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    restart: unless-stopped 
+
+  rabbitmq-exporter:
+    image: kbudde/rabbitmq-exporter:v1.0.0-RC6.1
+    environment:
+      RABBIT_URL: http://rabbitmq:15672
+      RABBIT_USER: ${LIST_RABBITMQ_USER}
+      RABBIT_PASSWORD: ${LIST_RABBITMQ_PASS}
+    restart: unless-stopped                
 
 # ########### db & broker
   mongo:
