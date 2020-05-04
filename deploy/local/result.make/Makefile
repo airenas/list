@@ -7,13 +7,13 @@ service=result-make-service
 tag=airenas/$(docker_container_prefix)$(service):$(TR_RESULT_SERVICE_VERSION).$(commit_count)
 
 #####################################################################################
-tools=punct.lattice lattice.to.text lattice.to.webvtt
+tools=punct.lattice lattice.to.text lattice.to.webvtt send.metric
 tools_dir=$(SRC_DIR)/tools/$(punct_wrapper_name)
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
-script_files=Makefile restore/lat_restore.pl restore/lat_map.pl restore/lt.pl restore/LatGraph.pm
+script_files=Makefile restore/lat_restore.pl restore/lat_map.pl restore/lt.pl restore/LatGraph.pm \
+	m_shell.sh m_start.sh m_end.sh
 dist_script_files=$(patsubst %, $(dist_dir)/cmd/%, $(script_files))
-
 #####################################################################################
 $(dist_dir):
 	mkdir -p $@
@@ -30,6 +30,8 @@ $(dist_dir)/cmd:
 $(dist_dir)/cmd/restore: 
 	mkdir -p $@
 $(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/result.make/Makefile | $(dist_dir)/cmd
+	cp $< $@
+$(dist_dir)/cmd/%.sh: $(SRC_DIR)/decode/scripts/%.sh | $(dist_dir)/cmd
 	cp $< $@
 $(dist_dir)/cmd/restore/%: $(SRC_DIR)/decode/result.make/restore/% | $(dist_dir)/cmd/restore
 	cp $< $@	

@@ -12,10 +12,17 @@ APP_DIR?=/app
 
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
-log=@echo $$(date +'%Y-%m-%d %T')
+log=echo $$(date +'%Y-%m-%d %T')
 logb=$(log): START
 loge=$(log): END
 
+###############################################################################
+## for metrics
+SHELL=$(SCRIPTS_DIR)/m_shell.sh
+.ONESHELL:
+.EXPORT_ALL_VARIABLES:
+worker=result.make
+###############################################################################
 # init symbolic directories
 steps:
 	ln -s $(APPS_ROOT)/steps
@@ -27,12 +34,12 @@ utils:
 .DELETE_ON_ERROR:	
 
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
-	$(logb) $@
+	tsk=prepareCtm;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+
 	gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
-	$(loge) $@  
 
 %.synced.ctm: %.selected.ctm
 	cat $^ | LC_ALL=C sort -k 1,1 -k 3,3n -k 4,4n > $@
@@ -41,29 +48,29 @@ $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINA
 	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@	
 
 $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
-	@mkdir -p $(RESULTS_ROOT)/$*/
+	mkdir -p $(RESULTS_ROOT)/$*/
 	cat $^ > $@	
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	$(logb) $@
-	@mkdir -p $(RESULTS_ROOT)/$*/
+	tsk=lattice2text;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+
+	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.text $^ $@
-	$(loge) $@
 
 $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	$(logb) $@
-	@mkdir -p $(RESULTS_ROOT)/$*/
+	tsk=lattice2webvtt;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	
+	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.webvtt $^ $@
-	$(loge) $@
 
 $(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
 	$(logb) $@
-	@mkdir -p $(RESULTS_ROOT)/$*/
+	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $^ $@
 	$(loge) $@	
 $(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
 	$(logb) $@
-	@mkdir -p $(RESULTS_ROOT)/$*/
+	mkdir -p $(RESULTS_ROOT)/$*/
 	gzip -c $^ > $@
 	$(loge) $@		
 
@@ -74,24 +81,22 @@ $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(loge) $@
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
-	$(logb) $@
+	tsk=prepareLat;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
 	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
-	$(loge) $@	
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
-	$(logb) $@
+	tsk=lattice2n10;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
 	gunzip -c $^ | \
 	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
-	$(loge) $@	
 
 #restore lattice
 $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
-	$(logb) $@
+	tsk=restoreLat;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
-		
 	# optimum rescaling parameters (estimated on ARM6)
 	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
 	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
@@ -123,17 +128,16 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
 		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt
 	touch $@ 
-	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
-	$(logb) $@
-	@mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
+	tsk=punctuate;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
 ifeq ($(PUNCTUATE), true)
 	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt $@
 else
 	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt > $@
 endif
-	$(loge) $@
 
 $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/result.txt $(RESULTS_ROOT)/%/resultFinal.txt \
 			$(RESULTS_ROOT)/%/lat.txt $(RESULTS_ROOT)/%/lat.nb10.txt  \

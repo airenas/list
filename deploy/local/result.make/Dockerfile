@@ -11,8 +11,10 @@ COPY deploy/cmdWorkerService /app/
 COPY deploy/punct.lattice /app/
 COPY deploy/lattice.to.text /app/
 COPY deploy/lattice.to.webvtt /app/
+COPY deploy/send.metric /app/
 COPY config.yaml /app/
 
+COPY deploy/cmd/*.sh /cmd/
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/
 COPY deploy/cmd/restore /cmd/restore
