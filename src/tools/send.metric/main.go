@@ -65,8 +65,8 @@ func takeParams(fs *flag.FlagSet, data *params) {
 	fs.StringVar(&data.id, "i", "", "Transcription ID")
 	fs.StringVar(&data.worker, "w", "", "Worker")
 	fs.StringVar(&data.task, "t", "", "Task")
-	fs.StringVar(&data.model, "m", "", "Model")
-	fs.StringVar(&data.url, "u", "", "Metrics URL")
+	fs.StringVar(&data.model, "m", data.model, "Model")
+	fs.StringVar(&data.url, "u", data.url, "Metrics URL")
 	fs.BoolVar(&data.start, "s", false, "Start if set, else end")
 }
 
