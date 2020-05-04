@@ -12,6 +12,7 @@
 OUTPUT_ROOT?=/audio.prepared
 INPUT_ROOT?=/audio.in
 
+
 MIN_LEN?=0.5
 
 WRONG_FORMAT_CMD=(echo -n [[[ >&2 && echo ErrorCode:WRONG_FORMAT]]] >&2 && exit 2)
@@ -27,29 +28,29 @@ define checkAudioLen
     }
 endef
 
-log=@echo $$(date +'%Y-%m-%d %T')
-logb=$(log): START
-loge=$(log): END
+###############################################################################
+## for metrics
+SHELL=$(SCRIPTS_DIR)/m_shell.sh
+.ONESHELL:
+.EXPORT_ALL_VARIABLES:
+worker=audio.prepare
+###############################################################################
 
 $(OUTPUT_ROOT):
 	mkdir $(OUTPUT_ROOT)
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.wav $(OUTPUT_ROOT)
-	$(logb) $@
+$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.wav | $(OUTPUT_ROOT)
+	tsk=wav;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
 	sox $< -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
-	$(loge) $@
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 $(OUTPUT_ROOT)
-	$(logb) $@
+$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 | $(OUTPUT_ROOT)
+	tsk=mp3;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
-	$(loge) $@
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 $(OUTPUT_ROOT)
-	$(logb) $@
+$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
+	tsk=mp4;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
 	$(call checkAudioLen,$@)
-	$(loge) $@
-
-test: $(OUTPUT_ROOT)/a.wav

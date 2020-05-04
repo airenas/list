@@ -1,2 +1,5 @@
 OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.prepared
 INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.in
+SCRIPTS_DIR=/home/airenas/projects/list/src/decode/scripts
+APP_DIR=/home/airenas/projects/list/src/tools/send.metric
+

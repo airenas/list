@@ -1,4 +1,6 @@
 OUTPUT_ROOT=/data/audio.prepared
 INPUT_ROOT=/data/audio.in
+APP_DIR=/app
+SCRIPTS_DIR=/cmd
 
 MIN_LEN=0.5
