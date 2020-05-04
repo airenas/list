@@ -67,3 +67,4 @@ deploy/local/dispatcher/deploy/**
 tmp/**
 deploy/local/rescore/deploy/**
 src/tools/internal/pkg/test/mocks/**
+deploy/local/metrics/deploy/**

@@ -294,6 +294,10 @@ services:
     depends_on:
     - node-exporter
     - rabbitmq-exporter
+    - metrics-collector
+
+  metrics-collector:
+    build: metrics
 
   node-exporter:
     image: prom/node-exporter:v0.18.1

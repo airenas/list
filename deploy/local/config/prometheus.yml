@@ -13,3 +13,15 @@ scrape_configs:
   static_configs:
   - targets:
     - rabbitmq-exporter:9419    
+
+- job_name: 'status-service'
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - status-service:8000    
+
+- job_name: 'metrics-collector'
+  scrape_interval: 30s
+  static_configs:
+  - targets:
+    - metrics-collector:8000  
