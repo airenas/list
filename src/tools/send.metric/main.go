@@ -74,17 +74,14 @@ func validateParams(data *params) error {
 	if data.url == "" {
 		return errors.New("No URL")
 	}
-	if data.model == "" {
-		return errors.New("No Model")
-	}
-	if data.id == "" {
-		return errors.New("No ID")
+	if data.worker == "" {
+		return errors.New("No Worker")
 	}
 	if data.task == "" {
 		return errors.New("No Task")
 	}
-	if data.worker == "" {
-		return errors.New("No Worker")
+	if data.id == "" {
+		return errors.New("No ID")
 	}
 	return nil
 }

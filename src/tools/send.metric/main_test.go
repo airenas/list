@@ -64,15 +64,17 @@ func TestValidate(t *testing.T) {
 	data = &params{url: "url", model: "model", worker: "worker", task: "task"}
 	err = validateParams(data)
 	assert.NotNil(t, err)
-	data = &params{url: "url", id: "id", worker: "worker", task: "task"}
-	err = validateParams(data)
-	assert.NotNil(t, err)
 	data = &params{url: "url", id: "id", model: "model", task: "task"}
 	err = validateParams(data)
 	assert.NotNil(t, err)
 	data = &params{url: "url", id: "id", model: "model", worker: "worker"}
 	err = validateParams(data)
 	assert.NotNil(t, err)
+
+	//allow
+	data = &params{url: "url", id: "id", worker: "worker", task: "task"}
+	err = validateParams(data)
+	assert.Nil(t, err)
 }
 
 func TestMap(t *testing.T) {
