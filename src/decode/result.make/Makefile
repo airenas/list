@@ -18,7 +18,7 @@ loge=$(log): END
 
 ###############################################################################
 ## for metrics
-SHELL=$(SCRIPTS_DIR)/m_shell.sh
+SHELL=$(APP_DIR)/m_shell.sh
 .ONESHELL:
 .EXPORT_ALL_VARIABLES:
 worker=result.make
@@ -34,7 +34,7 @@ utils:
 .DELETE_ON_ERROR:	
 
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
-	tsk=prepareCtm;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=prepareCtm;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
@@ -52,13 +52,13 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 	cat $^ > $@	
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	tsk=lattice2text;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.text $^ $@
 
 $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	tsk=lattice2webvtt;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=lattice2webvtt;id=$*;. $(APP_DIR)/m_start.sh $@
 	
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.webvtt $^ $@
@@ -81,12 +81,12 @@ $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	$(loge) $@
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
-	tsk=prepareLat;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=prepareLat;id=$*;. $(APP_DIR)/m_start.sh $@
 	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
-	tsk=lattice2n10;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=lattice2n10;id=$*;. $(APP_DIR)/m_start.sh $@
 	gunzip -c $^ | \
 	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
 		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
@@ -94,7 +94,7 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 
 #restore lattice
 $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
-	tsk=restoreLat;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=restoreLat;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
 	# optimum rescaling parameters (estimated on ARM6)
@@ -130,7 +130,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	touch $@ 
 
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
-	tsk=punctuate;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
+	tsk=punctuate;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
 ifeq ($(PUNCTUATE), true)

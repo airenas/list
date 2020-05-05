@@ -13,12 +13,10 @@ $(dist_dir)/$(executable_name): $(GO_SRC_DIR) | $(dist_dir)
 	@echo -n "$(GREEN)Build:$(C_NC) $(executable_name)\n"
 #####################################################################################
 tools_dir=$(SRC_DIR)/tools
-tools=send.metric
+tools=send.metric m_shell.sh m_start.sh m_end.sh
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
 scripts_dir=$(SRC_DIR)/decode/scripts
-scripts=m_shell.sh m_start.sh m_end.sh
-dist_scripts_files=$(patsubst %, $(dist_dir)/cmd/%, $(scripts))
 #####################################################################################
 $(dist_dir)/%: $(tools_dir)/% | $(dist_dir)
 	cd $< && $(go_build_cmd) -o $@
@@ -29,9 +27,9 @@ $(dist_dir)/cmd:
 	mkdir -p $(dist_dir)/cmd
 $(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/audio.prepare/Makefile | $(dist_dir)/cmd
 	cp $< $@
-$(dist_dir)/cmd/%: $(scripts_dir)/% | $(dist_dir)/cmd
+$(dist_dir)/%.sh: $(scripts_dir)/%.sh | $(dist_dir)/cmd
 	cp $< $@
-copy: $(dist_dir)/cmd/Makefile $(dist_scripts_files)
+copy: $(dist_dir)/cmd/Makefile
 ########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
 
