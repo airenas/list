@@ -16,10 +16,10 @@ INPUT_ROOT?=/audio.in
 MIN_LEN?=0.5
 
 CHECK_FORMAT_CMD=r=$$?;\
-		if [ $$r -gt 0 ]; then printf "[[[ErrorCode:WRONG_FORMAT]]]\n" >&2; exit 2; fi
+		if [ $$r -gt 0 ]; then printf "[[[%s:WRONG_FORMAT]]]\n" ErrorCode >&2; exit 2; fi
 CHECK_LEN_CMD=ok=$$(echo "$(MIN_LEN) > $$(sox --i -D $@)" | bc -l) ;\
-		if [ $$ok -gt 0 ] ; then printf "[[[ErrorCode:TOO_SHORT_AUDIO]]]\n" >&2; exit 3; fi
-l
+		if [ $$ok -gt 0 ] ; then printf "[[[%s:TOO_SHORT_AUDIO]]]\n" ErrorCode >&2; exit 3; fi
+
 ###############################################################################
 ## for metrics
 SHELL=$(SCRIPTS_DIR)/m_shell.sh
