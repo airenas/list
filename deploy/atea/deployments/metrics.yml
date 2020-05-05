@@ -18,6 +18,10 @@ data:
       static_configs:
       - targets:
         - metrics-collector:8000
+    - job_name: 'node-exporter'
+      static_configs:
+      - targets:
+        - node-exporter:9100    
     # - job_name: 'status-service'
     #   static_configs:
     #   - targets:
@@ -80,3 +84,104 @@ spec:
             name: prometheus-conf
         - name: prometheus-volume
           emptyDir: {}
+---
+### metrics collector
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-collector
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 8000
+    protocol: TCP
+    targetPort: 8000 
+  selector:
+    app: metrics-collector
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-collector
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metrics-collector
+  template:
+    metadata:
+      labels:
+        app: metrics-collector
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      containers:
+      - name: metrics-collector
+        image: airenas/list-metrics-collector:0.1.623
+        ports:
+        - containerPort: 8000
+---
+### node exporter
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 9100
+    protocol: TCP
+    targetPort: 9100 
+  selector:
+    app: node-exporter
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-exporter
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      containers:
+      - name: metrics-collector
+        image: prom/node-exporter:v0.18.1
+        ports:
+        - containerPort: 9100
+        args:
+        - "--collector.filesystem"
+        - "--path.procfs=/host/proc"
+        - "--path.sysfs=/host/sys"
+        - "--collector.filesystem.ignored-mount-points"
+        - "'^/(sys|proc|host|etc)($|/)'"
+        volumeMounts:
+        - mountPath: /host/proc
+          name: proc-fs
+        - mountPath: /host/sys
+          name: sys-fs
+        - mountPath: /rootfs
+          name: root-fs
+      volumes:
+      - name: proc-fs
+        hostPath:
+          path: /proc
+      - name: sys-fs
+        hostPath:
+          path: /sys
+      - name: root-fs
+        hostPath:
+          path: /
