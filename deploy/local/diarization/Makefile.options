@@ -3,3 +3,4 @@ INPUT_ROOT=/data/audio.prepared
 APPS_ROOT=/apps/diarization
 KALDI_ROOT=/apps/kaldi
 MODELS_ROOT=/models/diarization
+APP_DIR=/app
