@@ -25,11 +25,7 @@ echo "============= rnnlm rescore ================================="
 outdir=$(dirname $outputfile)
 mkdir -p $outdir/log
 lat_rspecifier="'ark:gunzip -c $inputfile|'"
-lat_wspecifier="'ark,t:|gzip -c>$outdir/rnnlm_rescored.gz'"
+lat_wspecifier="'ark,t:|gzip -c> $outputfile'"
 /app/pipe.runner -i pipe_input -o pipe_output -t 10m $lat_rspecifier $lat_wspecifier || exit 1;
-
-echo "============= scale rescore ================================="
-lattice-scale --inv-acoustic-scale=12.0 "ark:gunzip -c $outdir/rnnlm_rescored.gz|" ark:- | \
-  lattice-add-penalty --word-ins-penalty=3.0 ark:- "ark:| gzip -c > $outputfile" || exit 1
 echo "============= done ==================="
 exit 0;
