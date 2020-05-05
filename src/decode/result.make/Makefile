@@ -31,12 +31,24 @@ utils:
 	ln -s $(APPS_ROOT)/utils
 
 .SECONDARY:
-.DELETE_ON_ERROR:	
+.DELETE_ON_ERROR:
 
-$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
+#scale
+$(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
+	tsk=scale;id=$*;. $(APP_DIR)/m_start.sh $@
+
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
+	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
+	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
+	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
+		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
+		lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- "ark:| gzip -c > $@"
+
+
+$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
 	tsk=prepareCtm;id=$*;. $(APP_DIR)/m_start.sh $@
 
-	gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz | lattice-1best ark:- ark:- | \
+	gunzip -c $^ | lattice-1best ark:- ark:- | \
       nbest-to-ctm  ark:- - | \
       utils/int2sym.pl -f 5 $(MODELS_ROOT)/words.txt | \
 	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
@@ -51,64 +63,53 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cat $^ > $@	
 
-$(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
+$(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.text $^ $@
 
-$(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
+$(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	tsk=lattice2webvtt;id=$*;. $(APP_DIR)/m_start.sh $@
 	
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.webvtt $^ $@
 
-$(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	$(logb) $@
+$(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $^ $@
-	$(loge) $@	
-$(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt
-	$(logb) $@
+
+$(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	gzip -c $^ > $@
-	$(loge) $@		
 
-$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
-	$(logb) $@
+$(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz
 	mkdir -p $(RESULTS_ROOT)/$*/
-	cp $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz $@		
-	$(loge) $@
+	cp $^ $@		
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=prepareLat;id=$*;. $(APP_DIR)/m_start.sh $@
-	gunzip -c $^ | $(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
+
+	gunzip -c $^ | lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=lattice2n10;id=$*;. $(APP_DIR)/m_start.sh $@
 	gunzip -c $^ | \
-	  $(APPS_ROOT)/bin/lattice-to-nbest --n=10 ark:- ark:- | \
-		$(APPS_ROOT)/bin/lattice-copy ark:- ark,t:- | \
+	  lattice-to-nbest --n=10 ark:- ark:- | \
+		lattice-copy ark:- ark,t:- | \
 		utils/int2sym.pl -f 3 $(MODELS_ROOT)/words.txt > $@		
 
 #restore lattice
-$(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done | steps utils
+$(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
 	tsk=restoreLat;id=$*;. $(APP_DIR)/m_start.sh $@
 
-	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
-	# optimum rescaling parameters (estimated on ARM6)
-	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
-	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
 	unk_id=$$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
 	sil_id=$$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
-	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
-		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
-	lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- ark:- | \
-	lattice-prune --beam=7 ark:- ark:- | \
-	lattice-push ark:- ark:- | \
-	lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
-	$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat
+	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
+		lattice-push ark:- ark:- | \
+		lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
+		$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat
 
 	# Extract 1-best lattice
 	# negalima naudoti lattice-to-nbest --n=1 ark,t:L1.lat ark,t:L2.lat
@@ -126,17 +127,17 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	cd restore && ./lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
-		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt
+		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt
 	touch $@ 
 
-$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.1.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
+$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
 	tsk=punctuate;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
 ifeq ($(PUNCTUATE), true)
-	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt $@
+	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
 else
-	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.1.txt > $@
+	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt > $@
 endif
 
 $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/result.txt $(RESULTS_ROOT)/%/resultFinal.txt \
