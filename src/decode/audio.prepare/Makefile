@@ -15,19 +15,11 @@ INPUT_ROOT?=/audio.in
 
 MIN_LEN?=0.5
 
-WRONG_FORMAT_CMD=(echo -n [[[ >&2 && echo ErrorCode:WRONG_FORMAT]]] >&2 && exit 2)
-TOO_SHORT_AUDIO_CMD=(echo -n [[[ >&2 && echo ErrorCode:TOO_SHORT_AUDIO]]] >&2 && exit 3)
-
-define checkAudioLen
-	{ \
-		ok=$$(echo "$(MIN_LEN) > $$(sox --i -D $(1))" | bc -l) ;\
-		if [ $$ok -gt 0 ] ;\
-		then \
-			$(TOO_SHORT_AUDIO_CMD);\
-		fi ;\
-    }
-endef
-
+CHECK_FORMAT_CMD=r=$$?;\
+		if [ $$r -gt 0 ]; then printf "[[[ErrorCode:WRONG_FORMAT]]]\n" >&2; exit 2; fi
+CHECK_LEN_CMD=ok=$$(echo "$(MIN_LEN) > $$(sox --i -D $@)" | bc -l) ;\
+		if [ $$ok -gt 0 ] ; then printf "[[[ErrorCode:TOO_SHORT_AUDIO]]]\n" >&2; exit 3; fi
+l
 ###############################################################################
 ## for metrics
 SHELL=$(SCRIPTS_DIR)/m_shell.sh
@@ -41,16 +33,19 @@ $(OUTPUT_ROOT):
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.wav | $(OUTPUT_ROOT)
 	tsk=wav;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
-	sox $< -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
-	$(call checkAudioLen,$@)
+	sox $< -c 1 -b 16 $@ rate -v 16k 
+	$(CHECK_FORMAT_CMD)
+	$(CHECK_LEN_CMD)
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 | $(OUTPUT_ROOT)
 	tsk=mp3;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
 	
-	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
-	$(call checkAudioLen,$@)
+	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k
+	$(CHECK_FORMAT_CMD)
+	$(CHECK_LEN_CMD)
 
 $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
 	tsk=mp4;id=$*;. $(SCRIPTS_DIR)/m_start.sh $@
-	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k || $(WRONG_FORMAT_CMD)
-	$(call checkAudioLen,$@)
+	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
+	$(CHECK_FORMAT_CMD)
+	$(CHECK_LEN_CMD)
