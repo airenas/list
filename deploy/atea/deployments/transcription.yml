@@ -111,7 +111,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: status
-        image: airenas/list-status-service:1.0.463
+        image: airenas/list-status-service:1.2.583
         ports:
         - containerPort: 8000
           name: client
@@ -221,7 +221,7 @@ spec:
         nodetype: transcriber
       containers:
       - name: manager
-        image: airenas/list-manager-service:1.0.463
+        image: airenas/list-manager-service:1.1.583
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -275,7 +275,7 @@ spec:
           claimName: modelstorage-2    
       containers:
       - name: audio-prepare
-        image: airenas/list-audio-prepare-service:2.0.463
+        image: airenas/list-audio-prepare-service:2.1.632
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -289,6 +289,8 @@ spec:
             secretKeyRef:
               name: rabbit-mq-login
               key: password
+        - name: METRICS_URL
+          value: http://metrics-collector:8000/metrics      
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
@@ -325,7 +327,7 @@ spec:
           claimName: modelstorage-2       
       containers:
       - name: diarization
-        image: airenas/list-diarization-service:2.0.463
+        image: airenas/list-diarization-service:2.2.633
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -339,6 +341,8 @@ spec:
             secretKeyRef:
               name: rabbit-mq-login
               key: password
+        - name: METRICS_URL
+          value: http://metrics-collector:8000/metrics              
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
@@ -436,7 +440,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: transcription
-        image: airenas/list-transcription-service:3.0.537
+        image: airenas/list-transcription-service:3.2.633
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -450,6 +454,8 @@ spec:
             secretKeyRef:
               name: rabbit-mq-login
               key: password
+        - name: METRICS_URL
+          value: http://metrics-collector:8000/metrics      
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
@@ -458,21 +464,21 @@ spec:
         - name: modelstorage-vol 
           mountPath: /models
 ---  
-#resultmake dispatcher      
+#rescore dispatcher      
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: result-make-dispatcher
+  name: rescore-dispatcher
   namespace: aft  
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: result-make-dispatcher
+      app: rescore-dispatcher
   template:
     metadata:
       labels:
-        app: result-make-dispatcher
+        app: rescore-dispatcher
     spec:
       nodeSelector:
         nodetype: transcriber
@@ -484,7 +490,7 @@ spec:
         persistentVolumeClaim:
           claimName: modelstorage-2        
       containers:
-      - name: result-make-dispatcher
+      - name: rescore-dispatcher
         image: airenas/list-dispatcher-service:0.1.565
         env:
         - name: MESSAGESERVER_URL
@@ -500,9 +506,9 @@ spec:
               name: rabbit-mq-login
               key: password
         - name: DISPATCHER_REGISTRATIONQUEUE
-          value: ResultMakeWorker_Registry
+          value: RescoreWorker_Registry
         - name: DISPATCHER_WORKQUEUE
-          value: ResultMake
+          value: Rescore
         - name: RECOGNIZERCONFIG_KEY
           value: rescore-preload_key
         - name: STRATEGY_MODELLOADDURATION
@@ -517,14 +523,68 @@ spec:
         - name: modelstorage-vol 
           mountPath: /models    
 ---    
-## resultmake service
+## rescore worker
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rescore
+  namespace: aft  
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: rescore
+  template:
+    metadata:
+      labels:
+        app: rescore
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: filestorage-vol
+        persistentVolumeClaim:
+          claimName: filestorage
+      - name: appstorage-vol
+        persistentVolumeClaim:
+          claimName: appstorage
+      - name: modelstorage-vol
+        persistentVolumeClaim:
+          claimName: modelstorage-2        
+      containers:
+      - name: rescore
+        image: airenas/list-rescore-service:1.1.633
+        env:
+        - name: MESSAGESERVER_URL
+          value: rabbitmq:5672  
+        - name: MESSAGESERVER_USER
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: username  
+        - name: MESSAGESERVER_PASS
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-mq-login
+              key: password
+        - name: METRICS_URL
+          value: http://metrics-collector:8000/metrics
+        volumeMounts:
+        - name: filestorage-vol 
+          mountPath: /data
+        - name: appstorage-vol 
+          mountPath: /apps
+        - name: modelstorage-vol 
+          mountPath: /models
+---    
+## resultmake worker
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: result-make
   namespace: aft  
 spec:
-  replicas: 4
+  replicas: 1
   selector:
     matchLabels:
       app: result-make
@@ -547,7 +607,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:3.0.537
+        image: airenas/list-result-make-service:3.3.636
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -562,7 +622,9 @@ spec:
               name: rabbit-mq-login
               key: password
         - name: PR_URL
-          value: http://punctuation:8080/punctuation    
+          value: http://punctuation:8080/punctuationArray
+        - name: METRICS_URL
+          value: http://metrics-collector:8000/metrics
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
