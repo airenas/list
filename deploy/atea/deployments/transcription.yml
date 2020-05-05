@@ -723,7 +723,7 @@ spec:
           claimName: punctuationstorage
       containers:
       - name: punctuation
-        image: airenas/list-punctuation-service:v0.1beta
+        image: airenas/list-punctuation-service:2.0.606
         env:
         - name: TF_URL
           value: tensorflow:8500  
