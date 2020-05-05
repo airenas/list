@@ -1,0 +1,82 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-conf
+  labels:
+    name: prometheus-conf
+  namespace: aft
+data:
+  prometheus.rules.yml: |-
+    # empty rules now
+  prometheus.yml: |-
+    global:
+      scrape_interval: 30s
+    rule_files:
+      - /etc/prometheus/prometheus.rules.yml
+    scrape_configs:
+    - job_name: 'metrics-collector'
+      static_configs:
+      - targets:
+        - metrics-collector:8000
+    # - job_name: 'status-service'
+    #   static_configs:
+    #   - targets:
+    #     - status-service:8000    
+---
+### prometheus service
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: aft
+spec:
+  type: ClusterIP
+  ports:
+  - name: client-in
+    port: 9090
+    protocol: TCP
+    targetPort: 9090 
+  selector:
+    app: prometheus
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: aft  
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      nodeSelector:
+        nodetype: transcriber
+      volumes:
+      - name: configstorage-vol
+        persistentVolumeClaim:
+          claimName: configstorage
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.17.2
+        ports:
+        - containerPort: 9090
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--storage.tsdb.path=/prometheus/"
+        volumeMounts:
+        - name: prometheus-config-volume
+          mountPath: /etc/prometheus/
+        - name: prometheus-volume
+          mountPath: /prometheus/
+      volumes:
+        - name: prometheus-config-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-conf
+        - name: prometheus-volume
+          emptyDir: {}

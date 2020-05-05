@@ -3,6 +3,7 @@
 LOCAL_PORT_UPLOAD?=8001
 LOCAL_PORT_STATUS?=8002
 LOCAL_PORT_RESULT?=8003
+LOCAL_PORT_PROMETHEUS?=8004
 #####################################################################################
 ku_po: 
 	kubectl get pods
@@ -36,6 +37,9 @@ info_result:
 	curl -i http://localhost:$(LOCAL_PORT_RESULT)/live?full=1
 test_result:
 	./utils/test.sh proxy_result info_result		
+#####################################################################################
+proxy_prometheus:
+	kubectl -n aft port-forward svc/prometheus $(LOCAL_PORT_PROMETHEUS):9090
 #####################################################################################
 vh_pod_name:
 	$(eval vh_pod_name := $(shell kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $$1}'))
