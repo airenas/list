@@ -9,6 +9,8 @@ WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
 COPY config.yaml /app/
+COPY deploy/send.metric /app/
+COPY deploy/*.sh /app/
 
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/

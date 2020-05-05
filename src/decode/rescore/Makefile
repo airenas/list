@@ -7,10 +7,6 @@ FINAL_PASS=2-pass
 
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
-log=@echo $$(date +'%Y-%m-%d %T')
-logb=$(log): START
-loge=$(log): END
-
 # init symbolic directories
 steps:
 	ln -s $(APPS_ROOT)/steps
@@ -21,11 +17,19 @@ utils:
 .SECONDARY:
 .DELETE_ON_ERROR:	
 
+###############################################################################
+## for metrics
+SHELL=$(APP_DIR)/m_shell.sh
+.ONESHELL:
+.EXPORT_ALL_VARIABLES:
+worker=rescore
+###############################################################################
+
 #rescore lattice
 $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done: $(INPUT_ROOT)/trans/%/1-pass/decode/lat.1.gz | steps utils
-	$(logb) $@
+	tsk=rescore;id=$*;. $(APP_DIR)/m_start.sh $@
+
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode
 	## run rescore script for model
 	LM_DIR=$(LM_DIR) $(SCRIPTS_DIR)/rescore.sh $(MODELS_ROOT) $< $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz || exit 1
 	touch $@ 
-	$(loge) $@

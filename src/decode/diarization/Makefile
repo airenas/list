@@ -15,30 +15,38 @@ JAVA_BIN?=java
 .SECONDARY:
 .DELETE_ON_ERROR:
 
-log=@echo $$(date +'%Y-%m-%d %T')
+log=echo $$(date +'%Y-%m-%d %T')
 logb=$(log): START
 loge=$(log): END
 
+###############################################################################
+## for metrics
+SHELL=$(APP_DIR)/m_shell.sh
+.ONESHELL:
+.EXPORT_ALL_VARIABLES:
+worker=diarization
+###############################################################################
+
 # Speaker diarization
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
-	$(logb) $@
-	@echo "Number of speakers = $(NUMBER_OF_SPEAKERS)"
+	tsk=split;id=$*;. $(APP_DIR)/m_start.sh $@
+
+	echo "Number of speakers = $(NUMBER_OF_SPEAKERS)"
 	rm -rf `dirname $@`
 	mkdir -p `dirname $@`
 	echo "$* 1 0 1000000000 U U U 1" >  `dirname $@`/show.uem.seg;
 	if [ $(DO_MUSIC_DETECTION) = yes ]; then diarization_opts="-m"; fi; \
 	(export LOCALCLASSPATH=$(LOCALCLASSPATH); export JAVA_BIN=$(JAVA_BIN); export MODELS_ROOT=$(MODELS_ROOT); $(APPS_ROOT)/diarization.sh $$diarization_opts $^ `dirname $@`/show.uem.seg)
-	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
-	@mkdir -p `dirname $@`
+	mkdir -p `dirname $@`
 	cat $< | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(logb) $@
-	@mkdir -p `dirname $@`
+	mkdir -p `dirname $@`
 	cat $< | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s-S%04d\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, substr($$8,2)}' | \
@@ -47,7 +55,7 @@ $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg
 
 $(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg
 	$(logb) $@
-	@mkdir -p `dirname $@`
+	mkdir -p `dirname $@`
 	cat $< | \
 		awk '{ printf "%s-S%04d---%09.3f-%09.3f %s %.3f %.3f\n", \
 			$$1, substr($$8,2), $$3/100.0, ($$3+$$4)/100.0, $$1, $$3/100.0, ($$3+$$4)/100.0}' | \
@@ -62,4 +70,3 @@ $(OUTPUT_ROOT)/trans/%/spk2utt: $(OUTPUT_ROOT)/trans/%/utt2spk
 $(OUTPUT_ROOT)/trans/%/.diarization.done: $(OUTPUT_ROOT)/trans/%/spk2utt $(OUTPUT_ROOT)/trans/%/segments \
 											$(OUTPUT_ROOT)/trans/%/wav.scp
 	touch $@
-

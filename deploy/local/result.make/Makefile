@@ -9,7 +9,7 @@ tag=airenas/$(docker_container_prefix)$(service):$(TR_RESULT_SERVICE_VERSION).$(
 #####################################################################################
 tools=punct.lattice lattice.to.text lattice.to.webvtt send.metric \
 	m_shell.sh m_start.sh m_end.sh
-tools_dir=$(SRC_DIR)/tools/$(punct_wrapper_name)
+tools_dir=$(SRC_DIR)/tools
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
 script_files=Makefile restore/lat_restore.pl restore/lat_map.pl restore/lt.pl restore/LatGraph.pm
