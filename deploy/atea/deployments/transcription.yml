@@ -304,7 +304,7 @@ metadata:
   name: diarization
   namespace: aft  
 spec:
-  replicas: 4
+  replicas: 5
   selector:
     matchLabels:
       app: diarization
@@ -584,7 +584,7 @@ metadata:
   name: result-make
   namespace: aft  
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: result-make
