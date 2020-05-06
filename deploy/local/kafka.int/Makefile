@@ -1,22 +1,16 @@
 -include ../Makefile.options
 #####################################################################################
-dist_dir=deploy
+dist_dir=$(CURDIR)/deploy
 executable_name=kafkaIntegrationService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=kafka-integration-service
 version=$(KAFKA_INTEGRATION_SERVICE_VERSION)
 #####################################################################################
-$(main_dir)/$(executable_name): $(GO_SRC_DIR)
-	cd $(main_dir) && go build -tags static
+$(dist_dir)/$(executable_name): $(GO_SRC_DIR)
+	cd $(main_dir) && go build -tags static -o $@
 
-build: $(main_dir)/$(executable_name)
+build: $(dist_dir)/$(executable_name)
 #####################################################################################
-$(dist_dir)/$(executable_name): $(main_dir)/$(executable_name)
-	mkdir -p $(@D)
-	cp $< $@
-
-copy: $(dist_dir)/$(executable_name)
-########### DOCKER ##################################################################
 tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
 
 dbuild: $(dist_dir)/$(executable_name)
@@ -30,5 +24,5 @@ clean:
 	rm -f $(main_dir)/$(executable_name)
 
 .PHONY:
-	clean copy build dbuild dpush
+	clean build dbuild dpush
 

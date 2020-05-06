@@ -21,12 +21,12 @@ spec:
           claimName: kafkaintegrationstorage
       containers:
       - name: kafka-integration
-        image: airenas/list-kafka-integration-service:0.11.448
+        image: airenas/list-kafka-integration-service:1.1.650
         env:
         - name: KAFKA_BROKERS
           value: kafka-svc.atea.svc.cluster.local:9092
         - name: KAFKA_GROUP
-          value: Transcriber.Service.Group   
+          value: Transcriber.Service.Group
         - name: FS_URL
           value: http://repository-svc.tetragrama.svc.cluster.local:7001
         - name: TRANSCRIBER_URL_UPLOAD
@@ -38,7 +38,7 @@ spec:
         - name: TRANSCRIBER_URL_CLEAN
           value: http://clean:8000/   
         - name: LOGGER_LEVEL
-          value: info
+          value: debug
         volumeMounts:
         - name: kafkaintegration-vol 
           mountPath: /idsmap
