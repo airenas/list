@@ -1,4 +1,5 @@
 -include Makefile.options
+srv?=kafka
 #####################################################################################
 LOCAL_PORT_UPLOAD?=8001
 LOCAL_PORT_STATUS?=8002
@@ -49,6 +50,18 @@ vh_cmd: vh_pod_name
 #####################################################################################
 connect_vh: vh_cmd
 	$(vh_cmd) /bin/sh
+#####################################################################################
+connect: $(srv)_cmd
+	echo "Connecting $($(srv)_pod_name)"
+	$($(srv)_cmd) /bin/bash	
+logs: $(srv)_pod_name
+	echo "Connecting $($(srv)_pod_name)"
+	kubectl logs $($(srv)_pod_name)
+$(srv)_pod_name:
+	$(eval $(srv)_pod_name := $(shell kubectl get po | grep -e '^$(srv)' | head -n 1 | awk '{print $$1}'))
+	@$(if $(strip $($(srv)_pod_name)),echo "Pod name = $($(srv)_pod_name)",echo No $(srv) pod && exit 1)
+$(srv)_cmd: $(srv)_pod_name
+	$(eval $(srv)_cmd := kubectl exec -it $($(srv)_pod_name))	
 #####################################################################################
 init_filestorage: vh_cmd
 	$(vh_cmd) -- mkdir -p /filestorage/decoded/audio
