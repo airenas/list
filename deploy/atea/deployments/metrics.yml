@@ -21,11 +21,23 @@ data:
     - job_name: 'node-exporter'
       static_configs:
       - targets:
-        - node-exporter:9100    
-    # - job_name: 'status-service'
-    #   static_configs:
-    #   - targets:
-    #     - status-service:8000    
+        - node-exporter:9100 
+    - job_name: 'status-service'
+      static_configs:
+      - targets:
+        - status:8000    
+    - job_name: 'upload-service'
+      static_configs:
+      - targets:
+        - upload:8000
+    - job_name: 'result-service'
+      static_configs:
+      - targets:
+        - result:8000        
+    - job_name: 'clean-service'
+      static_configs:
+      - targets:
+        - clean:8000        
 ---
 ### prometheus service
 apiVersion: v1
