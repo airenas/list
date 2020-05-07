@@ -18,6 +18,21 @@ scrape_configs:
   - targets:
     - status-service:8000    
 
+- job_name: 'upload-service'
+  static_configs:
+  - targets:
+    - upload-service:8000
+
+- job_name: 'result-service'
+  static_configs:
+  - targets:
+    - result-service:8000        
+    
+- job_name: 'clean-service'
+  static_configs:
+  - targets:
+    - clean-service:8000            
+
 - job_name: 'metrics-collector'
   static_configs:
   - targets:
