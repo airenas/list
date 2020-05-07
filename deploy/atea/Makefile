@@ -6,9 +6,12 @@ LOCAL_PORT_STATUS?=8002
 LOCAL_PORT_RESULT?=8003
 LOCAL_PORT_PROMETHEUS?=8004
 #####################################################################################
-ku_po: 
+show-pods: 
 	kubectl get pods
-
+show-deployments: 
+	kubectl get deployments
+show-services: 
+	kubectl get services
 #####################################################################################
 init_vh: 
 	kubectl apply -f volume-helper
@@ -86,7 +89,12 @@ copy_apps:
 #####################################################################################
 redeploy:
 	kubectl apply -f deployments/
-
+#####################################################################################
+delete-prometheus:
+	kubectl delete deployment prometheus | true
+restart-prometheus: delete-prometheus
+	kubectl apply -f deployments/metrics.yml
+#####################################################################################
 clean:
 
 .PHONY:
