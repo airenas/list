@@ -622,7 +622,7 @@ spec:
               name: rabbit-mq-login
               key: password
         - name: PR_URL
-          value: http://punctuation:8080/punctuationArray
+          value: http://punctuation:8000/punctuationArray
         - name: METRICS_URL
           value: http://metrics-collector:8000/metrics
         volumeMounts:
@@ -693,9 +693,9 @@ spec:
   type: ClusterIP
   ports:
   - name: client-in
-    port: 8080
+    port: 8000
     protocol: TCP
-    targetPort: 8080 
+    targetPort: 8000 
   selector:
     app: punctuation
 ---    
@@ -723,7 +723,7 @@ spec:
           claimName: punctuationstorage
       containers:
       - name: punctuation
-        image: airenas/list-punctuation-service:2.0.606
+        image: airenas/list-punctuation-service:2.1.669
         env:
         - name: TF_URL
           value: tensorflow:8500  
@@ -770,7 +770,7 @@ spec:
           claimName: filestorage
       containers:
       - name: clean
-        image: airenas/list-clean-service:1.1.663
+        image: airenas/list-clean-service:1.1.668
         ports:
         - containerPort: 8000
           name: client

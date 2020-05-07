@@ -37,7 +37,11 @@ data:
     - job_name: 'clean-service'
       static_configs:
       - targets:
-        - clean:8000        
+        - clean:8000
+    - job_name: 'punctuation-service'
+      static_configs:
+      - targets:
+        - punctuation:8000            
 ---
 ### prometheus service
 apiVersion: v1
