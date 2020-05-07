@@ -4,7 +4,7 @@
 <punct-model-dir>/
     settings.yml    # model settings,
                     #   punctuation vocaburary, etc...
-    vocabulary      # words vocabulary (zero base index)
+    vocabulary      # words vocabulary (zero based index)
 ```
 
 ## Tensorflow model structure
