@@ -12,7 +12,8 @@ tools=punct.lattice lattice.to.text lattice.to.webvtt send.metric int.to.word \
 tools_dir=$(SRC_DIR)/tools
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
-script_files=Makefile restore/lat_restore.pl restore/lat_map.pl restore/lt.pl restore/LatGraph.pm
+script_files=Makefile restore/lat_restore.pl restore/lat_map.pl restore/lt.pl restore/LatGraph.pm \
+			restore/utils_num.pl
 dist_script_files=$(patsubst %, $(dist_dir)/cmd/%, $(script_files))
 #####################################################################################
 $(dist_dir):
