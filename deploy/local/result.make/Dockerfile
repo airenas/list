@@ -12,6 +12,7 @@ COPY deploy/punct.lattice /app/
 COPY deploy/lattice.to.text /app/
 COPY deploy/lattice.to.webvtt /app/
 COPY deploy/send.metric /app/
+COPY deploy/int.to.word /app/
 COPY config.yaml /app/
 COPY deploy/*.sh /app/
 
