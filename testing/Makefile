@@ -95,10 +95,12 @@ $(test_dir)/recognized.txt: $(test_dir)/result/.done
 $(test_dir)/wer.txt: $(test_dir)/recognized.txt
 	scripts/compute-wer --mode=present \
 		ark:$(test_dir)/testdata/txt/ref.txt  ark:$(test_dir)/recognized.txt > $(test_dir)/wer.txt
+$(test_dir)/ref.txt: $(test_dir)/.data.done
+	cat $(test_dir)/testdata/txt/ref.txt | sed 's/ *$$//g' > $@
 calc_wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
-compare: $(test_dir)/recognized.txt	
-	vimdiff $(test_dir)/testdata/txt/ref.txt $(test_dir)/recognized.txt
+compare: $(test_dir)/recognized.txt	$(test_dir)/ref.txt
+	vimdiff $(test_dir)/ref.txt $(test_dir)/recognized.txt
 #####################################################################################
 info: 
 	@echo "UPLOAD: $(UPLOAD_SERVICE)"
