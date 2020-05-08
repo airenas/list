@@ -109,25 +109,25 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
 		lattice-push ark:- ark:- | \
 		lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
-		$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat
+		$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat || exit 1
 
 	# Extract 1-best lattice
 	# negalima naudoti lattice-to-nbest --n=1 ark,t:L1.lat ark,t:L2.lat
 	# lattice-to-nbest ne tik papildo '-1' utt_id, bet ir prijungia tylas prie þodþiø pabaigos
 	# taip desinchronizuodama L1 ir L2
 	lattice-1best ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
-		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L2.lat
+		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L2.lat || exit 1
 
 	# Replace transition-ids by phone-ids (timing is lost)
 	lattice-to-phone-lattice --replace-words=false $(MODELS_ROOT)/final.mdl \
 		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
-		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L3.lat
+		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L3.lat  || exit 1
 
 	# Perform processing 
-	cd restore && ./lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
+	cd restore && perl lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
-		$(MODELS_ROOT)/phones.txt --join-spk --join-num 0.03 > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt
+		$(MODELS_ROOT)/phones.txt --join-spk --join-num 0.03 > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt || exit 1
 	touch $@ 
 
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
@@ -135,7 +135,7 @@ $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/resto
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
 ifeq ($(PUNCTUATE), true)
-	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
+	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@ || exit 1
 else
 	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt > $@
 endif
