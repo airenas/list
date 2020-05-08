@@ -23,6 +23,7 @@ type params struct {
 }
 
 func main() {
+	//defer profile.Start().Stop()
 	log.SetOutput(os.Stderr)
 	params := &params{}
 	fs := flag.CommandLine
@@ -160,14 +161,14 @@ func readVocabInt(src io.Reader, pJobs int) ([]string, error) {
 	cd := c / pJobs
 	toC := cd
 	for i := 0; i < c; i = toC {
-		if i+cd >= c {
+		toC = i + cd
+		if toC > c {
 			toC = c
 		} else {
-			toC = getTo(data, i+cd)
+			toC = getTo(data, toC)
 		}
 		wg.Add(1)
 		go read(data[i:toC], res, &wg)
-
 	}
 	wg.Wait()
 	return res.res, res.err
@@ -196,7 +197,7 @@ func read(data []byte, res *results, wg *sync.WaitGroup) {
 	for err != io.EOF {
 		line, err = buf.ReadString('\n')
 		if err != nil && err != io.EOF {
-			setError(res, errors.Wrapf(err, "Can't parse %s", line))
+			setError(res, errors.Wrapf(err, "Can't read"))
 			return
 		}
 		line = strings.TrimSpace(line)
