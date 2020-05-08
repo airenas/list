@@ -607,7 +607,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:3.3.636
+        image: airenas/list-result-make-service:3.4.683
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
