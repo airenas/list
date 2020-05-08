@@ -30,14 +30,19 @@ func TestParse(t *testing.T) {
 }
 
 func TestToString(t *testing.T) {
-	str := toString([]string{"olia", "10"})
+	str := toString([]string{"olia", "10"}, " ")
 	assert.Equal(t, "olia 10", str)
 
-	str = toString([]string{"olia"})
+	str = toString([]string{"olia"}, " ")
 	assert.Equal(t, "olia", str)
 
-	str = toString([]string{"olia", "qqq", "aaa"})
+	str = toString([]string{"olia", "qqq", "aaa"}, " ")
 	assert.Equal(t, "olia qqq aaa", str)
+}
+
+func TestToTab(t *testing.T) {
+	str := toString([]string{"olia", "10"}, "\t")
+	assert.Equal(t, "olia\t10", str)
 }
 
 func TestReadVocab(t *testing.T) {
@@ -103,6 +108,27 @@ func TestMap(t *testing.T) {
 	assert.Equal(t, "a b w_1 1", nl)
 }
 
+func TestMapTab(t *testing.T) {
+	rd := generate(10)
+	v, err := readVocab(rd)
+	assert.Nil(t, err)
+	nl, err := mapLine("a\t1\tb", v, 1)
+	assert.Nil(t, err)
+	assert.Equal(t, "a\tw_1\tb", nl)
+
+	nl, err = mapLine("1\ta", v, 0)
+	assert.Nil(t, err)
+	assert.Equal(t, "w_1\ta", nl)
+
+	nl, err = mapLine("a\tb\t1", v, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, "a\tb\tw_1", nl)
+
+	nl, err = mapLine("a\tb\t1\t1", v, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, "a\tb\tw_1\t1", nl)
+}
+
 func TestMapSkip(t *testing.T) {
 	rd := generate(10)
 	v, err := readVocab(rd)
@@ -139,7 +165,7 @@ func BenchmarkParse2(b *testing.B) { benchmarkParse(b, "oliaaaaaaaaaaaa 15\n") }
 
 func benchmarkToString(b *testing.B, str []string) {
 	for n := 0; n < b.N; n++ {
-		toString(str)
+		toString(str, " ")
 	}
 }
 

@@ -217,7 +217,11 @@ func read(data []byte, res *results, wg *sync.WaitGroup) {
 }
 
 func mapLine(line string, vocab []string, c int) (string, error) {
-	strs := strings.Split(line, " ")
+	sep := " "
+	if strings.Contains(line, "\t") {
+		sep = "\t"
+	}
+	strs := strings.Split(line, sep)
 	var w string
 	if c < len(strs) {
 		num, err := strconv.Atoi(strs[c])
@@ -234,16 +238,16 @@ func mapLine(line string, vocab []string, c int) (string, error) {
 			return "", errors.Errorf("Not found word by id %d", num)
 		}
 		strs[c] = w
-		return toString(strs), nil
+		return toString(strs, sep), nil
 	}
 	return line, nil
 }
 
-func toString(strs []string) string {
+func toString(strs []string, sep string) string {
 	res := strings.Builder{}
 	for _, s := range strs {
 		if res.Len() > 0 {
-			res.WriteString(" ")
+			res.WriteString(sep)
 		}
 		res.WriteString(s)
 	}
