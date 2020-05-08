@@ -44,27 +44,14 @@ $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PAS
 		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
 		lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- "ark:| gzip -c > $@"
 
-
-$(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).selected.ctm: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
-	tsk=prepareCtm;id=$*;. $(APP_DIR)/m_start.sh $@
-
-	gunzip -c $^ | lattice-1best ark:- ark:- | \
-      nbest-to-ctm  ark:- - | \
-      $(APP_DIR)/int.to.word -c 5 -v $(MODELS_ROOT)/words.txt | \
-	  perl -npe 's/(.*)-(S\d+)---(\S+)/\1_\3_\2/' > $@
-
-%.synced.ctm: %.selected.ctm
-	cat $^ | LC_ALL=C sort -k 1,1 -k 3,3n -k 4,4n > $@
-
-%.txt: %.synced.ctm
-	cat $^ | cut -f 5 -d " " | perl -npe 's/\n/ /'  > $@	
-
-$(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS).txt
+$(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
+	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
+	
 	mkdir -p $(RESULTS_ROOT)/$*/
-	cat $^ > $@	
+	$(APP_DIR)/lattice.to.text $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
-	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
+	tsk=lattice2textFinal;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(APP_DIR)/lattice.to.text $^ $@
