@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#X                                                                  X
+#X lat_map.pl, Copyright(C) Gailius Raskinis, 2020                  X
+#X                                                                  X
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 use strict;
 use warnings;
 

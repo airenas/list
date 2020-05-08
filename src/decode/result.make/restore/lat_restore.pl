@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+#X                                                                  X
+#X lat_restore.pl, Copyright(C) Gailius Raðkinis, 2020              X
+#X                                                                  X
+#XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
 # ./lat_restore.pl L1.lat L2.lat L3.lat words.txt phones.txt
 # L1.lat Word-aligned lattice that has transition-id sequence
 # L2.lat Best-path word-aligned lattice that has transition-id sequence
@@ -14,17 +20,22 @@
 use strict;
 use warnings;
 use File::Basename;
+use Digest::MD5  qw(md5_hex);
 use lib dirname (__FILE__); # kad rastu .pm
 use LatGraph;
 #use Data::Dumper qw(Dumper);
 
 my $dirname = dirname(__FILE__);
 require "$dirname/lat_map.pl";
+require "$dirname/utils_num.pl";
  
 binmode(STDIN, ":utf8");
 binmode(STDOUT, ":utf8");
 
-
+our $debug = 0;
+my $deb_lat;# = 96;# = 45;# = 184; # = 190;# = 183; # = 192; # = 33; ## = 210; # = 39; #203;#  = 190;# = 208;
+# 33 - <eps>
+# 39 - 600 vs. 649
 ###############################################################################
 #                                                                             #
 # MAIN PROGRAM                                                                #
@@ -36,6 +47,17 @@ my $L2 = shift @ARGV; # single best path lattice with transition-ids
 my $L3 = shift @ARGV; # multiple-path lattice with phone-ids
 $main::symtab_w = shift @ARGV; # word symbol table
 $main::symtab_p = shift @ARGV; # phone symbol table
+
+our $join_spk = 0;
+our $join_num = 0;
+our $max_intra_sil = 0.03;
+
+while (scalar @ARGV > 0) {
+   $join_spk = 1 if ($ARGV[0] eq '--join-spk');
+   $join_num = 1 if ($ARGV[0] eq '--join-num');
+   $max_intra_sil = $ARGV[0] if ($ARGV[0] =~ m/^[0-9\.]+$/);
+   shift @ARGV;
+   }
 
 if (!defined $L1 || !defined $L2 || !defined $L3 || !defined $main::symtab_w || !defined $main::symtab_p) {
    print STDERR "Usage: $0 L1.lat L2.lat L3.lat words.txt phones.txt\n" .
@@ -97,13 +119,14 @@ sub read_lats {
       elsif ( $nb_entries == 3 ) { # edge / word     
          if ($frameBased == 1) {   
             my $nb_frames = count_underscores(\$lines[$i]) + 1;
-            $lines[$i] =~ m/^(\d+)\t(\d+)\t([[:alnum:]<>]+)/;
-            $lat->add_edge($1, $2, $3, $nb_frames); 
+            $lines[$i] =~ m/^(\d+)\t(\d+)\t([[:alnum:]<>]+)\t([-e\.0-9]+,[-e\.0-9]+,[_0-9]+)$/;
+            # $4 - footprint must include not only transition ids but probs as well (identical <unk> transition ids observed)
+            $lat->add_edge($1, $2, $3, md5_hex($4), $nb_frames); 
             }
          elsif ($frameBased == 0) {   
             $lines[$i] =~ m/^(?:\d+)\t(?:\d+)\t(?:\d+)\t(?:[-e\.0-9]+),(?:[-e\.0-9]+),([_0-9]+)/; 
             if (!defined $1) { 
-            print "$lines[$i] -- $1\n";
+               print STDERR "$0: Unable to extract phone ids from line ".$i." '$lines[$i]'\n";
             }
             # $1 -> 419_493_565_369_620
             $lat->add_phones($1); 
@@ -142,17 +165,34 @@ sub label_phones {
    }
 #-----------------------------
 
-sub reduce_out {
+sub connect_nums {
    my ( $lats_ref ) = @_;
 
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
+      $$lats_ref[$i]->connect_nums();
+      }
+   }
+#-----------------------------
+
+sub reduce_out {
+   my ( $lats_ref ) = @_;
+
+   my $last_spk = -1;
+   for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
+      next if ($$lats_ref[$i]->is_empty() == 1);
       my $keys_ref = $$lats_ref[$i]->reduce_out();
       $$lats_ref[$i]->{_name} =~ m/-S([0-9]+)---/;
       if (! defined ($1)) {
          print STDERR "$0: cannot detect speaker name in the file name '$$lats_ref[$i]->{_name}'\n";
          exit -1;
          }
-      print '# '.($i+1).' S'.$1."\n";
+      if ($join_spk == 0 || $last_spk == -1 || $1 != $last_spk) {
+         print "\n" if ($i > 0);         # newline between sections
+         print '# '.($i+1).' S'.$1."\n"; # new section header
+         }
+      $last_spk = $1;
       $$lats_ref[$i]->print_sorted($keys_ref, 'STO');
       }
    }
@@ -161,7 +201,18 @@ sub reduce_out {
 sub print_lats {
    my ( $lats_ref, $options ) = @_;
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
       $$lats_ref[$i]->print($options);
+      }
+   }
+#-----------------------------
+
+# Perform checks to see if modified lattices satisfy necessary conditions
+sub test_lats {
+   my ( $lats_ref ) = @_;
+   for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
+      $$lats_ref[$i]->test_single_best($i);
       }
    }
 #-----------------------------
@@ -222,43 +273,17 @@ for(my $i=0; $i<scalar @L1; $i++) {
 # mark best hypothesis in the first colection of lattices
 label_best(\@L1, \@L2);
 label_phones(\@L1, \@L3);
-#sort @L1;
 my @s_L1 = sort { $a->{_startTime} <=> $b->{_startTime} } @L1;
+# Connect digits
+print_lats(\@s_L1, 'SNTIWP') if ($debug == 1);
+
+connect_nums(\@s_L1) if ($join_num == 1);
+# Print text hypotheses
 reduce_out(\@s_L1);
 #print_lats(\@L1, 'STO');
 #print_lats(\@L1, 'SNTIWP');
 
-exit 0;
-
-
-# nereikalinga, jei naudojame lattice-1best, o ne lattice-to-nbest --n=1
-# strip '-1' from the ending of the filename in the 1-best collection
-# for(my $i=0; $i<scalar @latnames2; $i++) {
-#   $latnames2[$i] =~ s/-1$//;
-#   }
-
-
-while (<>) {
-   my @A = split(" ", $_);
-   for (my $pos = 0; $pos <= $#A; $pos++) {
-      my $a = $A[$pos];
-      if ($pos == 2) {
-         $a = int2word($a);
-         }
-      elsif ($pos == 3) {
-         my @B = split(",", $A[$pos]);
-         $a = $B[0].",".$B[1];
-         my @C = split("_", $B[2]);
-         my $transc='';
-         for (my $p = 0; $p <= $#C; $p++) {
-            $transc = $transc.int2phone($C[$p], 1); # remove_pd_info
-            }
-         $a = $a." ".$transc;
-         }
-      print "$a ";
-      }
-   print "\n";
-   }
+test_lats(\@s_L1);
 
 exit 0;
 

@@ -127,7 +127,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 	cd restore && ./lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
-		$(MODELS_ROOT)/phones.txt > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt
+		$(MODELS_ROOT)/phones.txt --join-spk --join-num 0.03 > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt
 	touch $@ 
 
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
