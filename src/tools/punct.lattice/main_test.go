@@ -42,6 +42,58 @@ func TestGetNext(t *testing.T) {
 	assert.Equal(t, 4, ni)
 }
 
+func TestGetNext_SplitOnPause(t *testing.T) {
+	initTest(t)
+	tl, _ := lattice.Read(strings.NewReader(
+		`# 6 S4
+1 10.00 10.12 w9
+1 10.12 10.25 w10
+1 10.25 12.25 <eps>
+
+# 7 S4
+1 12.25 12.50 w11
+1 12.50 12.80 w12
+`))
+
+	ni := getNextPartIndex(tl, 0)
+	assert.Equal(t, 1, ni)
+}
+
+func TestGetNext_IgnoreNonMain(t *testing.T) {
+	initTest(t)
+	tl, _ := lattice.Read(strings.NewReader(
+		`# 6 S4
+1 10.00 10.12 w9
+1 10.12 10.25 w10
+1 10.25 12.25 <eps>
+0 10.25 12.25 olia
+
+# 7 S4
+1 12.25 12.50 w11
+1 12.50 12.80 w12
+`))
+
+	ni := getNextPartIndex(tl, 0)
+	assert.Equal(t, 1, ni)
+}
+
+func TestGetNext_SplitOnShortPause(t *testing.T) {
+	initTest(t)
+	tl, _ := lattice.Read(strings.NewReader(
+		`# 6 S4
+1 10.00 10.12 w9
+1 10.12 10.25 w10
+1 10.25 11.25 <eps>
+
+# 7 S4
+1 11.25 12.50 w11
+1 12.50 12.80 w12
+`))
+
+	ni := getNextPartIndex(tl, 0)
+	assert.Equal(t, 2, ni)
+}
+
 func TestGetWords(t *testing.T) {
 	initTest(t)
 	wrds := getWords(makeTestLattice(), 0, 1)
@@ -115,7 +167,6 @@ func makeTestLattice() []*lattice.Part {
 1 fr to <w7>
 1 fr to w8
 0 fr to word
-
 `))
 	return res
 }
