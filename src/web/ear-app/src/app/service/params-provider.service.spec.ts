@@ -7,6 +7,7 @@ export class TestParamsProviderService implements ParamsProviderService {
 
   private _transcriptionID: string;
   lastSelectedFile: File;
+  showErrorDetails = false;
   private _email: string;
   private _recognizer: string;
 
@@ -73,5 +74,12 @@ describe('ParamsProviderService', () => {
   it('should remember recognizer from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setRecognizer('rec');
     expect(service.getRecognizer()).toBe('rec');
+  }));
+  it('default showErrorDetails', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    expect(service.showErrorDetails).toBe(false);
+  }));
+  it('update showErrorDetails', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.showErrorDetails = true;
+    expect(service.showErrorDetails).toBe(true);
   }));
 });

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export abstract class ParamsProviderService {
   lastSelectedFile: File;
+  showErrorDetails: boolean;
   abstract setEmail(email: string): void;
   abstract getEmail(): string;
   abstract setTranscriptionID(id: string): void;
@@ -15,6 +16,7 @@ export class LocalStorageParamsProviderService implements ParamsProviderService 
 
   private _transcriptionID: string;
   lastSelectedFile: File;
+  showErrorDetails = false;
   private _email: string;
   private _recognizer: string;
 

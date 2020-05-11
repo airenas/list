@@ -2,10 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { TranscriptionResult } from '../api/transcription-result';
 import { ErrorCode } from '../api/error-codes';
 
-@Pipe({
-  name: 'error'
-})
 export class ErrorPipe implements PipeTransform {
+  constructor (private showDetails: boolean) {}
 
   transform(value: TranscriptionResult): string {
     if (value.errorCode === ErrorCode.TooShortAudio) {
@@ -13,6 +11,11 @@ export class ErrorPipe implements PipeTransform {
     }
     if (value.errorCode === ErrorCode.WrongFormat) {
       return 'Blogas formatas';
+    }
+    if (value.errorCode === ErrorCode.ServiceError) {
+      if (!this.showDetails) {
+        return 'Serviso klaida';
+      }
     }
     return value.error;
   }

@@ -139,6 +139,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   audioPlayer: AudioPlayer;
   audioURLKeeper: AudioURLKeeper = null;
   fileKeeper: FileURLKeeper = null;
+  errDetailsClick = 0;
   @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
 
 
@@ -182,12 +183,10 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
 
   onResult(result: TranscriptionResult) {
     this.result = result;
-    this.error = null;
     this.recognizedText = null;
     this.progress = null;
     this.status = null;
     if (this.result) {
-      this.error = new ErrorPipe().transform(result);
       this.recognizedText = result.recognizedText;
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
@@ -195,6 +194,15 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     }
     this.audioURLKeeper.setAudio(this.result);
     this.fileKeeper.setID(this.result);
+    this.setError();
+  }
+
+  setError() {
+    if (this.result) {
+      this.error = new ErrorPipe(this.paramsProviderService.showErrorDetails).transform(this.result);
+    } else {
+      this.error = null;
+    }
   }
 
   prepareProgress(result: TranscriptionResult): Progress {
@@ -226,5 +234,14 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
 
   stopAudio() {
     this.audioPlayer.pause();
+  }
+
+  showErrDetails() {
+    this.errDetailsClick++;
+    if (this.errDetailsClick > 4 && this.paramsProviderService.showErrorDetails !== true) {
+      this.paramsProviderService.showErrorDetails = true;
+      this.showInfo('Detalus klaidų rodymas įjungtas');
+      this.setError();
+    }
   }
 }

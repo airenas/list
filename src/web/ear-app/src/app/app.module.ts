@@ -23,7 +23,6 @@ import { ParamsProviderService, LocalStorageParamsProviderService } from './serv
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { WebsocketURLProviderService } from './service/websocket-urlprovider.service';
 import { MicrophoneFactory } from './utils/microphone';
-import { ErrorPipe } from './pipes/error.pipe';
 
 @NgModule({
   declarations: [
@@ -31,8 +30,7 @@ import { ErrorPipe } from './pipes/error.pipe';
     UploadComponent,
     ResultsComponent,
     StatusHumanPipe,
-    ResultTextPipe,
-    ErrorPipe
+    ResultTextPipe
   ],
   imports: [
     BrowserModule,

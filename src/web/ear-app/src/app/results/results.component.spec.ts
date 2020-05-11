@@ -1,3 +1,4 @@
+import { ErrorCode } from './../api/error-codes';
 import { ResultTextPipe } from './../pipes/result-text.pipe';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -251,6 +252,42 @@ describe('ResultsComponent', () => {
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(false);
     });
   }));
+
+  it('should display error', async(() => {
+    const r = { status: Status.Rescore, id: 'x', error: 'olia', errorCode: ErrorCode.ServiceError, progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(fixture.debugElement.query(By.css('#errorDiv')).nativeElement.innerText).toContain('Serviso klaida');
+    });
+  }));
+
+  it('should show detailed error', async(() => {
+    const r = { status: Status.Rescore, id: 'x', error: 'olia', errorCode: ErrorCode.ServiceError, progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      for (let i = 0; i <= 5; i++) {
+        fixture.debugElement.query(By.css('#errorDiv')).nativeElement.click();
+      }
+      fixture.detectChanges();
+      fixture.whenStable().then(() => {
+        expect(fixture.debugElement.query(By.css('#errorDiv')).nativeElement.innerText).toContain('olia');
+      });
+    });
+  }));
+
+  it('should click error details', async(() => {
+    const r = { status: Status.Rescore, id: 'x', error: 'olia', errorCode: ErrorCode.ServiceError, progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      spyOn(component, 'showErrDetails');
+      fixture.debugElement.query(By.css('#errorDiv')).nativeElement.click();
+      expect(component.showErrDetails).toHaveBeenCalled();
+    });
+  }));
+
 });
 
 describe('ResultsComponent Own Mock', () => {
