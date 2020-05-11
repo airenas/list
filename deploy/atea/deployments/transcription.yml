@@ -399,9 +399,9 @@ spec:
         - name: RECOGNIZERCONFIG_KEY
           value: transcription-preload_key
         - name: STRATEGY_MODELLOADDURATION
-          value: 30s
+          value: 10s
         - name: STRATEGY_REALTIMEFACTOR
-          value: "2"  
+          value: "1.1"  
         - name: LOGGER_LEVEL
           value: debug
         volumeMounts:
@@ -514,7 +514,7 @@ spec:
         - name: STRATEGY_MODELLOADDURATION
           value: 1m
         - name: STRATEGY_REALTIMEFACTOR
-          value: "5"  
+          value: "0.9"  
         - name: LOGGER_LEVEL
           value: debug
         volumeMounts:
@@ -569,6 +569,8 @@ spec:
               key: password
         - name: METRICS_URL
           value: http://metrics-collector:8000/metrics
+        - name: LOGGER_LEVEL
+          value: debug  
         volumeMounts:
         - name: filestorage-vol 
           mountPath: /data
@@ -607,7 +609,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:3.4.683
+        image: airenas/list-result-make-service:3.4.693
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
