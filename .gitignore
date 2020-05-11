@@ -68,3 +68,4 @@ tmp/**
 deploy/local/rescore/deploy/**
 src/tools/internal/pkg/test/mocks/**
 deploy/local/metrics/deploy/**
+src/tools/int.to.word/tmp/**
