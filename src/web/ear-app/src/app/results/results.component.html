@@ -26,7 +26,9 @@
       <div *ngIf="result?.recognizedText" class="result-text">Atpažinta:
         <strong>{{result?.recognizedText | resultText}}</strong>
       </div>
-      <div *ngIf="error">Klaida: <strong><span style="color:red">{{error}}</span></strong></div>
+      <div *ngIf="error" class="error-text">Klaida: 
+        <strong><span style="color:red">{{error}}</span></strong>
+      </div>
     </mat-card-content>
   </mat-card>
 
