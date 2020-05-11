@@ -169,11 +169,28 @@ func benchmarkToString(b *testing.B, str []string) {
 	}
 }
 
-func BenchmarkToString1(b *testing.B) { benchmarkToString(b, []string{"olia"}) }
-func BenchmarkToString2(b *testing.B) { benchmarkToString(b, []string{"olia", "olia"}) }
-func BenchmarkToString3(b *testing.B) { benchmarkToString(b, []string{"olia", "olia", "olia"}) }
-func BenchmarkToString5(b *testing.B) {
+func BenchmarkParseSplit(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		parseLine1("oliaaaaaaaaaaaa 15\n")
+	}
+}
+
+func BenchmarkToString_5(b *testing.B) {
 	benchmarkToString(b, []string{"olia", "olia", "olia", "olia", "olia"})
+}
+
+func BenchmarkToString1_5(b *testing.B) {
+	str := []string{"olia", "olia", "olia", "olia", "olia"}
+	for n := 0; n < b.N; n++ {
+		toString1(str, " ")
+	}
+}
+
+func BenchmarkToString2_5(b *testing.B) {
+	str := []string{"olia", "olia", "olia", "olia", "olia"}
+	for n := 0; n < b.N; n++ {
+		toString2(str, " ")
+	}
 }
 
 func benchmarkReadVocab(b *testing.B, n int, pJobs int) {
@@ -207,3 +224,28 @@ func generateStr(size int) string {
 	}
 	return res.String()
 }
+
+func benchmarkGetTo(b *testing.B, f func([]byte, int) int) {
+	str := []byte(generateStr(5000))
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		f(str, 1000)
+	}
+}
+
+func benchmarkGetToLongLine(b *testing.B, f func([]byte, int) int) {
+	str := []byte(strings.ReplaceAll(generateStr(5000), "\n", " "))
+
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		f(str, 1000)
+	}
+}
+
+func BenchmarkGetTo1(b *testing.B) { benchmarkGetTo(b, getTo1) }
+func BenchmarkGetTo(b *testing.B)  { benchmarkGetTo(b, getTo) }
+func BenchmarkGetTo2(b *testing.B) { benchmarkGetTo(b, getTo2) }
+
+func BenchmarkGetToLongLine1(b *testing.B) { benchmarkGetToLongLine(b, getTo1) }
+func BenchmarkGetToLongLine(b *testing.B)  { benchmarkGetToLongLine(b, getTo) }
+func BenchmarkGetToLongLine2(b *testing.B) { benchmarkGetToLongLine(b, getTo2) }

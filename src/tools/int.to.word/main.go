@@ -18,7 +18,7 @@ import (
 )
 
 type params struct {
-	c     int
+	field int
 	vocab string
 }
 
@@ -29,7 +29,7 @@ func main() {
 	fs := flag.CommandLine
 	takeParams(fs, params)
 	fs.Parse(os.Args[1:])
-	params.c-- // make zero based
+	params.field-- // make zero based
 	err := validateParams(params)
 	if err != nil {
 		log.Printf(err.Error())
@@ -65,7 +65,7 @@ func main() {
 	for scanner.Scan() {
 		ln++
 		line := scanner.Text()
-		nLine, err := mapLine(line, vocab, params.c)
+		nLine, err := mapLine(line, vocab, params.field)
 		if err != nil {
 			log.Fatal(errors.Wrapf(err, "Error on line %d", ln))
 		}
@@ -86,15 +86,15 @@ func takeParams(fs *flag.FlagSet, data *params) {
 		fs.PrintDefaults()
 	}
 	fs.StringVar(&data.vocab, "v", "", "Vocabulary")
-	fs.IntVar(&data.c, "c", 0, "Column to change")
+	fs.IntVar(&data.field, "f", 0, "Field/column to change")
 }
 
 func validateParams(data *params) error {
 	if data.vocab == "" {
 		return errors.New("No vocab")
 	}
-	if data.c < 0 {
-		return errors.New("No column specified")
+	if data.field < 0 {
+		return errors.New("No field/column specified")
 	}
 	return nil
 }
@@ -120,9 +120,27 @@ func getLastLine(data []byte) (string, error) {
 	return res, nil
 }
 
-func getTo(data []byte, start int) int {
+func getTo2(data []byte, start int) int {
 	l := len(data)
 	for ; start < l; start++ {
+		if data[start] == '\n' {
+			return start + 1
+		}
+	}
+	return start
+}
+
+func getTo1(data []byte, start int) int {
+	for l := len(data); start < l; start++ {
+		if data[start] == '\n' {
+			return start + 1
+		}
+	}
+	return start
+}
+
+func getTo(data []byte, start int) int {
+	for ; start < len(data); start++ {
 		if data[start] == '\n' {
 			return start + 1
 		}
@@ -138,6 +156,18 @@ func parseLine(line string) (string, int, error) {
 			return "", -1, errors.Wrapf(err, "Wrong number in %s", line)
 		}
 		return line[:ind], num, nil
+	}
+	return "", -1, errors.New("No space")
+}
+
+func parseLine1(line string) (string, int, error) {
+	strs := strings.Split(line, " ")
+	if len(strs) > 1 {
+		num, err := strconv.Atoi(strings.TrimSpace(strs[1]))
+		if err != nil {
+			return "", -1, errors.Wrapf(err, "Wrong number in %s", line)
+		}
+		return strs[0], num, nil
 	}
 	return "", -1, errors.New("No space")
 }
@@ -202,7 +232,7 @@ func read(data []byte, res *results, wg *sync.WaitGroup) {
 		}
 		line = strings.TrimSpace(line)
 		if line != "" {
-			w, num, err := parseLine(line)
+			w, num, err := parseLine1(line)
 			if err != nil {
 				setError(res, errors.Wrapf(err, "Can't parse %s", line))
 				return
@@ -252,4 +282,27 @@ func toString(strs []string, sep string) string {
 		res.WriteString(s)
 	}
 	return res.String()
+}
+
+func toString1(strs []string, sep string) string {
+	res := strings.Builder{}
+	for _, s := range strs {
+		if res.Len() > 0 {
+			res.WriteString(sep + s)
+		} else {
+			res.WriteString(s)
+		}
+	}
+	return res.String()
+}
+
+func toString2(strs []string, sep string) string {
+	res := ""
+	for _, s := range strs {
+		if len(res) > 0 {
+			res = res + sep
+		}
+		res = res + s
+	}
+	return res
 }
