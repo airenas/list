@@ -1,10 +1,12 @@
 -include Makefile.options
 srv?=kafka
+nth?=1
 #####################################################################################
 LOCAL_PORT_UPLOAD?=8001
 LOCAL_PORT_STATUS?=8002
 LOCAL_PORT_RESULT?=8003
 LOCAL_PORT_PROMETHEUS?=8004
+LOCAL_PORT_RABBITMQ?=8005
 #####################################################################################
 show-pods: 
 	kubectl get pods
@@ -42,8 +44,10 @@ info_result:
 test_result:
 	./utils/test.sh proxy_result info_result		
 #####################################################################################
-proxy_prometheus:
+proxy-prometheus:
 	kubectl -n aft port-forward svc/prometheus $(LOCAL_PORT_PROMETHEUS):9090
+proxy-rabbitmq:
+	kubectl -n aft port-forward svc/rabbitmq $(LOCAL_PORT_RABBITMQ):15672
 #####################################################################################
 vh_pod_name:
 	$(eval vh_pod_name := $(shell kubectl get po | grep -e '^vh' | head -n 1 | awk '{print $$1}'))
@@ -61,7 +65,7 @@ logs: $(srv)_pod_name
 	echo "Connecting $($(srv)_pod_name)"
 	kubectl logs $($(srv)_pod_name)
 $(srv)_pod_name:
-	$(eval $(srv)_pod_name := $(shell kubectl get po | grep -e '^$(srv)' | head -n 1 | awk '{print $$1}'))
+	$(eval $(srv)_pod_name := $(shell kubectl get po | grep -e '^$(srv)' | head -n $(nth) | tail -n 1 | awk '{print $$1}'))
 	@$(if $(strip $($(srv)_pod_name)),echo "Pod name = $($(srv)_pod_name)",echo No $(srv) pod && exit 1)
 $(srv)_cmd: $(srv)_pod_name
 	$(eval $(srv)_cmd := kubectl exec -it $($(srv)_pod_name))	
