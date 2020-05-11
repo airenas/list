@@ -24,6 +24,15 @@ mail:
             Informuojame, kad transkripcija {{ID}} baigta.
 
             Transkripcijos rezultatą galite peržiūrėti čia: {{URL}}
+    
+    Failed:
+        subject: Nepavyko Trankripcija
+        text: > 
+            Sveiki, 
+        
+            Informuojame, kad transkripcija {{ID}} nepavyko.
+
+            Daugiau informacijos čia: {{URL}}   
 
 # messageServer: 
 #     url: 
