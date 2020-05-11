@@ -100,8 +100,9 @@ func getNextPartIndex(data []*lattice.Part, i int) int {
 	if i >= l {
 		return i
 	}
-	for sp := data[i].Speaker; i < l &&
-		sp == data[i].Speaker && lattice.SilDuration(data, i) < (2*time.Second); i++ {
+	sp := data[i].Speaker
+	for i++; i < l && sp == data[i].Speaker &&
+		lattice.SilDuration(data, i) < (2*time.Second); i++ {
 	}
 	return i
 }

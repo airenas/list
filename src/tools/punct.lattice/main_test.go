@@ -94,6 +94,26 @@ func TestGetNext_SplitOnShortPause(t *testing.T) {
 	assert.Equal(t, 2, ni)
 }
 
+func TestGetNext_IncreaseIndex(t *testing.T) {
+	initTest(t)
+	tl, _ := lattice.Read(strings.NewReader(
+		`# 6 S4
+1 1.00 1.12 w9
+1 1.12 2 w10
+
+# 7 S4
+1 5 6 w11
+1 7 8 w12
+
+# 8 S4
+1 13 14 w11
+1 15 16 w12
+`))
+
+	ni := getNextPartIndex(tl, 1)
+	assert.Equal(t, 2, ni)
+}
+
 func TestGetWords(t *testing.T) {
 	initTest(t)
 	wrds := getWords(makeTestLattice(), 0, 1)
