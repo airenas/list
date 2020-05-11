@@ -121,3 +121,42 @@ func Duration(str string) time.Duration {
 	}
 	return time.Duration(math.Round(res*1000)) * time.Millisecond
 }
+
+//SilDuration return duration between main last word of data[i-1] and first main word of data[i]
+func SilDuration(data []*Part, i int) time.Duration {
+	if i == 0 {
+		return 0
+	}
+	tf := getLastWordDuration(data[i-1].Words)
+	if tf == 0 {
+		return 0
+	}
+	tt := getFirstWordDuration(data[i].Words)
+	if tt == 0 {
+		return 0
+	}
+	return tt - tf
+}
+
+func getLastWordDuration(data []*Word) time.Duration {
+	for i := len(data) - 1; i >= 0; i-- {
+		w := data[i]
+		if w.Main == MainInd {
+			if w.Word != SilWord {
+				return Duration(w.To)
+			}
+		}
+	}
+	return 0
+}
+
+func getFirstWordDuration(data []*Word) time.Duration {
+	for _, w := range data {
+		if w.Main == MainInd {
+			if w.Word != SilWord {
+				return Duration(w.From)
+			}
+		}
+	}
+	return 0
+}

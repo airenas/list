@@ -48,19 +48,15 @@ func main() {
 func getText(data []*lattice.Part) string {
 	var res strings.Builder
 	sep := ""
-	pp := ""
-	for _, p := range data {
-		if pp != p.Speaker && sep != "" {
+	ps := ""
+	for i, p := range data {
+		if sep != "" && (ps != p.Speaker || lattice.SilDuration(data, i) >= (time.Second*2)) {
 			sep = newLine(&res, sep)
 		}
-		pp = p.Speaker
+		ps = p.Speaker
 		for _, w := range p.Words {
 			if w.Main == lattice.MainInd {
-				if w.Word == lattice.SilWord {
-					if lattice.WordDuration(w) > (time.Second * 2) {
-						sep = newLine(&res, sep)
-					}
-				} else {
+				if w.Word != lattice.SilWord {
 					sep = writeWord(&res, w.Word, sep)
 					sep = writePunct(&res, w.Punct)
 				}

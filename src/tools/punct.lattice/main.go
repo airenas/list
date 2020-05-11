@@ -100,49 +100,10 @@ func getNextPartIndex(data []*lattice.Part, i int) int {
 	if i >= l {
 		return i
 	}
-	iPrev := i
-	for sp := data[i].Speaker; i < l && sp == data[i].Speaker && noPause(data, iPrev, i); i++ {
-		iPrev = i
+	for sp := data[i].Speaker; i < l &&
+		sp == data[i].Speaker && lattice.SilDuration(data, i) < (2*time.Second); i++ {
 	}
 	return i
-}
-
-func noPause(data []*lattice.Part, from, to int) bool {
-	if from == to {
-		return true
-	}
-	tf := getLastWordTime(data[from].Words)
-	if tf == 0 {
-		return true
-	}
-	tt := getFirstWordTime(data[to].Words)
-	if tt == 0 {
-		return true
-	}
-	return (tt - tf) < (2 * time.Second)
-}
-
-func getLastWordTime(data []*lattice.Word) time.Duration {
-	for i := len(data) - 1; i >= 0; i-- {
-		w := data[i]
-		if w.Main == lattice.MainInd {
-			if w.Word != lattice.SilWord {
-				return lattice.Duration(w.To)
-			}
-		}
-	}
-	return 0
-}
-
-func getFirstWordTime(data []*lattice.Word) time.Duration {
-	for _, w := range data {
-		if w.Main == lattice.MainInd {
-			if w.Word != lattice.SilWord {
-				return lattice.Duration(w.From)
-			}
-		}
-	}
-	return 0
 }
 
 func getWords(data []*lattice.Part, i int, to int) []string {
