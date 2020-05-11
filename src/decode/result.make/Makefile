@@ -78,14 +78,14 @@ $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=prepareLat;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	gunzip -c $^ | lattice-copy ark:- ark,t:- | \
-		$(APP_DIR)/int.to.word -c 3 -v $(MODELS_ROOT)/words.txt > $@
+		$(APP_DIR)/int.to.word -f 3 -v $(MODELS_ROOT)/words.txt > $@
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=lattice2n10;id=$*;. $(APP_DIR)/m_start.sh $@
 	gunzip -c $^ | \
 	  lattice-to-nbest --n=10 ark:- ark:- | \
 		lattice-copy ark:- ark,t:- | \
-		$(APP_DIR)/int.to.word -c 3 -v $(MODELS_ROOT)/words.txt > $@		
+		$(APP_DIR)/int.to.word -f 3 -v $(MODELS_ROOT)/words.txt > $@		
 
 #restore lattice
 $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
