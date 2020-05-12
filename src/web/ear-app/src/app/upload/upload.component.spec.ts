@@ -215,6 +215,12 @@ describe('UploadComponent', () => {
       expect(component.recognizers.length).toBe(1);
     });
   }));
+  it('should have set speakerCount values', async(() => {
+    component = fixture.debugElement.componentInstance;
+    fixture.whenStable().then(() => {
+      expect(component.speakerCountValues.length).toBe(3);
+    });
+  }));
 
 });
 
@@ -296,4 +302,29 @@ describe('UploadComponent Own Mock', () => {
       expect(component.recognizer).toBe('rID');
     });
   }));
+
+  it('should read speakerCount  value from provider', async(() => {
+    const params = new TestParamsProviderService();
+    params.setSpeakerCount('2');
+
+    TestBed.configureTestingModule({
+      declarations: [UploadComponent],
+      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      providers: [{ provide: ParamsProviderService, useValue: params },
+      { provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
+      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
+    })
+      .compileComponents();
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.speakerCount).toBe('2');
+    });
+  }));
+
 });

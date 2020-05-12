@@ -80,7 +80,7 @@ describe('ParamsProviderService', () => {
   }));
   it('should remember recognizer from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setRecognizer('rec');
-    expect(new LocalStorageParamsProviderService().getSpeakerCount()).toBe('rec');
+    expect(new LocalStorageParamsProviderService().getRecognizer()).toBe('rec');
   }));
   it('should remember speakerCount', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setSpeakerCount('123');
@@ -88,7 +88,7 @@ describe('ParamsProviderService', () => {
   }));
   it('should remember speakerCount from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setSpeakerCount('123');
-    expect(new LocalStorageParamsProviderService().getSpeakerCount()).toBe('id2');
+    expect(new LocalStorageParamsProviderService().getSpeakerCount()).toBe('123');
   }));
   it('default showErrorDetails', inject([ParamsProviderService], (service: ParamsProviderService) => {
     expect(service.showErrorDetails).toBe(false);
