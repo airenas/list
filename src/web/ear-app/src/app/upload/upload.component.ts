@@ -121,7 +121,8 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.sending = true;
     this.transcriptionService.sendFile({
       file: this.selectedFile, fileName: this.selectedFileName, email: this.email,
-      recognizer: this.recognizer, speakerCount: this.speakerCount})
+      recognizer: this.recognizer,
+      speakerCount: (this.speakerCount === '-' ? '' : this.speakerCount)})
       .subscribe(
         result => {
           this.sending = false;
