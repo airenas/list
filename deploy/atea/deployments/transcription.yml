@@ -378,7 +378,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: transcription-dispatcher
-        image: airenas/list-dispatcher-service:0.1.565
+        image: airenas/list-dispatcher-service:1.0.701
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -401,7 +401,7 @@ spec:
         - name: STRATEGY_MODELLOADDURATION
           value: 10s
         - name: STRATEGY_REALTIMEFACTOR
-          value: "1.1"  
+          value: "0.4"  
         - name: LOGGER_LEVEL
           value: debug
         volumeMounts:
@@ -491,7 +491,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: rescore-dispatcher
-        image: airenas/list-dispatcher-service:0.1.565
+        image: airenas/list-dispatcher-service:1.0.701
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
@@ -514,7 +514,7 @@ spec:
         - name: STRATEGY_MODELLOADDURATION
           value: 1m
         - name: STRATEGY_REALTIMEFACTOR
-          value: "0.9"  
+          value: "0.5"  
         - name: LOGGER_LEVEL
           value: debug
         volumeMounts:

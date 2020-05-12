@@ -1,7 +1,16 @@
 default: words_v3
+
 words_v0: words_v0
 words_v1: words_v1
 words_v2: words_v2
 words_v3: words_v3
+
 general_standard: words_v3
-medicine: words_v2
+medicine_standard: words_v3
+law_standard: words_v3
+administration_standard: words_v3
+
+general_telephonic: words_v3
+medicine_telephonic: words_v3
+law_telephonic: words_v3
+administration_telephonic: words_v3
