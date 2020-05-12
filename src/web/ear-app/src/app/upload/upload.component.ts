@@ -41,6 +41,8 @@ export class UploadComponent extends BaseComponent implements OnInit {
 
   private _recognizer: string;
   recognizers: Recognizer[];
+  private _speakerCount: string;
+  speakerCountValues: SpeakerCount[];
 
   ngOnInit() {
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
@@ -48,6 +50,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.getEmail();
     this.initRecognizer();
+    this.initSpeakerCount();
   }
 
   initRecognizer() {
@@ -61,6 +64,13 @@ export class UploadComponent extends BaseComponent implements OnInit {
       }
     );
     this._recognizer = this.paramsProviderService.getRecognizer();
+  }
+
+  initSpeakerCount() {
+    this.speakerCountValues = [{ id: '-', name: '--', tooltip: 'Automatiškai nustatomas diktorių skaičius' },
+    { id: '1', name: '1', tooltip: 'Vieno diktoriaus garso įrašas' },
+    { id: '2', name: '2', tooltip: 'Garso įraše kalba du diktoriai' }];
+    this._speakerCount = this.paramsProviderService.getSpeakerCount();
   }
 
   recordEvent(ev: string, data: any): void {
@@ -111,8 +121,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.sending = true;
     this.transcriptionService.sendFile({
       file: this.selectedFile, fileName: this.selectedFileName, email: this.email,
-      recognizer: this.recognizer
-    })
+      recognizer: this.recognizer, speakerCount: this.speakerCount})
       .subscribe(
         result => {
           this.sending = false;
@@ -147,6 +156,15 @@ export class UploadComponent extends BaseComponent implements OnInit {
   set recognizer(recognizer: string) {
     this._recognizer = recognizer;
     this.paramsProviderService.setRecognizer(recognizer);
+  }
+
+  get speakerCount(): string {
+    return this._speakerCount;
+  }
+
+  set speakerCount(speakerCount: string) {
+    this._speakerCount = speakerCount;
+    this.paramsProviderService.setSpeakerCount(speakerCount);
   }
 
   isValid() {
@@ -191,4 +209,10 @@ export class UploadComponent extends BaseComponent implements OnInit {
       this.showInfo('Version: ' + environment.version);
     }
   }
+}
+
+interface SpeakerCount {
+  id: string;
+  name: string;
+  tooltip?: string;
 }

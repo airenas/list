@@ -10,6 +10,8 @@ export abstract class ParamsProviderService {
   abstract getTranscriptionID(): string;
   abstract setRecognizer(recognizer: string): void;
   abstract getRecognizer(): string;
+  abstract setSpeakerCount(speakerCount: string): void;
+  abstract getSpeakerCount(): string;
 }
 
 export class LocalStorageParamsProviderService implements ParamsProviderService {
@@ -19,8 +21,20 @@ export class LocalStorageParamsProviderService implements ParamsProviderService 
   showErrorDetails = false;
   private _email: string;
   private _recognizer: string;
+  private _speakerCount: string;
 
   constructor() {
+  }
+  setSpeakerCount(speakerCount: string): void {
+    this._speakerCount = speakerCount;
+    localStorage.setItem('speakerCount', speakerCount);
+  }
+
+  getSpeakerCount(): string {
+    if (this._speakerCount == null) {
+      this._speakerCount = localStorage.getItem('speakerCount');
+    }
+    return this._speakerCount;
   }
 
   setEmail(email: string): void {

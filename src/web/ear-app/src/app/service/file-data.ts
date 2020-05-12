@@ -3,4 +3,5 @@ export class FileData {
     fileName: string;
     email: string;
     recognizer: string;
+    speakerCount: string;
 }

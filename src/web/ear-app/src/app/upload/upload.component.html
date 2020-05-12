@@ -85,6 +85,22 @@
         <div class="stepper-line"></div>
       </div>
       <div>
+        <div class="stepper-title">Diktorių skaičius</div>
+        <mat-form-field class="full-width" class="upload-input-width">
+          <mat-select id="speakerCountSelect" name="speakerCount" matInput [(ngModel)]="speakerCount"
+            matTooltip="Pasirinkite diktorių skaičių">
+            <mat-option *ngFor="let sp of speakerCountValues" [value]="sp.id" matTooltip="{{sp.tooltip}}">{{sp.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="stepper">
+      <div>
+        <div class="stepper-circle">5</div>
+        <div class="stepper-line"></div>
+      </div>
+      <div>
         <div class="stepper-title">Siuntimas transkripcijai</div>
         <button *ngIf="!sending" id="uploadButton" mat-raised-button color="primary" [disabled]="!isValid()"
           (click)="upload()">Siųsti</button>
