@@ -10,9 +10,16 @@ export class TestParamsProviderService implements ParamsProviderService {
   showErrorDetails = false;
   private _email: string;
   private _recognizer: string;
+  private _speakerCount: string;
 
 
   constructor() {
+  }
+  setSpeakerCount(speakerCount: string): void {
+    this._speakerCount = speakerCount;
+  }
+  getSpeakerCount(): string {
+    return this._speakerCount;
   }
 
   setEmail(email: string): void {
@@ -73,7 +80,15 @@ describe('ParamsProviderService', () => {
   }));
   it('should remember recognizer from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
     service.setRecognizer('rec');
-    expect(service.getRecognizer()).toBe('rec');
+    expect(new LocalStorageParamsProviderService().getSpeakerCount()).toBe('rec');
+  }));
+  it('should remember speakerCount', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setSpeakerCount('123');
+    expect(service.getSpeakerCount()).toBe('123');
+  }));
+  it('should remember speakerCount from local storage', inject([ParamsProviderService], (service: ParamsProviderService) => {
+    service.setSpeakerCount('123');
+    expect(new LocalStorageParamsProviderService().getSpeakerCount()).toBe('id2');
   }));
   it('default showErrorDetails', inject([ParamsProviderService], (service: ParamsProviderService) => {
     expect(service.showErrorDetails).toBe(false);
