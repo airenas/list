@@ -215,13 +215,36 @@ describe('UploadComponent', () => {
       expect(component.recognizers.length).toBe(1);
     });
   }));
+  it('should have set recognizer value', async(() => {
+    fixture.detectChanges();
+    const select = fixture.debugElement.query(By.css('#recognizerSelect')).nativeElement;
+    select.click();
+    fixture.detectChanges();
+    const matOption = fixture.debugElement.query(By.css('#recognizerOption-rID')).nativeElement;
+    matOption.click();
+    fixture.detectChanges();
+    fixture.whenStable().then( () => {
+      expect(component.recognizer).toBe('rID');
+    });
+  }));
   it('should have set speakerCount values', async(() => {
     component = fixture.debugElement.componentInstance;
     fixture.whenStable().then(() => {
       expect(component.speakerCountValues.length).toBe(3);
     });
   }));
-
+  it('should have set speakerCount value', async(() => {
+    fixture.detectChanges();
+    const select = fixture.debugElement.query(By.css('#speakerCountSelect')).nativeElement;
+    select.click();
+    fixture.detectChanges();
+    const matOption = fixture.debugElement.query(By.css('#speakerCountOption-1')).nativeElement;
+    matOption.click();
+    fixture.detectChanges();
+    fixture.whenStable().then( () => {
+      expect(component.speakerCount).toBe('1');
+    });
+  }));
 });
 
 describe('UploadComponent Own Mock', () => {

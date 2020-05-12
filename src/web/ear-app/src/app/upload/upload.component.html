@@ -73,7 +73,8 @@
         <mat-form-field class="full-width" class="upload-input-width">
           <mat-select id="recognizerSelect" name="recognizer" matInput [(ngModel)]="recognizer"
             matTooltip="Pasirinkite atpažintuvą">
-            <mat-option *ngFor="let rec of recognizers" [value]="rec.id" matTooltip="{{rec.description}}">{{rec.name}}
+            <mat-option *ngFor="let rec of recognizers" [value]="rec.id" matTooltip="{{rec.description}}"
+              id="recognizerOption-{{rec.id}}">{{rec.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -89,7 +90,8 @@
         <mat-form-field class="full-width" class="upload-input-width">
           <mat-select id="speakerCountSelect" name="speakerCount" matInput [(ngModel)]="speakerCount"
             matTooltip="Pasirinkite diktorių skaičių">
-            <mat-option *ngFor="let sp of speakerCountValues" [value]="sp.id" matTooltip="{{sp.tooltip}}">{{sp.name}}
+            <mat-option *ngFor="let sp of speakerCountValues" [value]="sp.id" matTooltip="{{sp.tooltip}}"
+              id="speakerCountOption-{{sp.id}}">{{sp.name}}
             </mat-option>
           </mat-select>
         </mat-form-field>
