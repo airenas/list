@@ -35,8 +35,7 @@
             "scripts": [
               "node_modules/wavesurfer.js/dist/wavesurfer.min.js",
               "node_modules/wavesurfer.js/dist/plugin/wavesurfer.microphone.min.js",
-              "node_modules/web-audio-recorder-js/lib-minified/WebAudioRecorder.min.js",
-              "node_modules/hammerjs/hammer.min.js"
+              "node_modules/web-audio-recorder-js/lib-minified/WebAudioRecorder.min.js"
             ]
           },
           "configurations": {
