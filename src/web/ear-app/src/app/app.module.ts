@@ -1,3 +1,4 @@
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { ResultTextPipe } from './pipes/result-text.pipe';
 import { AudioPlayerFactory } from './utils/audio.player';
 import { ResultSubscriptionService, WSResultSubscriptionService } from './service/result-subscription.service';
@@ -21,7 +22,6 @@ import { ShowOnDirtyErrorStateMatcher, ErrorStateMatcher } from '@angular/materi
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { FileSizeModule } from 'ngx-filesize';
 import { Config } from './config';
 import { HttpClientModule } from '@angular/common/http';
 import { StatusHumanPipe } from './pipes/status-human.pipe';
@@ -45,7 +45,7 @@ import { MicrophoneFactory } from './utils/microphone';
     BrowserAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
-    MatCardModule, FileSizeModule, MatSelectModule,
+    MatCardModule, NgxFilesizeModule, MatSelectModule,
     ReactiveFormsModule, MatTooltipModule, MatMenuModule
   ],
   providers: [Config,
