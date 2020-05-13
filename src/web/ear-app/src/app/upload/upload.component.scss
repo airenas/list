@@ -7,65 +7,72 @@
   width: 100%;
 }
   
-  .upload-input-width {
-    min-width: 250px;
-    width: 100%;
-  }
+.upload-input-width {
+  min-width: 250px;
+  width: 100%;
+}
 
-  .upload-select-button {
-    min-width: 0px;
-    width: 15%;
-    padding: 0 0px;
-    margin-left: -10%;
-    opacity: 0.7;
-  }
+.upload-select-button {
+  min-width: 0px;
+  width: 15%;
+  padding: 0 0px;
+  margin-left: -10%;
+  opacity: 0.7;
+}
 
-  .upload-file-control {
-    width: 60%;
-  }
+.upload-file-control {
+  width: 60%;
+}
 
-  .upload-file-container
-  {
-    width: 100%;
-    align-items: center;
-    display: flex;
-  }
-  .audio-wave {
-    border-style: solid;
-    border-width: 1px;
-    border-color: grey; 
-    display:inline-block;
-    width: 85%;
-  }
+.upload-file-container
+{
+  width: 100%;
+  align-items: center;
+  display: flex;
+}
 
-  .mic-wave {
-    border-style: solid;
-    border-width: 1px;
-    border-color: grey; 
-    display:inline-block;
-    width: 95%;
-  }
+.audio-wave {
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey; 
+  display:inline-block;
+  width: 85%;
+}
 
-  .mic-audio-control {
-    width: 100%;
-  }
+.file-size-div {
+  padding-bottom: 1.25em;
+}
+
+.mic-wave {
+  border-style: solid;
+  border-width: 1px;
+  border-color: grey; 
+  display:inline-block;
+  width: 95%;
+}
+
+.mic-audio-control {
+  width: 100%;
+}
   
-  .mic-button{
-    min-width: 0px;
-    margin-left: 21%;
-    padding: 0 5px;
-  }
+.mic-button{
+  min-width: 0px;
+  margin-left: 21%;
+  padding: 0 5px;
+}
 
-  .upload-spinner {
-    margin: 0 20px;
-  }
+.upload-spinner {
+  margin: 0 20px;
+}
 
 .stepper { position: relative; 
   min-height: 32px;
- }
+}
+
 .stepper > div:first-child { 
   position: static; 
   height: 0; }
+
 .stepper > div:last-child { 
   margin-left: 24px ; 
   padding-left: 16px; }
@@ -88,4 +95,6 @@
 .stepper:last-child .stepper-line { display: none; }
 .stepper-title { 
   line-height: 24px; 
-  font-weight: bold; }
+  font-weight: bold; 
+  font-size: 20px;
+}

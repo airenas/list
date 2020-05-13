@@ -54,7 +54,7 @@
               <i class="material-icons">stop</i>
             </button>
           </div>
-          <div id="fileSizeDiv" *ngIf="selectedFile">Dydis: {{selectedFile.size | filesize}}</div>
+          <div id="fileSizeDiv" *ngIf="selectedFile" class="file-size-div" >Dydis: {{selectedFile.size | filesize}}</div>
         </div>
         <div [hidden]="!recorder.recording">
           <div class="mic-audio-control">
