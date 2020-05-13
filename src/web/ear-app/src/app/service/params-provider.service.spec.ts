@@ -2,7 +2,7 @@ import { TestBed, inject } from '@angular/core/testing';
 import {} from 'jasmine';
 
 import { ParamsProviderService, LocalStorageParamsProviderService } from './params-provider.service';
-import { Injectable } from "@angular/core";
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class TestParamsProviderService implements ParamsProviderService {
