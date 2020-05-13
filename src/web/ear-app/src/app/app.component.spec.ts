@@ -22,11 +22,11 @@ describe('AppComponent', () => {
   }));
   it(`should have navigation to upload`, async(() => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('a[routerlink="/upload"]')).toBeTruthy();
+    expect(compiled.querySelector('div[routerlink="/upload"]')).toBeTruthy();
   }));
 
   it(`should have navigation to result`, async(() => {
     const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('a[routerlink="/results"]')).toBeTruthy();
+    expect(compiled.querySelector('div[routerlink="/results"]')).toBeTruthy();
   }));
 });
