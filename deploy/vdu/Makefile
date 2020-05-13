@@ -47,16 +47,16 @@ deploy: copy
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop && docker-compose build && docker-compose pull && docker-compose up -d"
 
 deploy-one: copy
-	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
-	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop $(service) && docker-compose pull $(service) && docker-compose up -d $(service)"
+	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop $(srv) && docker-compose pull $(srv) && docker-compose up -d $(srv)"
 
 log-one:
-	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
-	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose logs $(service)"
+	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose logs $(srv)"
 
 exec-into:
-	@$(if $(strip $(service)),echo "Service = $(service)",echo No service set && exit 1)
-	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose exec $(service) /bin/bash"
+	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose exec $(srv) /bin/bash"
 
 
 status:
