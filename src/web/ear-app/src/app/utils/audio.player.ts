@@ -46,6 +46,8 @@ export class WebSurferAudioPlayer implements AudioPlayer {
   getSurfer(): any {
     if (this.wavesurfer == null) {
       this.wavesurfer = WaveSurfer.create({
+        fillParent: true,
+        scrollParent: false,
         container: this.divName,
         waveColor: 'grey',
         progressColor: 'blue',
