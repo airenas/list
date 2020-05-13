@@ -26,7 +26,6 @@
     "ngx-filesize": "^1.1.2",
     "queueing-subject": "^0.3.0",
     "rxjs": "~6.5.5",
-    "rxjs-compat": "^6.4.0",
     "rxjs-websockets": "^6.0.4",
     "tslib": "^1.9.0",
     "wavesurfer.js": "^2.1.3",
