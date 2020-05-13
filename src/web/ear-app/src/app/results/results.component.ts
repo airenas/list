@@ -140,7 +140,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   audioURLKeeper: AudioURLKeeper = null;
   fileKeeper: FileURLKeeper = null;
   errDetailsClick = 0;
-  @ViewChild('menuTrigger') menuTrigger: MatMenuTrigger;
+  @ViewChild('menuTrigger', { static: false }) menuTrigger: MatMenuTrigger;
 
 
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
