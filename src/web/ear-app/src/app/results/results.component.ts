@@ -187,7 +187,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.recognizedText = null;
     this.progress = null;
     this.status = null;
-    if (this.result) {
+    if (this.result != null) {
       this.recognizedText = result.recognizedText;
       this.resultSubscriptionService.send(this.result.id);
       this.progress = this.prepareProgress(this.result);
