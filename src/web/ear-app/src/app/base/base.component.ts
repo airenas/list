@@ -1,5 +1,5 @@
 import { TranscriptionService } from '../service/transcription.service';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export abstract class BaseComponent {
 

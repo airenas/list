@@ -1,6 +1,7 @@
 import { ResultSubscriptionService } from './../service/result-subscription.service';
 import { TranscriptionResult } from './../api/transcription-result';
-import { MatSnackBar, MatMenuTrigger } from '@angular/material';
+import { MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { ActivatedRoute } from '@angular/router';
