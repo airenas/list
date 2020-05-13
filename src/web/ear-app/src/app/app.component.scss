@@ -4,6 +4,18 @@ nav a.active {
     color: mat-color($primary);
 }
 
+nav div.active {
+    color: mat-color($primary);
+}
+
+.nav-icon {
+    transform: scale(0.5);
+}
+
+.nav-icon.active {
+    transform: scale(0.7);
+}
+
 .footer {
     position: fixed;
     right: 0;

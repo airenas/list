@@ -1,6 +1,10 @@
 <nav mat-tab-nav-bar>
-  <a mat-tab-link routerLink="/upload" routerLinkActive="active">Audio--></a>
-  <a mat-tab-link routerLink="/results" routerLinkActive="active">-->Rezultatas</a>
+  <div mat-tab-link routerLink="/upload" routerLinkActive="active">
+    <span>Audio</span><i class="material-icons nav-icon" routerLinkActive="active">arrow_upward</i>
+  </div>
+  <div mat-tab-link routerLink="/results" routerLinkActive="active">
+    <span>Rezultatas</span><i class="material-icons nav-icon" routerLinkActive="active">arrow_downward</i>
+  </div>
 </nav>
 <p></p>
 <router-outlet></router-outlet>
