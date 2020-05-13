@@ -40,7 +40,7 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
       });
     });
 
-    const observable = Observable.create((obs: Observer<MessageEvent>) => {
+    const observable = new Observable((obs: Observer<MessageEvent>) => {
       this.ws.onmessage = obs.next.bind(obs);
       this.ws.onerror = obs.error.bind(obs);
       this.ws.onclose = (m => {
@@ -50,6 +50,7 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
       });
       return this.ws.close.bind(this.ws);
     });
+
     return observable.map(
       (response: MessageEvent): TranscriptionResult => {
         return JSON.parse(response.data);
