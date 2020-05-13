@@ -5,7 +5,6 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { UploadComponent } from './upload.component';
 import { MockActivatedRoute, MockSubscriptionService, MockTestService } from '../base/test.app.module';
 import { TestAppModule, FileHelper, TestHelper } from '../base/test.app.module';
-import { FileSizeModule } from 'ngx-filesize';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 import { ParamsProviderService } from '../service/params-provider.service';
@@ -16,6 +15,7 @@ import { AudioPlayerFactory } from '../utils/audio.player';
 import { MicrophoneFactory } from '../utils/microphone';
 import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
+import { NgxFilesizeModule } from 'ngx-filesize';
 
 
 describe('UploadComponent', () => {
@@ -25,7 +25,7 @@ describe('UploadComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      imports: [TestAppModule, RouterTestingModule.withRoutes([])],
       providers: [
         { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
         { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }]
@@ -256,7 +256,7 @@ describe('UploadComponent Own Mock', () => {
     params.lastSelectedFile = new FileHelper().createFakeFile();
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
@@ -282,7 +282,7 @@ describe('UploadComponent Own Mock', () => {
 
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
@@ -308,7 +308,7 @@ describe('UploadComponent Own Mock', () => {
 
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },
@@ -332,7 +332,7 @@ describe('UploadComponent Own Mock', () => {
 
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
-      imports: [TestAppModule, FileSizeModule, RouterTestingModule.withRoutes([])],
+      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
       providers: [{ provide: ParamsProviderService, useValue: params },
       { provide: APP_BASE_HREF, useValue: '/' },
       { provide: TranscriptionService, useClass: MockTestService },

@@ -16,7 +16,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FileSizeModule } from 'ngx-filesize';
+import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranscriptionService } from '../service/transcription.service';
 import { Observable } from 'rxjs/Observable';
 import { FileData } from '../service/file-data';
@@ -85,7 +85,7 @@ export class TestHelper {
     NoopAnimationsModule,
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
-    MatCardModule, FileSizeModule, MatSelectModule, MatMenuModule,
+    MatCardModule, NgxFilesizeModule, MatSelectModule, MatMenuModule,
     ReactiveFormsModule
   ],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' },
@@ -101,7 +101,8 @@ export class TestHelper {
   exports: [
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatCardModule, MatProgressBarModule, MatProgressSpinnerModule, MatSelectModule, MatTooltipModule,
-    MatMenuModule, NoopAnimationsModule
+    MatMenuModule, NoopAnimationsModule,
+    NgxFilesizeModule
   ],
 })
 
