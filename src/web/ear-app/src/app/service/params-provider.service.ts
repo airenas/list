@@ -14,6 +14,7 @@ export abstract class ParamsProviderService {
   abstract getSpeakerCount(): string;
 }
 
+@Injectable()
 export class LocalStorageParamsProviderService implements ParamsProviderService {
 
   private _transcriptionID: string;

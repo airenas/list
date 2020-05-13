@@ -4,7 +4,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Config } from './../config';
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -32,6 +32,7 @@ import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
 import { Recognizer } from '../api/recognizer';
 
+@Injectable()
 export class MockTestService implements TranscriptionService {
   getRecognizers(): Observable<Recognizer[]> {
     return of<Recognizer[]>([{id: 'rID', name: 'rName', description: 'rDescr'}]);
@@ -45,6 +46,7 @@ export class MockTestService implements TranscriptionService {
   }
 }
 
+@Injectable()
 export class MockSubscriptionService implements ResultSubscriptionService {
   connect(): Observable<TranscriptionResult> {
     return EMPTY;
@@ -53,6 +55,7 @@ export class MockSubscriptionService implements ResultSubscriptionService {
   }
 }
 
+@Injectable()
 export class MockActivatedRoute {
   snapshot = { paramMap: new Map() };
 }
