@@ -29,7 +29,7 @@
     "rxjs": "~6.5.5",
     "rxjs-compat": "^6.5.5",
     "tslib": "^1.9.0",
-    "wavesurfer.js": "^2.1.3",
+    "wavesurfer.js": "^3.3.3",
     "web-audio-recorder-js": "0.0.2",
     "zone.js": "~0.9.1"
   },
