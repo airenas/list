@@ -1,60 +1,82 @@
 @import './../../styles.scss';
+@import './../../theme.scss';
 
 .result-form {
-    min-width: 250px;
-    max-width: 1000px;
-    width: 100%;
-  }
+  min-width: 250px;
+  max-width: 1000px;
+  width: 100%;
+}
 
-  .result-card {
-   // width: 100%;
-  }
+.transcription-control {
+  width: 100%;
+  align-items: center;
+  display: flex;
+}
 
-  .audio-card {
-   // width: 100%;
-  }
+.transcription-input {
+  display: inline-block;
+  width: 85%;
+}
 
-  .transcription-control {
-    width: 100%;
-    align-items: center;
-    display: flex;
-  }
+.transcription-button {
+  margin-left: 10px;
+}
 
-  .transcription-input {
-    display:inline-block;
-    width: 85%;
-  }
+.result-full-width {
+  width: 100%;
+}
 
-  .transcription-button{
-    margin-left: 10px;
-  }
+.header-title {
+  line-height: 24px;
+  font-weight: normal;
+  font-size: 18px;
+}
 
-  .result-full-width {
-    width: 100%;
-  }
+.result-text {
+  white-space: pre-wrap;
+}
 
-  .header-title { 
-    line-height: 24px; 
-    font-weight: bold; }
+.error-text {
+  white-space: pre-wrap;
+}
 
-  .result-text { 
-      white-space: pre-wrap; }  
-  
-  .error-text { 
-        white-space: pre-wrap; }        
+.result-progress-section {
+  display: flex;
+  align-content: center;
+  align-items: center;
+  height: 20px;
+}
 
-  .result-progress-section {
-    display: flex;
-    align-content: center;
-    align-items: center;
-    height: 20px;
-  }
-  
-  .result-progress {
-    margin: 0 10px;
-  }
+.result-progress {
+  margin: 0 10px;
+}
 
-  .file-button{
-    padding: 0 10px;
-    margin-right: 10px;
+.file-button {
+  padding: 0 10px;
+  margin-right: 10px;
+}
+
+.result-header {
+  margin-left: 0px;
+  margin-bottom: 15px;
+}
+
+.result-circle {
+  background: mat-color($primary);
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  border-radius: 16px;
+  position: relative;
+  color: white;
+  text-align: center;
+  margin-right: 15px;
+  display: inline-block;
+}
+
+.result-title {
+  line-height: 24px;
+  font-weight: normal;
+  font-size: 18px;
+  display: inline-block;
 }

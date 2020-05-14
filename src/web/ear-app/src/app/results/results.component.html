@@ -13,9 +13,10 @@
   </mat-card>
 
   <mat-card class="result-card">
-    <mat-card-header>
-      <mat-card-title class="header-title">Transkripcijos rezultatas</mat-card-title>
-    </mat-card-header>
+    <div class="result-header">
+      <div class="result-circle">-</div>
+      <div class="result-title">Transkripcijos rezultatas</div>
+    </div>
     <mat-card-content>
       <div id="status" *ngIf="status">Statusas: <strong>{{status | statusHuman}}</strong></div>
       <section class="result-progress-section" *ngIf="progress">
@@ -26,7 +27,7 @@
       <div *ngIf="result?.recognizedText" class="result-text">Atpažinta:
         <strong>{{result?.recognizedText | resultText}}</strong>
       </div>
-      <div *ngIf="error" class="error-text" (click)="showErrDetails()" id="errorDiv">Klaida: 
+      <div *ngIf="error" class="error-text" (click)="showErrDetails()" id="errorDiv">Klaida:
         <strong><span style="color:red">{{error}}</span></strong>
       </div>
     </mat-card-content>
@@ -34,9 +35,10 @@
 
   <div [hidden]="!audioURLKeeper.isAudio">
     <mat-card class="audio-card">
-      <mat-card-header>
-        <mat-card-title class="header-title">Originalus įrašas</mat-card-title>
-      </mat-card-header>
+      <div class="result-header">
+        <div class="result-circle">-</div>
+        <div class="result-title">Originalus įrašas</div>
+      </div>
       <mat-card-content>
         <div class="audio-control">
           <div id="audioWaveDiv" class="audio-wave"></div>
@@ -56,9 +58,10 @@
     </mat-card>
   </div>
   <mat-card class="file-card" *ngIf="fileKeeper.contains">
-    <mat-card-header>
-      <mat-card-title class="header-title">Rezultatų failai</mat-card-title>
-    </mat-card-header>
+    <div class="result-header">
+      <div class="result-circle">-</div>
+      <div class="result-title">Rezultatų failai</div>
+    </div>
     <mat-card-content>
       <div class="file-control">
         <button mat-raised-button color="primary" id="dwnMenu" [matMenuTriggerFor]="menu"
