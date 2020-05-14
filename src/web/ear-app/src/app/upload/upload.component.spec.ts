@@ -18,6 +18,21 @@ import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
 import { NgxFilesizeModule } from 'ngx-filesize';
 
+class TestUtil {
+  static configure(params: TestParamsProviderService) {
+    TestBed.configureTestingModule({
+      declarations: [UploadComponent],
+      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
+      providers: [{ provide: ParamsProviderService, useValue: params },
+      { provide: APP_BASE_HREF, useValue: '/' },
+      { provide: TranscriptionService, useClass: MockTestService },
+      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
+      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
+    }).compileComponents();
+  }
+}
 
 describe('UploadComponent', () => {
   let component: UploadComponent;
@@ -255,18 +270,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read File value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.lastSelectedFile = new FileHelper().createFakeFile();
-    TestBed.configureTestingModule({
-      declarations: [UploadComponent],
-      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
-    })
-      .compileComponents();
+    TestUtil.configure(params);
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -288,19 +292,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read email value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setEmail('olia');
-
-    TestBed.configureTestingModule({
-      declarations: [UploadComponent],
-      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
-    })
-      .compileComponents();
+    TestUtil.configure(params);
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -314,19 +306,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read recognizer value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setRecognizer('rID');
-
-    TestBed.configureTestingModule({
-      declarations: [UploadComponent],
-      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
-    })
-      .compileComponents();
+    TestUtil.configure(params);
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -338,19 +318,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read speakerCount  value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setSpeakerCount('2');
-
-    TestBed.configureTestingModule({
-      declarations: [UploadComponent],
-      imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
-    })
-      .compileComponents();
+    TestUtil.configure(params);
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -359,4 +327,35 @@ describe('UploadComponent Own Mock', () => {
     });
   }));
 
+  it('should stop playing on destroy', async(() => {
+    const params = new TestParamsProviderService();
+    TestUtil.configure(params);
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      component.playAudio();
+      expect(component.audioPlayer.isPlaying()).toEqual(true);
+      fixture.destroy();
+      fixture.whenStable().then(() => {
+        expect(component.audioPlayer.isPlaying()).toEqual(false);
+      });
+    });
+  }));
+
+  it('should stop recording on destroy', async(() => {
+    const params = new TestParamsProviderService();
+    TestUtil.configure(params);
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      component.recorder.start();
+      expect(component.recorder.recording).toEqual(true);
+      fixture.destroy();
+      fixture.whenStable().then(() => {
+        expect(component.recorder.recording).toEqual(false);
+      });
+    });
+  }));
 });

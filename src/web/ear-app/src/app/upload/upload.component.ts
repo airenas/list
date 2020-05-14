@@ -74,9 +74,6 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
     if (this.recorder.recording) {
       this.recorder.stop();
     }
-    if (this.audioPlayer.isPlaying()) {
-      // this.audioPlayer.pause();
-    }
     this.audioPlayer.destroy();
   }
 
