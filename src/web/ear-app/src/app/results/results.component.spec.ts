@@ -14,6 +14,26 @@ import { ActivatedRoute } from '@angular/router';
 import { APP_BASE_HREF } from '@angular/common';
 import { Status } from '../api/status';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
+import { Observable, NEVER } from 'rxjs';
+import { TranscriptionResult } from '../api/transcription-result';
+
+class TestUtil {
+  static configure(providers: any[]) {
+    TestBed.configureTestingModule({
+      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
+      imports: [TestAppModule],
+      providers: providers
+    })
+      .compileComponents();
+  }
+  static initProviders(params: ParamsProviderService): any[] {
+    return [{ provide: ParamsProviderService, useValue: params },
+    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: TranscriptionService, useClass: MockTestService },
+    { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+    { provide: ActivatedRoute, useClass: MockActivatedRoute }];
+  }
+}
 
 describe('ResultsComponent', () => {
   let component: ResultsComponent;
@@ -299,15 +319,12 @@ describe('ResultsComponent Own Mock', () => {
       snapshot = { paramMap: new Map([['id', 'id1']]) };
     }
 
-    TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
-      imports: [TestAppModule],
-      providers: [{ provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
-    })
-      .compileComponents();
+    const params = new TestParamsProviderService();
+    params.setTranscriptionID('id2');
+    let providers = TestUtil.initProviders(params);
+    providers = providers.concat({ provide: ActivatedRoute, useClass: MockActivatedRouteInternal });
+    TestUtil.configure(providers);
+
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -325,17 +342,10 @@ describe('ResultsComponent Own Mock', () => {
 
     const params = new TestParamsProviderService();
     params.setTranscriptionID('id2');
+    let providers = TestUtil.initProviders(params);
+    providers = providers.concat({ provide: ActivatedRoute, useClass: MockActivatedRouteInternal });
+    TestUtil.configure(providers);
 
-    TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
-      imports: [TestAppModule],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: ActivatedRoute, useClass: MockActivatedRouteInternal }]
-    })
-      .compileComponents();
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -349,16 +359,8 @@ describe('ResultsComponent Own Mock', () => {
   it('should read value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setTranscriptionID('id1');
-    TestBed.configureTestingModule({
-      declarations: [ResultsComponent, StatusHumanPipe, ResultTextPipe],
-      imports: [TestAppModule],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
-    })
-      .compileComponents();
+    TestUtil.configure(TestUtil.initProviders(params));
+
     fixture = TestBed.createComponent(ResultsComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -366,6 +368,49 @@ describe('ResultsComponent Own Mock', () => {
       const input = fixture.debugElement.query(By.css('#transcriptionIDInput'));
       const el = input.nativeElement;
       expect(el.value).toBe('id1');
+    });
+  }));
+
+  it('should stop playing on destroy', async(() => {
+    const params = new TestParamsProviderService();
+    TestUtil.configure(TestUtil.initProviders(params));
+
+    fixture = TestBed.createComponent(ResultsComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      component.playAudio();
+      expect(component.audioPlayer.isPlaying()).toEqual(true);
+      fixture.destroy();
+      fixture.whenStable().then(() => {
+        expect(component.audioPlayer.isPlaying()).toEqual(false);
+      });
+    });
+  }));
+
+  it('should unsubscribe websocket on destroy', async(() => {
+    const params = new TestParamsProviderService();
+    class MockResultSubscriptionService implements ResultSubscriptionService {
+      connect(): Observable<TranscriptionResult> {
+        return NEVER;
+      }
+      send(id: string): void {
+      }
+    }
+
+    let providers = TestUtil.initProviders(params);
+    providers = providers.concat({ provide: ResultSubscriptionService, useClass: MockResultSubscriptionService });
+    TestUtil.configure(providers);
+
+    fixture = TestBed.createComponent(ResultsComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(component.resultSubscription.closed).toEqual(false);
+      fixture.destroy();
+      fixture.whenStable().then(() => {
+        expect(component.resultSubscription.closed).toEqual(true);
+      });
     });
   }));
 });
