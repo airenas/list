@@ -35,7 +35,7 @@ import { Recognizer } from '../api/recognizer';
 @Injectable()
 export class MockTestService implements TranscriptionService {
   getRecognizers(): Observable<Recognizer[]> {
-    return of<Recognizer[]>([{id: 'rID', name: 'rName', description: 'rDescr'}]);
+    return of<Recognizer[]>([{ id: 'rID', name: 'rName', description: 'rDescr' }]);
   }
   sendFile(fileData: FileData): Observable<SendFileResult> {
     return EMPTY;
@@ -70,7 +70,10 @@ export class FileHelper {
 
 export class TestHelper {
   static Visible(element: any): boolean {
-    if (element == null || element.nativeElement == null) {
+    if (element !== null && element.name === '#document' && element.parent === null) {
+      return true;
+    }
+    if (element === null || element.nativeElement === null) {
       return false;
     }
     return !element.nativeElement.hasAttribute('hidden') && (element.parent == null || TestHelper.Visible(element.parent));
