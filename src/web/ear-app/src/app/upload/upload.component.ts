@@ -139,7 +139,7 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
     this.selectedFile = null;
     this.selectedFileName = null;
     this.paramsProviderService.lastSelectedFile = file;
-    if (file !== null) {
+    if (file) {
       this.selectedFile = file;
       this.selectedFileName = this.selectedFile.name;
     }

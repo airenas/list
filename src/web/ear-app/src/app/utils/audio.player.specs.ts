@@ -6,6 +6,8 @@ export class TestAudioPlayer implements AudioPlayer {
 
     constructor(private divName: string, private eventHandler: NamedEvent) {
     }
+    destroy() {
+    }
 
     loadFile(file: File) {
     }

@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs/Observable';
 import { TestAudioPlayerFactory } from './../utils/audio.player.specs';
-import { HttpTranscriptionService, TranscriptionService } from './../service/transcription.service';
+import { TranscriptionService } from './../service/transcription.service';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UploadComponent } from './upload.component';
@@ -223,7 +224,7 @@ describe('UploadComponent', () => {
     const matOption = fixture.debugElement.query(By.css('#recognizerOption-rID')).nativeElement;
     matOption.click();
     fixture.detectChanges();
-    fixture.whenStable().then( () => {
+    fixture.whenStable().then(() => {
       expect(component.recognizer).toBe('rID');
     });
   }));
@@ -241,7 +242,7 @@ describe('UploadComponent', () => {
     const matOption = fixture.debugElement.query(By.css('#speakerCountOption-1')).nativeElement;
     matOption.click();
     fixture.detectChanges();
-    fixture.whenStable().then( () => {
+    fixture.whenStable().then(() => {
       expect(component.speakerCount).toBe('1');
     });
   }));
@@ -270,9 +271,17 @@ describe('UploadComponent Own Mock', () => {
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
     fixture.whenStable().then(() => {
-      const input = fixture.debugElement.query(By.css('#fileInput'));
-      const el = input.nativeElement;
-      expect(el.value).toBe('file.wav');
+      (async () => {
+        // Do something before delay
+        console.log('before delay');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        fixture.detectChanges();
+        fixture.whenStable().then(() => {
+          const input = fixture.debugElement.query(By.css('#fileInput'));
+          const el = input.nativeElement;
+          expect(el.value).toBe('file.wav');
+        });
+      })();
     });
   }));
 
