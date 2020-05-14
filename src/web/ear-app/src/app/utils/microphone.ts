@@ -18,9 +18,9 @@ export class WebSurferMicrophone implements Microphone {
 
     stop() {
         if (this.wavesurfer != null) {
-            console.log('stopping recording');
+            // console.log('stopping recording');
             this.recorder.finishRecording();
-            console.log('stopping wavesurfer');
+            // console.log('stopping wavesurfer');
             this.recording = false;
             this.wavesurfer.microphone.stop();
         }
@@ -58,15 +58,15 @@ export class WebSurferMicrophone implements Microphone {
                     numChannels: 1,
                     encoding: 'wav',
                     onEncoderLoading: (recorder, encoding) => {
-                        console.log('Loading ' + encoding + ' encoder...');
+//                        console.log('Loading ' + encoding + ' encoder...');
                     },
                     onEncoderLoaded: (recorder, encoding) => {
-                        console.log(encoding + ' encoder loaded');
+//                        console.log(encoding + ' encoder loaded');
                     }
                 });
 
                 this.recorder.onComplete = (recorder, blob) => {
-                    console.log('got recorded audio');
+//                    console.log('got recorded audio');
                     this.eventHandler('data', blob);
                 };
 
@@ -82,7 +82,7 @@ export class WebSurferMicrophone implements Microphone {
 
                 this.recorder.startRecording();
 
-                console.log('Recording started');
+//                console.log('Recording started');
             });
             this.wavesurfer.microphone.on('deviceError', code => {
                 this.recording = false;

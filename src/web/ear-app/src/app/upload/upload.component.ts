@@ -75,7 +75,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   recordEvent(ev: string, data: any): void {
-    console.log('recordEvent: ' + ev);
+    // console.log('recordEvent: ' + ev);
     if (ev === 'data') {
       this.fileChange(this.newFile(data));
     } else if (ev === 'error') {
@@ -118,7 +118,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   upload() {
-    console.log('sending this to server', this.selectedFile);
+    // console.log('sending this to server', this.selectedFile);
     this.sending = true;
     this.transcriptionService.sendFile({
       file: this.selectedFile, fileName: this.selectedFileName, email: this.email,

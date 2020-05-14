@@ -29,7 +29,7 @@ class AudioURLKeeper {
   }
 
   setAudio(result: TranscriptionResult) {
-    console.log('keeper ID: ' + (result == null ? 'null' : result.id));
+//    console.log('keeper ID: ' + (result == null ? 'null' : result.id));
     if (result == null || result.status === Status.NOT_FOUND) {
       this.URL = null;
       this.ID = null;
@@ -43,7 +43,7 @@ class AudioURLKeeper {
     this.URL = this.config.audioUrl + result.id;
     this.isAudio = this.ID != null;
     if (this.isAudio && this.lastLoadedURL !== this.URL) {
-      console.log('load URL: ' + this.URL);
+//      console.log('load URL: ' + this.URL);
       this.audioPlayer.load(this.URL);
       this.lastLoadedURL = this.URL;
     }
@@ -162,7 +162,7 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
       this.paramsProviderService.setTranscriptionID(this.transcriptionId);
     }
     this.resultSubscription = this.resultSubscriptionService.connect().subscribe((message: TranscriptionResult) => {
-      console.log('received message from server: ' + JSON.stringify(message));
+      // console.log('received message from server: ' + JSON.stringify(message));
       this.onResult(message);
     });
     this.refresh();

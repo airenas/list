@@ -29,13 +29,9 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
     this.ws = new WebSocket(this.urlProvider.getURL());
     this.inputStream = new QueueingSubject<string>();
     this.ws.onopen = (m => {
-      console.log('Websocket opened');
       this.inputStream.subscribe((id: string) => {
         if (this.ws.readyState === WebSocket.OPEN) {
-          console.log('Send to websocket ' + id);
           this.ws.send(id);
-        } else {
-          console.warn('Websocket in not ready state');
         }
       });
     });
@@ -44,7 +40,6 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
       this.ws.onmessage = obs.next.bind(obs);
       this.ws.onerror = obs.error.bind(obs);
       this.ws.onclose = (m => {
-        console.log('got complete ' + m);
         this.inputStream.unsubscribe();
         obs.complete();
       });
@@ -59,7 +54,6 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
   }
 
   public send(id: string): void {
-    console.log('Try send to websocket ' + id);
     this.inputStream.next(id);
   }
 }
