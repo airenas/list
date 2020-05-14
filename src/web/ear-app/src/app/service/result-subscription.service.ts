@@ -40,6 +40,7 @@ export class WSResultSubscriptionService implements ResultSubscriptionService {
       this.ws.onmessage = obs.next.bind(obs);
       this.ws.onerror = obs.error.bind(obs);
       this.ws.onclose = (m => {
+        console.log('WebSocket closed');
         this.inputStream.unsubscribe();
         obs.complete();
       });

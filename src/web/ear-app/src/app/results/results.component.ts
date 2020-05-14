@@ -168,6 +168,12 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     this.refresh();
   }
 
+  ngOnDestroy() {
+    console.log('Destroy result');
+    this.audioPlayer.destroy();
+    this.resultSubscription.unsubscribe();
+  }
+
   refresh() {
     this.onResult(null);
     if (this.transcriptionId) {
@@ -215,10 +221,6 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     progress.color = result.error ? 'warn' : 'primary';
     progress.buffer = result.error || (result.status === Status.Completed) ? 100 : 90;
     return progress;
-  }
-
-  ngOnDestroy() {
-    this.resultSubscription.unsubscribe();
   }
 
   canPlayAudio(): boolean {

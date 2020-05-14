@@ -1,5 +1,6 @@
+import { Observable } from 'rxjs/Observable';
 import { SendFileResult } from './../api/send-file-result';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
 import { Router } from '@angular/router';
 import { ErrorStateMatcher } from '@angular/material/core';
@@ -11,6 +12,7 @@ import { AudioPlayer, AudioPlayerFactory } from '../utils/audio.player';
 import { Microphone, MicrophoneFactory } from '../utils/microphone';
 import { environment } from 'src/environments/environment';
 import { Recognizer } from '../api/recognizer';
+import 'rxjs/add/observable/interval';
 
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -24,7 +26,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss']
 })
-export class UploadComponent extends BaseComponent implements OnInit {
+export class UploadComponent extends BaseComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(protected transcriptionService: TranscriptionService,
     private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService,
     private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory,
@@ -39,6 +41,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   audioPlayer: AudioPlayer;
   sending = false;
   versionClick = 0;
+  destroyind: boolean;
 
   private _recognizer: string;
   recognizers: Recognizer[];
@@ -46,12 +49,35 @@ export class UploadComponent extends BaseComponent implements OnInit {
   speakerCountValues: SpeakerCount[];
 
   ngOnInit() {
+    console.log('Init upload');
     this.audioPlayer = this.audioPlayerFactory.create('#audioWaveDiv', (ev) => this.cdr.detectChanges());
     this.recorder = this.microphoneFactory.create('#micWaveDiv', (ev, data) => this.recordEvent(ev, data));
-    this.fileChange(this.paramsProviderService.lastSelectedFile);
     this._email = this.paramsProviderService.getEmail();
     this.initRecognizer();
     this.initSpeakerCount();
+  }
+
+  ngAfterViewInit() {
+    console.log('View init');
+    if (this.paramsProviderService.lastSelectedFile !== null) {
+      const tm = Observable.interval(50).subscribe((v) => {
+        console.log('On file timer');
+        tm.unsubscribe();
+        this.fileChange(this.paramsProviderService.lastSelectedFile);
+      });
+    }
+  }
+
+  ngOnDestroy() {
+    console.log('Destroy upload');
+    this.destroyind = true;
+    if (this.recorder.recording) {
+      this.recorder.stop();
+    }
+    if (this.audioPlayer.isPlaying()) {
+      // this.audioPlayer.pause();
+    }
+    this.audioPlayer.destroy();
   }
 
   initRecognizer() {
@@ -75,7 +101,10 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   recordEvent(ev: string, data: any): void {
-    // console.log('recordEvent: ' + ev);
+    console.log('recordEvent: ' + ev);
+    if (this.destroyind) {
+      return;
+    }
     if (ev === 'data') {
       this.fileChange(this.newFile(data));
     } else if (ev === 'error') {
@@ -110,7 +139,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.selectedFile = null;
     this.selectedFileName = null;
     this.paramsProviderService.lastSelectedFile = file;
-    if (file) {
+    if (file !== null) {
       this.selectedFile = file;
       this.selectedFileName = this.selectedFile.name;
     }
@@ -123,7 +152,8 @@ export class UploadComponent extends BaseComponent implements OnInit {
     this.transcriptionService.sendFile({
       file: this.selectedFile, fileName: this.selectedFileName, email: this.email,
       recognizer: this.recognizer,
-      speakerCount: (this.speakerCount === '-' ? '' : this.speakerCount)})
+      speakerCount: (this.speakerCount === '-' ? '' : this.speakerCount)
+    })
       .subscribe(
         result => {
           this.sending = false;
@@ -198,6 +228,7 @@ export class UploadComponent extends BaseComponent implements OnInit {
   }
 
   startRecord() {
+    this.fileChange(null);
     this.recorder.start();
   }
 

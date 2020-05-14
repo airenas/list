@@ -8,6 +8,7 @@ export abstract class AudioPlayer {
   abstract clear();
   abstract play();
   abstract pause();
+  abstract destroy();
   abstract isPlaying(): boolean;
 }
 
@@ -18,6 +19,13 @@ export class WebSurferAudioPlayer implements AudioPlayer {
   wavesurfer: any = null;
 
   constructor(private divName: string, private eventHandler: NamedEvent) {
+  }
+  destroy() {
+    if (this.wavesurfer != null) {
+      console.log('Wavesurfer destroy');
+      this.wavesurfer.destroy();
+      this.wavesurfer = null;
+    }
   }
 
   loadFile(file: File) {
@@ -30,6 +38,7 @@ export class WebSurferAudioPlayer implements AudioPlayer {
 
   clear() {
     if (this.wavesurfer != null) {
+      console.log('Wavesurfer clear');
       this.wavesurfer.empty();
     }
   }
@@ -45,6 +54,7 @@ export class WebSurferAudioPlayer implements AudioPlayer {
 
   getSurfer(): any {
     if (this.wavesurfer == null) {
+      console.log('Wavesurfer create');
       this.wavesurfer = WaveSurfer.create({
         fillParent: true,
         scrollParent: false,
@@ -61,7 +71,8 @@ export class WebSurferAudioPlayer implements AudioPlayer {
 
   handle(event: string) {
     if (this.eventHandler != null) {
-        this.eventHandler(event);
+      console.log('Wavesurfer event ' + event);
+      this.eventHandler(event);
     }
   }
 }
