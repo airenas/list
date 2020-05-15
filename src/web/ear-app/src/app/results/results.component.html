@@ -14,7 +14,9 @@
 
   <mat-card class="result-card">
     <div class="result-header">
-      <div class="result-circle">-</div>
+      <div class="result-circle">
+        <div class="result-dot"></div>
+      </div>
       <div class="result-title">Transkripcijos rezultatas</div>
     </div>
     <mat-card-content>
@@ -36,7 +38,9 @@
   <div [hidden]="!audioURLKeeper.isAudio">
     <mat-card class="audio-card">
       <div class="result-header">
-        <div class="result-circle">-</div>
+        <div class="result-circle">
+          <div class="result-dot"></div>
+        </div>
         <div class="result-title">Originalus įrašas</div>
       </div>
       <mat-card-content>
@@ -59,7 +63,9 @@
   </div>
   <mat-card class="file-card" *ngIf="fileKeeper.contains">
     <div class="result-header">
-      <div class="result-circle">-</div>
+      <div class="result-circle">
+        <div class="result-dot"></div>
+      </div>
       <div class="result-title">Rezultatų failai</div>
     </div>
     <mat-card-content>
