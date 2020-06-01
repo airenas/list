@@ -1,5 +1,6 @@
 -include Makefile.options
 -include $(config)
+wordfix_dir=../../lm-scripts/wordfix
 #####################################################################################
 file?=1.wav
 upload: 
@@ -13,7 +14,7 @@ record:
 $(test_dir):
 	mkdir -p $@
 $(test_dir)/.data.done: | $(test_dir)
-	curl -k https://prn509.vdu.lt:7080/testdata/testdata.zip -o $(test_dir)/testdata.zip
+	curl -k https://prn509.vdu.lt:7080/testdata/testdata-v2.zip -o $(test_dir)/testdata.zip
 	cd $(test_dir) && unzip testdata.zip
 	rm $(test_dir)/testdata.zip
 	touch $(test_dir)/.data.done
@@ -75,9 +76,9 @@ $(test_dir)/.upload.done: $(test_dir)/.data.done
 	export UPLOAD_SERVICE=$(UPLOAD_SERVICE); ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list
 	touch $(test_dir)/.upload.done
 	
-upload_to_server: $(test_dir)/.upload.done
+upload-to-server: $(test_dir)/.upload.done
 #####################################################################################
-transcription_status: $(test_dir)/file.list
+transcription-status: $(test_dir)/file.list
 	export STATUS_SERVICE=$(STATUS_SERVICE); cat $(test_dir)/file.list | xargs -n2 -P20 scripts/status.sh | sort	
 #####################################################################################
 $(test_dir)/result:
@@ -88,19 +89,27 @@ $(test_dir)/result/.done: $(test_dir)/file.list | $(test_dir)/result
 	touch $(test_dir)/result/.done
 get_result: $(test_dir)/result/.done	
 #####################################################################################
-$(test_dir)/recognized.txt: $(test_dir)/result/.done
-	awk '{print FILENAME,$$0}' $(test_dir)/result/*.txt | \
-		sed 's|$(test_dir)/result/||' > $(test_dir)/recognized.txt
+$(test_dir)/result/fixed:
+	mkdir -p $@
 
-$(test_dir)/wer.txt: $(test_dir)/recognized.txt
+$(test_dir)/recognized.txt: $(test_dir)/result/.done | $(test_dir)/result/fixed
+	ls -1 $(test_dir)/result/*$(tf).txt | xargs -n 1 -I {} sh -c "f={};\
+		cat \$$f | tr '\n' ' ' | sed -r 's/ +/ /g' | sed -r 's/^ //' > $(test_dir)/result/fixed/\$${f##*/}"
+	awk '{print FILENAME,$$0}' $(test_dir)/result/fixed/*.txt | \
+		sed 's|$(test_dir)/result/fixed/||' > $(test_dir)/recognized.txt
+
+$(test_dir)/recognized.f.txt: $(test_dir)/recognized.txt
+		cat $(test_dir)/recognized.txt | perl $(wordfix_dir)/filter.pl $(wordfix_dir) > $(test_dir)/recognized.f.txt
+
+$(test_dir)/wer.txt: $(test_dir)/recognized.f.txt
 	scripts/compute-wer --mode=present \
-		ark:$(test_dir)/testdata/txt/ref.txt  ark:$(test_dir)/recognized.txt > $(test_dir)/wer.txt
+		ark:$(test_dir)/testdata/txt/ref.txt  ark:$(test_dir)/recognized.f.txt > $(test_dir)/wer.txt
 $(test_dir)/ref.txt: $(test_dir)/.data.done
 	cat $(test_dir)/testdata/txt/ref.txt | sed 's/ *$$//g' > $@
-calc_wer: $(test_dir)/wer.txt
+calc-wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
-compare: $(test_dir)/recognized.txt	$(test_dir)/ref.txt
-	vimdiff $(test_dir)/ref.txt $(test_dir)/recognized.txt
+compare: $(test_dir)/recognized.f.txt	$(test_dir)/ref.txt
+	vimdiff $(test_dir)/ref.txt $(test_dir)/recognized.f.txt
 #####################################################################################
 info: 
 	@echo "UPLOAD: $(UPLOAD_SERVICE)"
@@ -109,18 +118,18 @@ info:
 	@echo "Dir:    $(test_dir)"
 	
 #####################################################################################
-clean: clean_upload
+clean: clean-upload
 	rm -rf $(test_dir)
 
-clean_upload:
+clean-upload:
 	rm -rf $(test_dir)/.upload.done
 
-clean_result:
+clean-result:
 	rm -rf $(test_dir)/result
 	rm -rf $(test_dir)/recognized.txt 
 
 .PHONY:
-	transcription_status info calc_wer
+	transcription-status info calc-wer
 
 
 	
