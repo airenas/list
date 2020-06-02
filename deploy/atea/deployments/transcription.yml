@@ -41,7 +41,7 @@ spec:
           claimName: modelstorage-2    
       containers:
       - name: upoad
-        image: airenas/list-upload-service:1.3.663
+        image: airenas/list-upload-service:1.4.744
         ports:
         - containerPort: 8000
           name: client
@@ -609,7 +609,7 @@ spec:
           claimName: modelstorage-2        
       containers:
       - name: result-make
-        image: airenas/list-result-make-service:3.4.693
+        image: airenas/list-result-make-service:3.5.744
         env:
         - name: MESSAGESERVER_URL
           value: rabbitmq:5672  
