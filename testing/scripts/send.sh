@@ -22,8 +22,9 @@ echoerr() { echo "$@" 1>&2; }
 ###############################################################
 echoerr "File: $file model: $model url: $uploadURL"
 echoerr "Uploading..."
+numJoinParam='';if [ "${SKIP_NUM_JOIN}" == "1" ]; then numJoinParam='-F skipNumJoin=1'; fi
 c_res=$(curl -X POST -k $uploadURL -H 'Accept: application/json' -H 'content-type: multipart/form-data' -F recognizer=$model \
-    -F file=@$file 2>/dev/null)
+    -F file=@$file ${numJoinParam} 2>/dev/null)
 echoerr Response: $c_res
 id=$(echo $c_res | jq -r '.["id"]')
 if [ $? -gt "0" ] ; then
