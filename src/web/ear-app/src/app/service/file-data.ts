@@ -4,4 +4,5 @@ export class FileData {
     email: string;
     recognizer: string;
     speakerCount: string;
+    skipNumJoin?: boolean;
 }

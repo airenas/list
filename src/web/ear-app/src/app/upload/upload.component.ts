@@ -2,7 +2,7 @@ import { Observable } from 'rxjs/Observable';
 import { SendFileResult } from './../api/send-file-result';
 import { Component, OnInit, ChangeDetectorRef, OnDestroy, AfterViewInit } from '@angular/core';
 import { TranscriptionService } from '../service/transcription.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BaseComponent } from '../base/base.component';
@@ -30,7 +30,8 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
   constructor(protected transcriptionService: TranscriptionService,
     private router: Router, protected snackBar: MatSnackBar, private paramsProviderService: ParamsProviderService,
     private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory,
-    private microphoneFactory: MicrophoneFactory) {
+    private microphoneFactory: MicrophoneFactory,
+    private route: ActivatedRoute) {
     super(transcriptionService, snackBar);
   }
 
@@ -47,6 +48,7 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
   recognizers: Recognizer[];
   private _speakerCount: string;
   speakerCountValues: SpeakerCount[];
+  _uploadParamSkipNumJoin = false;
 
   ngOnInit() {
     console.log('Init upload');
@@ -55,6 +57,7 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
     this._email = this.paramsProviderService.getEmail();
     this.initRecognizer();
     this.initSpeakerCount();
+    this.initParams();
   }
 
   ngAfterViewInit() {
@@ -95,6 +98,11 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
     { id: '1', name: '1', tooltip: 'Vieno diktoriaus garso įrašas' },
     { id: '2', name: '2', tooltip: 'Garso įraše kalba du diktoriai' }];
     this._speakerCount = this.paramsProviderService.getSpeakerCount();
+  }
+
+  initParams() {
+    this._uploadParamSkipNumJoin = this.route.snapshot.queryParamMap.get('skipNumJoin') === '1';
+    console.log('skipNumJoin=', this._uploadParamSkipNumJoin);
   }
 
   recordEvent(ev: string, data: any): void {
@@ -149,7 +157,8 @@ export class UploadComponent extends BaseComponent implements OnInit, OnDestroy,
     this.transcriptionService.sendFile({
       file: this.selectedFile, fileName: this.selectedFileName, email: this.email,
       recognizer: this.recognizer,
-      speakerCount: (this.speakerCount === '-' ? '' : this.speakerCount)
+      speakerCount: (this.speakerCount === '-' ? '' : this.speakerCount),
+      skipNumJoin: this._uploadParamSkipNumJoin
     })
       .subscribe(
         result => {

@@ -57,6 +57,9 @@ export class HttpTranscriptionService implements TranscriptionService {
     formData.append('email', fileData.email);
     formData.append('recognizer', fileData.recognizer === '' ? '' : fileData.recognizer);
     formData.append('numberOfSpeakers', fileData.speakerCount === '' ? '' : fileData.speakerCount);
+    if (fileData.skipNumJoin === true) {
+      formData.append('skipNumJoin', '1');
+    }
     const httpOptions = {
       headers: new HttpHeaders({
         'Accept': 'application/json'

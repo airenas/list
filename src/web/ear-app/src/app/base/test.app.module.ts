@@ -57,7 +57,7 @@ export class MockSubscriptionService implements ResultSubscriptionService {
 
 @Injectable()
 export class MockActivatedRoute {
-  snapshot = { paramMap: new Map() };
+  snapshot = { paramMap: new Map(), queryParamMap: new Map()};
 }
 
 export class FileHelper {

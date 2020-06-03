@@ -19,18 +19,22 @@ import { TestParamsProviderService } from '../service/params-provider.service.sp
 import { NgxFilesizeModule } from 'ngx-filesize';
 
 class TestUtil {
-  static configure(params: TestParamsProviderService) {
+  static configure(providers: any[]) {
     TestBed.configureTestingModule({
       declarations: [UploadComponent],
       imports: [TestAppModule, NgxFilesizeModule, RouterTestingModule.withRoutes([])],
-      providers: [{ provide: ParamsProviderService, useValue: params },
-      { provide: APP_BASE_HREF, useValue: '/' },
-      { provide: TranscriptionService, useClass: MockTestService },
-      { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
-      { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-      { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
-      { provide: ActivatedRoute, useClass: MockActivatedRoute }]
+      providers: providers
     }).compileComponents();
+  }
+
+  static providers(params: TestParamsProviderService): any[] {
+    return [{ provide: ParamsProviderService, useValue: params },
+    { provide: APP_BASE_HREF, useValue: '/' },
+    { provide: TranscriptionService, useClass: MockTestService },
+    { provide: ResultSubscriptionService, useClass: MockSubscriptionService },
+    { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
+    { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
+    { provide: ActivatedRoute, useClass: MockActivatedRoute }];
   }
 }
 
@@ -270,7 +274,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read File value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.lastSelectedFile = new FileHelper().createFakeFile();
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -292,7 +296,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read email value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setEmail('olia');
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -306,7 +310,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read recognizer value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setRecognizer('rID');
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -318,7 +322,7 @@ describe('UploadComponent Own Mock', () => {
   it('should read speakerCount  value from provider', async(() => {
     const params = new TestParamsProviderService();
     params.setSpeakerCount('2');
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -329,7 +333,7 @@ describe('UploadComponent Own Mock', () => {
 
   it('should stop playing on destroy', async(() => {
     const params = new TestParamsProviderService();
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -345,7 +349,7 @@ describe('UploadComponent Own Mock', () => {
 
   it('should stop recording on destroy', async(() => {
     const params = new TestParamsProviderService();
-    TestUtil.configure(params);
+    TestUtil.configure(TestUtil.providers(params));
     fixture = TestBed.createComponent(UploadComponent);
     component = fixture.debugElement.componentInstance;
     fixture.detectChanges();
@@ -356,6 +360,33 @@ describe('UploadComponent Own Mock', () => {
       fixture.whenStable().then(() => {
         expect(component.recorder.recording).toEqual(false);
       });
+    });
+  }));
+
+  it('should default to non skipNumJoin', async(() => {
+    const params = new TestParamsProviderService();
+    TestUtil.configure(TestUtil.providers(params));
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      component.recorder.start();
+      expect(component._uploadParamSkipNumJoin).toEqual(false);
+    });
+  }));
+
+  it('should read skipNumJoin param', async(() => {
+    const params = new TestParamsProviderService();
+    const prv = TestUtil.providers(params);
+    prv.push({ provide: ActivatedRoute, useValue: { snapshot: { queryParamMap:
+      new Map([['skipNumJoin', '1']]) } } });
+    TestUtil.configure(prv);
+    fixture = TestBed.createComponent(UploadComponent);
+    component = fixture.debugElement.componentInstance;
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      component.recorder.start();
+      expect(component._uploadParamSkipNumJoin).toEqual(true);
     });
   }));
 });
