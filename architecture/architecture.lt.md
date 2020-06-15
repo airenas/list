@@ -24,7 +24,8 @@ Sistemą sudarantys komponentai pateikti [AFT-Schema.png](AFT-Schema.png) diagra
 | Tensorflow servisas | Teikia paslaugas tensorflow skyrybos ženklų atstatymo medeliui | [Tensorflow serving](https://www.tensorflow.org/tfx/guide/serving) | tensorflow/serving:1.14.0
 | Vartotojo informavimo servisas | Siunčia el.laišką apie transkripcijos startą, pabaigą vartotojui | Go |
 | Nereikalingų vartotojo duomenų trynimo servisas | Ištrina transkribavimo duomenis iš failinės sistemos, kai jie jau nereikalingi. | Go
+| Metrikų surinkimo servisas | Realizuoja sąsają metrikų registravimui iš programinių skriptų | Go  ||
+| Sistemos darbo analizės servisas | Bus kaupiama sistemos darbo statistika: užklausų kiekis, apdorojimo laikai, servisų naudojami resursai (atmintis, procesoriaus laikas) | [Prometheus](https://prometheus.io/) | prom/prometheus:v2.17.2, prom/node-exporter:v0.18.1
 | FS: DB duomenų saugykla | Saugomi DB ir Įvykių eilės servisų failai | [Docker volume](https://docs.docker.com/storage/volumes/)
 | FS: Transkribavimo failų saugykla | Saugomi visi darbiniai failai nuo pirmo vartotojo pateikto audio failo iki galutinių transkripcijos tekstų ir hipotezių failų. | Docker volume |
 | FS: Atpažinimo modulių failų saugykla | Failai, kuriuose saugomi akustiniai, kalbos, skyrybos ženklų atstatymo modeliai, MFCC skaičiavimo ir kiti konfigūraciniai failai | Docker volume
-| Sistemos darbo analizės servisas | Bus kaupiama sistemos darbo statistika: užklausų kiekis, apdorojimo laikai, servisų naudojami resursai (atmintis, procesoriaus laikas) | [Prometheus](https://prometheus.io/) | prom/prometheus:v2.17.2, prom/node-exporter:v0.18.1
