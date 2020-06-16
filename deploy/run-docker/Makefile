@@ -28,11 +28,19 @@ $(deploy_dir)/.env.done: $(deploy_dir)/.init.done
 
 	touch $@
 
-init: $(deploy_dir)/.init.done $(deploy_dir)/.env.done
+$(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
+	mkdir -p $(deploy_dir)/volumes/
+	touch $@
 
+init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done
 
-clean: clean-dir
+run: $(deploy_dir)/.env.done $(deploy_dir)/.dir.done
+	cd $(deploy_dir) && docker-compose up -d
+
+clean: clean-docker clean-dir 
 
 clean-dir:
 	rm -rf $(deploy_dir)	
-	
+
+clean-docker:
+	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
