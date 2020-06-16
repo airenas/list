@@ -13,6 +13,7 @@ Transcribatroriaus IT sprendimas gali būti diegiamas, bet kurioje operacinėje 
 ## Reikalavimai
 
 Aparatūrai:
+
 | Komponentas | Min reikalavimai | Rekomenduojama | Papildomai |
 | ---|-|-|-|
 | Platform | x86_64 | | |
