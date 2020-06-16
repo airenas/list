@@ -12,13 +12,13 @@ Transcribatroriaus IT sprendimas gali būti diegiamas, bet kurioje operacinėje 
 
 ## Reikalavimai
 
-Aparatūrai: 
+Aparatūrai:
 | Komponentas | Min reikalavimai | Rekomenduojama | Papildomai |
 | ---|-|-|-|
-| Platform | x86_64 |
+| Platform | x86_64 | | |
 | CPU | 64-bit, 2 branduoliai | 8 branduoliai | |
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
-| RAM  | 16 Gb | 32 Gb | | 
+| RAM  | 16 Gb | 32 Gb | |
 
 Operacinė sistema: Linux OC 64-bit. Papildomai turi būti sudiegta:
 
