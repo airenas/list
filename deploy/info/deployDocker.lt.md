@@ -25,6 +25,44 @@ Operacinė sistema: Linux OC 64-bit. Papildomai turi būti sudiegta:
 | Komponentas | Min versija | URL |
 | ---|-|-|
 | Docker | 18.09.7 | [Link](https://docs.docker.com/engine/install/)
-| Docker-compose | 1.23.0-rc2 | [Link](https://docs.docker.com/compose/install/) |
+| Docker-compose | 1.23.0 | [Link](https://docs.docker.com/compose/install/) |
 | GNU Make | 4.1 | [Link](https://www.gnu.org/software/make/manual/make.html) |
 | Git | 2.17.1 | [Link](https://git-scm.com/download/linux) |
+
+## Diegimas
+
+1. Parsisiųskite diegimo skriptus (Ši git repositorija):
+
+```bash
+git clone https://bitbucket.org/airenas/list.git
+cd list/deploy/run-docker
+```
+Docker diegimo direktorija yra *list/deploy/run-docker*.
+
+2. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
+
+```bash
+cp Makefile.options.template Makefile.options
+```
+
+3. Sukonfigūruokite *Makefile.options*:
+
+| Parametras | Paskirtis | Pvz |
+| ---|-|-|
+
+4. Instaliuokite
+
+```bash
+make install
+```
+
+Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
+Sistema bus sudiegta <INSTALL_DIR> direktorijoje
+
+## Patikrinimas
+
+Atidarykite URL naršyklėje: 
+
+Patikrinkite ar visi servisai veikia su docker-compose
+
+

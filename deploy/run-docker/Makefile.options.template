@@ -1,0 +1,24 @@
+# dir for service deployment
+#deploy_dir=/home/user/list
+deploy_dir=
+
+#deploy_dir=/home/user/list
+models=
+
+## pass for rabbimq
+rabbitmq_pass=
+
+## pass for rabbimq
+mongo_pass=
+
+## ports
+http_port=80
+https_port=443
+
+## URL
+## host_external_url=https://list.airenas.eu:7080
+host_external_url=
+
+## SMTP settings
+smtp_username=
+smtp_password=
