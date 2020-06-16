@@ -218,14 +218,14 @@ services:
       MODEL_NAME: punctuation
       MODEL_BASE_PATH: /models/model
     volumes:
-      - modelsStorage/punctuation:/models
+      - modelsStorage:/models
     restart: unless-stopped 
   
   punctuation-service:
     image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
-      - punctModelsStorage:/model
+      - modelsStorage:/model
     environment:
       TF_URL: tensorflow:8500
     labels:
@@ -247,8 +247,8 @@ services:
     - --web.external-url=${HOST_EXTERNAL_URL}/prometheus/
     - --web.route-prefix=/
     volumes:
-    - prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    - prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
+    - ${LIST_VOLUMES_DIR}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ${LIST_VOLUMES_DIR}/prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
     depends_on:
     - node-exporter
     - metrics-collector
@@ -324,7 +324,7 @@ volumes:
     driver_opts:
       type: none
       device: ${LIST_VOLUMES_DIR}/models
-      o: bind  
+      o: bind
 
   rabbitmq:
     driver_opts:
@@ -337,9 +337,3 @@ volumes:
       type: none
       device: ${LIST_VOLUMES_DIR}/mongo
       o: bind
-
-  prometheus:
-    driver_opts:
-      type: none
-      device: ${LIST_VOLUMES_DIR}/prometheus
-      o: bind    
