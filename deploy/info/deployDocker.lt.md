@@ -57,7 +57,7 @@ cp Makefile.options.template Makefile.options
 | mongo_pass | DB slaptažodis ||
 | http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
 | https_port | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
-| host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | https://airenas.eu:7054/ |
+| host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | https://airenas.eu:7054 |
 | smtp_host | SMTP serveris, laiškų siuntimui | 80 |
 | smtp_port | SMTP portas | 587 |
 | smtp_username | SMTP serverio vartotojas | olia@gmail.com |
