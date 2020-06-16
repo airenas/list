@@ -71,3 +71,4 @@ deploy/local/metrics/deploy/**
 src/tools/int.to.word/tmp/**
 testing/testdata/**
 testing/tcorpus/**
+deploy/run-docker/Makefile.options

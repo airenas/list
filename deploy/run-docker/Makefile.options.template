@@ -2,7 +2,7 @@
 #deploy_dir=/home/user/list
 deploy_dir=
 
-#deploy_dir=/home/user/list
+#model=/home/user/list
 models=
 
 ## pass for rabbimq
@@ -20,5 +20,7 @@ https_port=443
 host_external_url=
 
 ## SMTP settings
+smtp_host=smtp.gmail.com
+smtp_port=587
 smtp_username=
 smtp_password=

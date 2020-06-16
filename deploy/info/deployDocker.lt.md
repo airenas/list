@@ -1,6 +1,6 @@
 # Diegimas vienoje mašinoje naudojant Docker
 
-## Apie 
+## Apie
 
 Transkribatroriaus IT sprendimas yra realizuotas *Docker* komponentais. Visa sistema sukonfigūruota ir paruošta paleisti su *docker-compose* konfigūraciniu failu. Sistemos darbui taip pat reikalingi kai kurie papildomi (nedokerizuoti) binariniai vykdomieji failai ir lietuvių kalbos atpažinimo modelių failai. Diegient Jums reikės:
 
@@ -38,6 +38,7 @@ Operacinė sistema: Linux OC 64-bit. Papildomai turi būti sudiegta:
 git clone https://bitbucket.org/airenas/list.git
 cd list/deploy/run-docker
 ```
+
 Docker diegimo direktorija yra *list/deploy/run-docker*.
 
 2. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
@@ -50,6 +51,17 @@ cp Makefile.options.template Makefile.options
 
 | Parametras | Paskirtis | Pvz |
 | ---|-|-|
+| *deply_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
+| *models* | Instaliuojami modeliai. Galimi pasirinkimai: | |
+| rabbitmq_pass | Eilės serviso slaptažodis ||
+| mongo_pass | DB slaptažodis ||
+| http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
+| https_port | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
+| host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | https://airenas.eu:7054/ |
+| smtp_host | SMTP serveris, laiškų siuntimui | 80 |
+| smtp_port | SMTP portas | 587 |
+| smtp_username | SMTP serverio vartotojas | olia@gmail.com |
+| smtp_password | SMTP slaptažodis |  |
 
 4. Instaliuokite
 
@@ -58,12 +70,35 @@ make install
 ```
 
 Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
-Sistema bus sudiegta <INSTALL_DIR> direktorijoje
+Sistema bus sudiegta <deploy_dir> direktorijoje
 
 ## Patikrinimas
 
-Atidarykite URL naršyklėje: 
+Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
 
-Patikrinkite ar visi servisai veikia su docker-compose
+Patikrinkite ar visi servisai veikia su docker-compose:
 
+```bash
+    cd <deploy_dir>
+    docker-compose ps
+```
 
+Visi servisai turi būti *Up* būsenoje.
+
+## Servisų sustabdymmas/valdymas
+
+Servisai valdomi su docker-compose komanda:
+
+```bash
+    cd <deploy_dir>
+    ##Sustabdymas
+    docker-compose stop
+    ##Paleidimas
+    docker-compose up -d
+```
+
+## Išinstaliavimas
+
+```bash
+make clean
+```
