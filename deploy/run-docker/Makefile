@@ -33,6 +33,11 @@ $(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
 	touch $@
 
 init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done
+	mkdir - p $(deploy_dir)/volumes/mongo
+	mkdir - p $(deploy_dir)/volumes/rabbitmq
+	mkdir - p $(deploy_dir)/volumes/filestorage
+	mkdir - p $(deploy_dir)/volumes/apps
+	mkdir - p $(deploy_dir)/volumes/models
 
 run: $(deploy_dir)/.env.done $(deploy_dir)/.dir.done
 	cd $(deploy_dir) && docker-compose up -d

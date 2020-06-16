@@ -9,12 +9,7 @@ services:
       - "${LIST_TRAEFIK_HTTPS_EXT_PORT}:443"     # https proxy port
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
-      - ./traefik/traefik.toml:/traefik.toml
-      - ./traefik/acme.json:/acme.json
     restart: unless-stopped
-    environment:
-      CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
-      CLOUDFLARE_API_KEY: ${CF_API_KEY}  
     labels:
       - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
       - "traefik.proxy.port=8080"
@@ -22,16 +17,6 @@ services:
       - "traefik.api.port=8080"
       - "traefik.health.frontend.rule=PathPrefix:/health"
       - "traefik.health.port=8080"
-
-  testdata:
-    image: nginx:1.17.0
-    restart: unless-stopped
-    volumes:
-      - ./wwwdata:/usr/share/nginx/html
-    labels:
-     - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/testdata/"
-     - "traefik.http.port=80"
 
   web:
     image: airenas/list-ear-app:${EAR_APP_VERSION}
@@ -233,7 +218,7 @@ services:
       MODEL_NAME: punctuation
       MODEL_BASE_PATH: /models/model
     volumes:
-      - punctModelsStorage:/models
+      - modelsStorage/punctuation:/models
     restart: unless-stopped 
   
   punctuation-service:
@@ -289,14 +274,6 @@ services:
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     restart: unless-stopped 
 
-  rabbitmq-exporter:
-    image: kbudde/rabbitmq-exporter:v1.0.0-RC6.1
-    environment:
-      RABBIT_URL: http://rabbitmq:15672
-      RABBIT_USER: ${LIST_RABBITMQ_USER}
-      RABBIT_PASSWORD: ${LIST_RABBITMQ_PASS}
-    restart: unless-stopped                
-
 # ########### db & broker
   mongo:
     image: mongo:4.1.1
@@ -335,35 +312,29 @@ volumes:
   fileStorage:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}fileStorage
+      device: ${LIST_VOLUMES_DIR}/fileStorage
       o: bind
 
   appsStorage:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}apps
+      device: ${LIST_VOLUMES_DIR}/apps
       o: bind      
 
   modelsStorage:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}models
+      device: ${LIST_VOLUMES_DIR}/models
       o: bind  
-
-  punctModelsStorage:
-    driver_opts:
-      type: none
-      device: ${LIST_VOLUMES_DIR}h256_w200k
-      o: bind                
 
   rabbitmq:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}rabbitmq
+      device: ${LIST_VOLUMES_DIR}/rabbitmq
       o: bind     
 
   mongo:
     driver_opts:
       type: none
-      device: ${LIST_VOLUMES_DIR}mongo
+      device: ${LIST_VOLUMES_DIR}/mongo
       o: bind
