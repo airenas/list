@@ -29,17 +29,21 @@ $(deploy_dir)/.env.done: $(deploy_dir)/.init.done
 	touch $@
 
 $(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
-	mkdir -p $(deploy_dir)/volumes/
-	touch $@
-
-init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done
 	mkdir - p $(deploy_dir)/volumes/mongo
 	mkdir - p $(deploy_dir)/volumes/rabbitmq
 	mkdir - p $(deploy_dir)/volumes/filestorage
 	mkdir - p $(deploy_dir)/volumes/apps
 	mkdir - p $(deploy_dir)/volumes/models
+	touch $@
 
-run: $(deploy_dir)/.env.done $(deploy_dir)/.dir.done
+init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done $(deploy_dir)/.prom.done
+	
+$(deploy_dir)/.prom.done: $(deploy_dir)/.env.done
+	mkdir - p $(deploy_dir)/volumes/prometheus
+	cp prometheus/* $(deploy_dir)/volumes/prometheus
+	touch $@
+
+run: init
 	cd $(deploy_dir) && docker-compose up -d
 
 clean: clean-docker clean-dir 

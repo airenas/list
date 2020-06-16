@@ -247,11 +247,10 @@ services:
     - --web.external-url=${HOST_EXTERNAL_URL}/prometheus/
     - --web.route-prefix=/
     volumes:
-    - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    - ./prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
+    - prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
     depends_on:
     - node-exporter
-    - rabbitmq-exporter
     - metrics-collector
     labels:  
     - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
@@ -338,3 +337,9 @@ volumes:
       type: none
       device: ${LIST_VOLUMES_DIR}/mongo
       o: bind
+
+  prometheus:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/prometheus
+      o: bind    
