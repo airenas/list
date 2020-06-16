@@ -102,3 +102,5 @@ Servisai valdomi su docker-compose komanda:
 ```bash
 make clean
 ```
+
+Komandą reikia vykdyti *admin* teisėmis, pvz.: `sudo sh -c 'make clean'`.
