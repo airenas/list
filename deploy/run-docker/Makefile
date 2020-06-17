@@ -27,7 +27,7 @@ $(install_dir)/.init.done: | $(deploy_dir)
 	cp .env $(deploy_dir)/.env
 	touch $@
 
-$(install_dir)/.env.done: $(deploy_dir)/.init.done
+$(install_dir)/.env.done: $(install_dir)/.init.done
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
 	echo "LIST_TRAEFIK_HTTPS_EXT_PORT=$(https_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
