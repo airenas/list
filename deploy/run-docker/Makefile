@@ -1,10 +1,16 @@
 include Makefile.options
-
+########################################################################################################
+dwn_dir=$(deploy_dir)/dwn
+apps_url=https://prn509.vdu.lt:7080/testdata/apps-1.0.tar.gz
+########################################################################################################
 $(deploy_dir):
 	mkdir -p $@
 
 $(deploy_dir)/volumes:
 	mkdir -p $@	
+
+$(dwn_dir):
+	mkdir -p $@		
 
 $(deploy_dir)/.init.done: | $(deploy_dir)
 	cp docker-compose.yml $(deploy_dir)/docker-compose.yml
@@ -37,7 +43,14 @@ $(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
 	mkdir -p $(deploy_dir)/volumes/models/punctuation
 	touch $@
 
-init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done $(deploy_dir)/.prom.done
+$(dwn_dir)/apps.tar.gz: | $(dwn_dir)
+	wget -O $(dwn_dir)/apps.tar.gz $(apps_url)
+
+$(deploy_dir)/.apps.done: $(dwn_dir)/apps.tar.gz $(deploy_dir)/.dir.done
+	tar xvzf @^ -C $(deploy_dir)/volumes
+	touch $@
+
+init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done $(deploy_dir)/.prom.done $(deploy_dir)/.apps.done
 	
 $(deploy_dir)/.prom.done: $(deploy_dir)/.env.done
 	mkdir -p $(deploy_dir)/volumes/prometheus
