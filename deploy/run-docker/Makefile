@@ -22,12 +22,22 @@ $(dwn_dir):
 $(install_dir):
 	mkdir -p $@		
 ########################################################################################################
-$(install_dir)/.init.done: | $(deploy_dir)
+$(install_dir)/.init.done: validate | $(deploy_dir)
 	cp docker-compose.yml $(deploy_dir)/docker-compose.yml
 	cp .env $(deploy_dir)/.env
 	touch $@
+########################################################################################################
+validate:
+	@$(if $(strip $(deploy_dir)),echo "deploy_dir = $(deploy_dir)",echo No deploy_dir set && exit 1)
+	@$(if $(strip $(models)),echo "models = $(models)",echo No models set && exit 1)
+	@$(if $(strip $(rabbitmq_pass)),echo "rabbitmq_pass = ****",echo No rabbitmq_pass set && exit 1)
+	@$(if $(strip $(mongo_pass)),echo "mongo_pass = ****",echo No mongo_pass set && exit 1)
+	@$(if $(strip $(http_port)),echo "http_port = $(http_port)",echo No http_port set && exit 1)
+	@$(if $(strip $(https_port)),echo "https_port = $(https_port)",echo No https_port set && exit 1)
 
-$(install_dir)/.env.done: $(install_dir)/.init.done
+
+########################################################################################################
+$(install_dir)/.env.done: $(install_dir)/.init.done validate
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
 	echo "LIST_TRAEFIK_HTTPS_EXT_PORT=$(https_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
@@ -132,3 +142,5 @@ clean-docker:
 	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
 
 .SECONDARY:
+
+.PHONY: validate clean run init install
