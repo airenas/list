@@ -218,14 +218,14 @@ services:
       MODEL_NAME: punctuation
       MODEL_BASE_PATH: /models/model
     volumes:
-      - modelsStorage:/models
+      - ${LIST_VOLUMES_DIR}/models/punctuation/v1.0:/models
     restart: unless-stopped 
   
   punctuation-service:
     image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
-      - modelsStorage:/model
+      - ${LIST_VOLUMES_DIR}/models/punctuation/v1.0:/model
     environment:
       TF_URL: tensorflow:8500
     labels:

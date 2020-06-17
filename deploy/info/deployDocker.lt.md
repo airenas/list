@@ -1,4 +1,4 @@
-# Diegimas vienoje mašinoje naudojant Docker
+# Diegimas vienoje mašinoje naudojant *Docker*
 
 ## Apie
 
@@ -32,7 +32,7 @@ Papildomi įrankiai reikalingi instaliavimui: [GNU Make](https://www.gnu.org/sof
 
 ## Diegimas
 
-1. Parsisiųskite diegimo skriptus (Ši git repositorija):
+1. Parsisiųskite diegimo skriptus (ši git repositorija):
 
 ```bash
 git clone https://bitbucket.org/airenas/list.git
@@ -51,7 +51,7 @@ cp Makefile.options.template Makefile.options
 
 | Parametras | Paskirtis | Pvz |
 | ---|-|-|
-| *deply_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
+| *deploy_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
 | *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*,  *ben-tel*, *adm*, *adm-tel*, *tei*, *tei-tel*, *med*, *med-tel* | ben adm-tel |
 | rabbitmq_pass | Eilės serviso slaptažodis ||
 | mongo_pass | DB slaptažodis ||
@@ -70,7 +70,7 @@ make install
 ```
 
 Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
-Sistema bus sudiegta <deploy_dir> direktorijoje
+Sistema bus sudiegta *<deploy_dir>* direktorijoje
 
 ## Patikrinimas
 
