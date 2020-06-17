@@ -52,7 +52,7 @@ Papildomi įrankiai naudojami instaliuojant: [make](https://www.gnu.org/software
     | Parametras | Paskirtis | Pvz |
     | ---|-|-|
     | *deploy_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
-    | *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*,  *ben-tel*, *adm*, *adm-tel*, *tei*, *tei-tel*, *med*, *med-tel* | ben adm-tel |
+    | *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*(bendrinis modelis),  *ben-tel* (bendrinis modelis, telefoninė kokybė), *adm* (administracinis), *adm-tel*, *tei* (teisinis), *tei-tel*, *med* (medicininis), *med-tel* | ben adm-tel |
     | rabbitmq_pass | Eilės serviso slaptažodis ||
     | mongo_pass | DB slaptažodis ||
     | http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
@@ -69,7 +69,7 @@ Papildomi įrankiai naudojami instaliuojant: [make](https://www.gnu.org/software
     make install -j4
     ```
 
-    Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
+    Skriptas parsiųs reikalingus failus, paleis *docker* konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
     Sistema bus sudiegta *<deploy_dir>* direktorijoje
 
 ## Patikrinimas

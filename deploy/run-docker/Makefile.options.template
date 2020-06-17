@@ -1,9 +1,10 @@
-# dir for service deployment
-#deploy_dir=/home/user/list
+## dir for service deployment
+## sample: deploy_dir=/home/user/list
 deploy_dir=
 
-#model=/home/user/list
-models=
+## space separated list of models: ben, ben-tel, adm, adm-tel, med, med-tel, tei, tei-tel
+## sample: model=adm ben-tel
+models=ben
 
 ## pass for rabbimq
 rabbitmq_pass=
@@ -15,11 +16,12 @@ mongo_pass=
 http_port=80
 https_port=443
 
-## URL
+## URL to acces from outside
 ## host_external_url=https://list.airenas.eu:7080
-host_external_url=
+host_external_url=http//localhost
 
 ## SMTP settings
+## for email sending
 smtp_host=smtp.gmail.com
 smtp_port=587
 smtp_username=
