@@ -127,12 +127,14 @@ $(install_dir)/.prom.done: $(install_dir)/.env.done
 	cp prometheus/* $(deploy_dir)/volumes/prometheus
 	touch $@
 ########################################################################################################
-
 run: init
 	cd $(deploy_dir) && docker-compose up -d
 
 install: run	
-
+########################################################################################################
+status: 
+	cd $(deploy_dir) && docker-compose ps
+########################################################################################################
 clean: clean-docker clean-dir 
 
 clean-dir:
@@ -140,7 +142,7 @@ clean-dir:
 
 clean-docker:
 	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
-
+########################################################################################################
 .SECONDARY:
 
 .PHONY: validate clean run init install
