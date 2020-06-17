@@ -21,14 +21,14 @@ Aparatūrai:
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
 | RAM  | 16 Gb | 32 Gb | |
 
-Operacinė sistema: Linux OC 64-bit. Papildomai turi būti sudiegta:
+Operacinė sistema: Linux OC 64-bit. Turi būti sudiegta:
 
 | Komponentas | Min versija | URL |
 | ---|-|-|
 | Docker | 18.09.7 | [Link](https://docs.docker.com/engine/install/)
 | Docker-compose | 1.23.0 | [Link](https://docs.docker.com/compose/install/) |
-| GNU Make | 4.1 | [Link](https://www.gnu.org/software/make/manual/make.html) |
-| Git | 2.17.1 | [Link](https://git-scm.com/download/linux) |
+
+Papildomi įrankiai reikalingi instaliavimui: [GNU Make](https://www.gnu.org/software/make/manual/make.html), [Git](https://git-scm.com/download/linux), [GNU Wget](https://www.gnu.org/software/wget/manual/wget.html), [GNU Tar](https://www.gnu.org/software/tar/manual/).
 
 ## Diegimas
 

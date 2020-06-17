@@ -2,31 +2,32 @@ include Makefile.options
 ########################################################################################################
 dwn_dir=$(deploy_dir)/dwn
 install_dir=$(deploy_dir)/install
+rec_file=$(deploy_dir)/volumes/models/config/recognizers.map.yml
 dwn_url=https://prn509.vdu.lt:7080/testdata
 apps_url=$(dwn_url)/apps-1.0.tar.gz
-punctuation_url=$(dwn_url)/punctuation-1.0.tar.gz
-diarization_url=$(dwn_url)/diarization-1.0.tar.gz
 ########################################################################################################
-models_dot=$(patsubst %, $(deploy_dir)/install/.%.model.done, $(models))
+models_dwn=$(patsubst %, $(install_dir)/.%.done.dwn, $(models))
+models_conf=$(patsubst %, $(install_dir)/.%.done.conf, $(models))
 ########################################################################################################
 $(deploy_dir):
 	mkdir -p $@
-
 $(deploy_dir)/volumes:
 	mkdir -p $@	
-
+$(deploy_dir)/volumes/models:
+	mkdir -p $@		
+$(deploy_dir)/volumes/models/config:
+	mkdir -p $@
 $(dwn_dir):
 	mkdir -p $@	
-
 $(install_dir):
 	mkdir -p $@		
 ########################################################################################################
-$(deploy_dir)/.init.done: | $(deploy_dir)
+$(install_dir)/.init.done: | $(deploy_dir)
 	cp docker-compose.yml $(deploy_dir)/docker-compose.yml
 	cp .env $(deploy_dir)/.env
 	touch $@
 
-$(deploy_dir)/.env.done: $(deploy_dir)/.init.done
+$(install_dir)/.env.done: $(deploy_dir)/.init.done
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
 	echo "LIST_TRAEFIK_HTTPS_EXT_PORT=$(https_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
@@ -43,7 +44,7 @@ $(deploy_dir)/.env.done: $(deploy_dir)/.init.done
 
 	touch $@
 
-$(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
+$(install_dir)/.dir.done: $(install_dir)/.init.done
 	mkdir -p $(deploy_dir)/volumes/mongo
 	mkdir -p $(deploy_dir)/volumes/rabbitmq
 	mkdir -p $(deploy_dir)/volumes/fileStorage
@@ -53,38 +54,65 @@ $(deploy_dir)/.dir.done: $(deploy_dir)/.init.done
 $(dwn_dir)/apps.tar.gz: | $(dwn_dir)
 	wget --no-check-certificate -O $(dwn_dir)/apps.tar.gz $(apps_url)
 
-$(deploy_dir)/.apps.done: $(dwn_dir)/apps.tar.gz | $(deploy_dir)/volumes
+$(install_dir)/.apps.done.dwn: $(dwn_dir)/apps.tar.gz | $(deploy_dir)/volumes
 	tar xvzf $(dwn_dir)/apps.tar.gz -C $(deploy_dir)/volumes
 	touch $@
 ########################################################################################################
 $(dwn_dir)/%.tar.gz: | $(dwn_dir)
 	wget --no-check-certificate -O $@ $(dwn_url)/$*.tar.gz	
 
-$(install_dir)/.%.done: $(dwn_dir)/%.tar.gz | $(install_dir)
+$(install_dir)/.%.done.dwn: $(dwn_dir)/%.tar.gz | $(install_dir) $(deploy_dir)/volumes/models
 	tar xvzf $^ -C $(deploy_dir)/volumes/models
 	touch $@
 ########################################################################################################
-$(deploy_dir)/install/.ben-tel.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(rec_file): $(deploy_dir)/volumes/models/config
 	touch $@
-$(deploy_dir)/install/.ben.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.ben-tel.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'ben-tel: words_v3' $(rec_file) || echo 'ben-tel: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.adm-tel.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.ben.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'ben: words_v3' $(rec_file) || echo 'ben: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.adm.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.adm-tel.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'adm-tel: words_v3' $(rec_file) || echo 'adm-tel: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.tei-tel.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.adm.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'adm: words_v3' $(rec_file) || echo 'adm: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.tei.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.med-tel.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'med-tel: words_v3' $(rec_file) || echo 'med-tel: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.med-tel.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.med.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'med: words_v3' $(rec_file) || echo 'med: words_v3' >> $(rec_file) 
 	touch $@
-$(deploy_dir)/install/.med.model.done: $(install_dir)/.lm-1.0.done $(install_dir)/.ac-1.0.done 
+$(install_dir)/.tei-tel.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'tei-tel: words_v3' $(rec_file) || echo 'tei-tel: words_v3' >> $(rec_file) 
+	touch $@
+$(install_dir)/.tei.done.conf: | $(install_dir) $(rec_file)
+	grep -qxF 'tei: words_v3' $(rec_file) || echo 'tei: words_v3' >> $(rec_file) 
+	touch $@	
+########################################################################################################
+$(deploy_dir)/install/.ben-tel.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.ben.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.adm-tel.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.adm.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.tei-tel.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.tei.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.med-tel.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
+	touch $@
+$(deploy_dir)/install/.med.done.dwn: $(install_dir)/.lm-1.0.done.dwn $(install_dir)/.ac-1.0.done.dwn 
 	touch $@		
 ########################################################################################################
-init: $(deploy_dir)/.dir.done $(deploy_dir)/.env.done $(deploy_dir)/.prom.done $(deploy_dir)/.apps.done \
-	$(install_dir)/.punctuation-1.0.done $(install_dir)/.diarization-1.0.done $(models_dot)
-	
-$(deploy_dir)/.prom.done: $(deploy_dir)/.env.done
+init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.apps.done.dwn \
+	$(install_dir)/.punctuation-1.0.done.dwn $(install_dir)/.diarization-1.0.done.dwn $(models_dwn) $(models_conf)
+
+$(install_dir)/.prom.done: $(install_dir)/.env.done
 	mkdir -p $(deploy_dir)/volumes/prometheus
 	cp prometheus/* $(deploy_dir)/volumes/prometheus
 	touch $@
@@ -93,6 +121,8 @@ $(deploy_dir)/.prom.done: $(deploy_dir)/.env.done
 run: init
 	cd $(deploy_dir) && docker-compose up -d
 
+install: run	
+
 clean: clean-docker clean-dir 
 
 clean-dir:
@@ -100,3 +130,5 @@ clean-dir:
 
 clean-docker:
 	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
+
+.SECONDARY:
