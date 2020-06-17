@@ -52,7 +52,7 @@ cp Makefile.options.template Makefile.options
 | Parametras | Paskirtis | Pvz |
 | ---|-|-|
 | *deply_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
-| *models* | Instaliuojami modeliai. Galimi pasirinkimai: | |
+| *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*,  *ben-tel*, *adm*, *adm-tel*, *tei*, *tei-tel*, *med*, *med-tel* | ben adm-tel |
 | rabbitmq_pass | Eilės serviso slaptažodis ||
 | mongo_pass | DB slaptažodis ||
 | http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
@@ -76,7 +76,7 @@ Sistema bus sudiegta <deploy_dir> direktorijoje
 
 Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
 
-Patikrinkite ar visi servisai veikia su docker-compose:
+Patikrinkite ar visi servisai veikia su *docker-compose*:
 
 ```bash
     cd <deploy_dir>
@@ -87,7 +87,7 @@ Visi servisai turi būti *Up* būsenoje.
 
 ## Servisų sustabdymmas/valdymas
 
-Servisai valdomi su docker-compose komanda:
+Servisai valdomi su *docker-compose* komanda:
 
 ```bash
     cd <deploy_dir>
