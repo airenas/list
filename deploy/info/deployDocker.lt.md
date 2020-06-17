@@ -28,49 +28,49 @@ Operacinė sistema: Linux OC 64-bit. Turi būti sudiegta:
 | Docker | 18.09.7 | [Link](https://docs.docker.com/engine/install/)
 | Docker-compose | 1.23.0 | [Link](https://docs.docker.com/compose/install/) |
 
-Papildomi įrankiai reikalingi instaliavimui: [GNU Make](https://www.gnu.org/software/make/manual/make.html), [Git](https://git-scm.com/download/linux), [GNU Wget](https://www.gnu.org/software/wget/manual/wget.html), [GNU Tar](https://www.gnu.org/software/tar/manual/).
+Papildomi įrankiai naudojami instaliuojant: [make](https://www.gnu.org/software/make/manual/make.html), [git](https://git-scm.com/download/linux), [wget](https://www.gnu.org/software/wget/manual/wget.html), [tar](https://www.gnu.org/software/tar/manual/).
 
 ## Diegimas
 
 1. Parsisiųskite diegimo skriptus (ši git repositorija):
 
-```bash
-git clone https://bitbucket.org/airenas/list.git
-cd list/deploy/run-docker
-```
+    ```bash
+    git clone https://bitbucket.org/airenas/list.git
+    cd list/deploy/run-docker
+    ```
 
-Docker diegimo direktorija yra *list/deploy/run-docker*.
+    Docker diegimo direktorija yra *list/deploy/run-docker*.
 
 2. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
-```bash
-cp Makefile.options.template Makefile.options
-```
+    ```bash
+    cp Makefile.options.template Makefile.options
+    ```
 
 3. Sukonfigūruokite *Makefile.options*:
 
-| Parametras | Paskirtis | Pvz |
-| ---|-|-|
-| *deploy_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
-| *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*,  *ben-tel*, *adm*, *adm-tel*, *tei*, *tei-tel*, *med*, *med-tel* | ben adm-tel |
-| rabbitmq_pass | Eilės serviso slaptažodis ||
-| mongo_pass | DB slaptažodis ||
-| http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
-| https_port | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
-| host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | https://airenas.eu:7054 |
-| smtp_host | SMTP serveris, laiškų siuntimui | 80 |
-| smtp_port | SMTP portas | 587 |
-| smtp_username | SMTP serverio vartotojas | olia@gmail.com |
-| smtp_password | SMTP slaptažodis |  |
+    | Parametras | Paskirtis | Pvz |
+    | ---|-|-|
+    | *deploy_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
+    | *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*,  *ben-tel*, *adm*, *adm-tel*, *tei*, *tei-tel*, *med*, *med-tel* | ben adm-tel |
+    | rabbitmq_pass | Eilės serviso slaptažodis ||
+    | mongo_pass | DB slaptažodis ||
+    | http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
+    | https_port | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
+    | host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
+    | smtp_host | SMTP serveris, laiškų siuntimui | 80 |
+    | smtp_port | SMTP portas | 587 |
+    | smtp_username | SMTP serverio vartotojas | olia@gmail.com |
+    | smtp_password | SMTP slaptažodis |  |
 
 4. Instaliuokite
 
-```bash
-make install
-```
+    ```bash
+    make install -j4
+    ```
 
-Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
-Sistema bus sudiegta *<deploy_dir>* direktorijoje
+    Skriptas parsiųs reikalingus failus, paleis docker konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
+    Sistema bus sudiegta *<deploy_dir>* direktorijoje
 
 ## Patikrinimas
 
