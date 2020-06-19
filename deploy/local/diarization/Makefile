@@ -6,7 +6,7 @@ main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=diarization-service
 version=$(DIARIZATION_SERVICE_VERSION)
 #####################################################################################
-tools=send.metric \
+tools=send.metric fix.segments \
 	m_shell.sh m_start.sh m_end.sh
 tools_dir=$(SRC_DIR)/tools
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
