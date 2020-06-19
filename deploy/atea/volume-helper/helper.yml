@@ -36,7 +36,7 @@ spec:
           claimName: punctuationstorage                                 
       containers:
       - name: vh
-        image: airenas/volume-helper:1.0
+        image: airenas/list-volume-helper:1.1.791
         volumeMounts:
         - name: appstorage-vol 
           mountPath: /apps

@@ -2,17 +2,17 @@ include Makefile.options
 ########################################################################################################
 ########################################################################################################
 info: 
-	echo "apps dir: $(apps_dir)"
-	echo "apps: $(apps)"
-	echo "apps: $(dwn_url)"
+	@echo "==================================="
+	@echo "apps dir: $(apps_dir)"
+	@echo "apps: $(apps)"
+	@echo "apps: $(dwn_url)"
+	@echo "==================================="
 ########################################################################################################
 $(dwn_dir):
 	mkdir -p $@
-
 $(dwn_dir)/.$(apps).done: | $(dwn_dir)
 	wget --no-check-certificate -O $(dwn_dir)/$(apps).tar.gz $(dwn_url)/$(apps).tar.gz
 	touch $@
-
 $(apps_dir)/.$(apps).done: $(dwn_dir)/.$(apps).done | $(apps_dir)
 	tar xvzf $(dwn_dir)/$(apps).tar.gz -C $(apps_dir)
 	touch $@
