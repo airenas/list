@@ -17,6 +17,8 @@ $(deploy_dir)/volumes/models:
 	mkdir -p $@		
 $(deploy_dir)/volumes/models/config:
 	mkdir -p $@
+$(deploy_dir)/volumes/models/apps:
+	mkdir -p $@	
 $(dwn_dir):
 	mkdir -p $@	
 $(install_dir):
@@ -58,11 +60,11 @@ $(install_dir)/.dir.done: $(install_dir)/.init.done
 	touch $@
 
 ########################################################################################################
-$(dwn_dir)/apps.tar.gz: | $(dwn_dir)
+$(dwn_dir)/apps.tar.gz: | $(dwn_dir) | $(deploy_dir)/volumes/apps 
 	wget --no-check-certificate -O $(dwn_dir)/apps.tar.gz $(apps_url)
 
 $(install_dir)/.apps.done.dwn: $(dwn_dir)/apps.tar.gz | $(deploy_dir)/volumes
-	tar xvzf $(dwn_dir)/apps.tar.gz -C $(deploy_dir)/volumes
+	tar xvzf $(dwn_dir)/apps.tar.gz -C $(deploy_dir)/volumes/apps
 	touch $@
 ########################################################################################################
 $(dwn_dir)/%.tar.gz: | $(dwn_dir)

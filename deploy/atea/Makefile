@@ -90,6 +90,9 @@ copy_lm:
 ########### APPS ####################################################################
 copy_apps: 
 	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
+install-apps: vh_cmd
+	$(vh_cmd) make apps=apps-1.0 install-apps
+install: install-apps	
 #####################################################################################
 redeploy:
 	kubectl apply -f deployments/
