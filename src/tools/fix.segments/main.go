@@ -27,7 +27,7 @@ type line struct {
 
 func main() {
 	log.SetOutput(os.Stderr)
-	params := &params{minMillis: 110}
+	params := &params{}
 	fs := flag.CommandLine
 	takeParams(fs, params)
 	fs.Parse(os.Args[1:])
@@ -70,7 +70,7 @@ func main() {
 
 	sort.Slice(lns, func(i, j int) bool { return lns[i].from < lns[j].from })
 
-	log.Printf("Join shorter than %d ms", params.minMillis)
+	log.Printf("Join segments shorter than %d ms", params.minMillis)
 	lnsF := joinLines(lns, params.minMillis)
 
 	for _, l := range lnsF {
@@ -88,7 +88,7 @@ func takeParams(fs *flag.FlagSet, data *params) {
 		fmt.Fprintf(fs.Output(), "Usage of %s: <params> [input-file | stdin] [output-file | stdout]\n", os.Args[0])
 		fs.PrintDefaults()
 	}
-	fs.IntVar(&data.minMillis, "m", 0, "Minimum ms to keep separate line")
+	fs.IntVar(&data.minMillis, "m", 110, "Minimum ms to keep separate line")
 }
 
 func validateParams(data *params) error {
@@ -131,9 +131,12 @@ func joinLines(lns []*line, minMillis int) []*line {
 	var last *line
 	for _, l := range lns {
 		if last != nil && (l.len*10 <= minMillis || last.len*10 <= minMillis) {
+			jl := l
 			if last.len < l.len {
 				last.rFields = l.rFields
+				jl = last
 			}
+			log.Printf("Join segment at %d-%d ms", jl.from*10, (jl.from+jl.len)*10)
 			last.len = l.len + l.from - last.from
 		} else {
 			res = append(res, l)
