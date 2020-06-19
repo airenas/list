@@ -38,13 +38,17 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 	if [ $(DO_MUSIC_DETECTION) = yes ]; then diarization_opts="-m"; fi; \
 	(export LOCALCLASSPATH=$(LOCALCLASSPATH); export JAVA_BIN=$(JAVA_BIN); export MODELS_ROOT=$(MODELS_ROOT); $(APPS_ROOT)/diarization.sh $$diarization_opts $^ `dirname $@`/show.uem.seg)
 
-$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.seg 
+$(OUTPUT_ROOT)/diarization/%/show.fixed.seg: $(OUTPUT_ROOT)/diarization/%/show.seg 
+	$(APP_DIR)/fix.segments $< $@
+
+
+$(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
 	$(logb) $@
 	mkdir -p `dirname $@`
 	cat $< | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
-$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg 
+$(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
 	$(logb) $@
 	mkdir -p `dirname $@`
 	cat $< | \
@@ -53,7 +57,7 @@ $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.seg
 		LC_ALL=C sort > $@
 	$(loge) $@		
 
-$(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.seg
+$(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg
 	$(logb) $@
 	mkdir -p `dirname $@`
 	cat $< | \
