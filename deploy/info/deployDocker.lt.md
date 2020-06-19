@@ -50,14 +50,15 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Parsisiųskite diegimo skriptus (ši git repositorija):
 
-    >`git clone https://bitbucket.org/airenas/list.git`
-    >`cd list/deploy/run-docker`
+    `git clone https://bitbucket.org/airenas/list.git`
+    
+    `cd list/deploy/run-docker`
 
     Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
 
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
-    >`cp Makefile.options.template Makefile.options`
+    `cp Makefile.options.template Makefile.options`
 
 1. Sukonfigūruokite *Makefile.options*:
 
@@ -76,30 +77,18 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Instaliuokite
 
-    >`make install -j4`
+    `make install -j4`
 
     Skriptas parsiųs reikalingus failus, paleis *docker* konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
     Sistema bus sudiegta *<deploy_dir>* direktorijoje
 
 ## Patikrinimas
 
-Patikrinkite ar visi servisai veikia su *docker-compose*:
+1. Patikrinkite ar visi servisai veikia su *docker-compose*: `make status`. Visi servisai turi būti *Up* būsenoje.
 
-```bash
-    make status
-```
+1. Patikrinkite ar servisas gali priimti užklausas: `make status-service`. Turi grąžinti užklausos kodą 200.
 
-Visi servisai turi būti *Up* būsenoje.
-
-Patikrinkite ar servisas gali priimti užklausas:
-
-```bash
-    make status-service
-```
-
-Turi grąžinti užklausos kodą 200.
-
-Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
+1. Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
 
 ## Servisų sustabdymmas/valdymas
 
