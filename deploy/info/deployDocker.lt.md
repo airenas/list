@@ -21,7 +21,7 @@ Aparatūrai:
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
 | RAM  | 16 Gb | 32 Gb | |
 
-Operacinė sistema: Linux OC 64-bit. Turi būti sudiegta:
+Operacinė sistema: Linux OS 64-bit. Turi būti sudiegta:
 
 | Komponentas | Min versija | URL |
 | ---|-|-|
@@ -30,44 +30,54 @@ Operacinė sistema: Linux OC 64-bit. Turi būti sudiegta:
 
 Papildomi įrankiai naudojami instaliuojant: [make](https://www.gnu.org/software/make/manual/make.html), [git](https://git-scm.com/download/linux), [wget](https://www.gnu.org/software/wget/manual/wget.html), [tar](https://www.gnu.org/software/tar/manual/).
 
+## Prieš diegiant
+
+Patikrinkite ar visi reikalingi komponentai veikia mašinoje: 
+
+```bash
+    ## Docker
+    docker run hello-world
+    ## Docker-compose
+    docker-compose --version
+    ## Kiti komponentai
+    make --version
+    tar --version
+    wget --version
+    git --version
+```
+
 ## Diegimas
 
 1. Parsisiųskite diegimo skriptus (ši git repositorija):
 
-    ```bash
-    git clone https://bitbucket.org/airenas/list.git
-    cd list/deploy/run-docker
-    ```
+    >`git clone https://bitbucket.org/airenas/list.git`
+    >`cd list/deploy/run-docker`
 
-    Docker diegimo direktorija yra *list/deploy/run-docker*.
+    Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
 
-2. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
+1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
-    ```bash
-    cp Makefile.options.template Makefile.options
-    ```
+    >`cp Makefile.options.template Makefile.options`
 
-3. Sukonfigūruokite *Makefile.options*:
+1. Sukonfigūruokite *Makefile.options*:
 
-    | Parametras | Paskirtis | Pvz |
-    | ---|-|-|
-    | *deploy_dir* | Pilnas kelias iki instaliavimo direktorijos | /home/user/list
-    | *models* | Instaliuojami modeliai. Galimi pasirinkimai: *ben*(bendrinis modelis),  *ben-tel* (bendrinis modelis, telefoninė kokybė), *adm* (administracinis), *adm-tel*, *tei* (teisinis), *tei-tel*, *med* (medicininis), *med-tel* | ben adm-tel |
-    | rabbitmq_pass | Eilės serviso slaptažodis ||
-    | mongo_pass | DB slaptažodis ||
-    | http_port | HTTP portas, kuriuo bus pasiekiami servisai | 80 |
-    | https_port | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
-    | host_external_url | Kompiuterio url, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
-    | smtp_host | SMTP serveris, laiškų siuntimui | 80 |
-    | smtp_port | SMTP portas | 587 |
-    | smtp_username | SMTP serverio vartotojas | olia@gmail.com |
-    | smtp_password | SMTP slaptažodis |  |
+    | Parametras | Privalomas | Paskirtis |Pvz |
+    | ---|-|-|-|
+    | *deploy_dir* | + | Pilnas kelias iki instaliavimo direktorijos mašinoje. Šioje direktorijoje bus atsiųsti modeliai, sukurtas pakatalogis darbiniams transkribatoriaus failams | /home/user/list
+    | *models* | + | Instaliuojami modeliai. Galimi pasirinkimai: *ben*(bendrinis modelis),  *ben-tel* (bendrinis modelis, telefoninė kokybė), *adm* (administracinis), *adm-tel*, *tei* (teisinis), *tei-tel*, *med* (medicininis), *med-tel* | ben adm-tel |
+    | rabbitmq_pass | + | Eilės serviso slaptažodis ||
+    | mongo_pass | + |DB slaptažodis ||
+    | http_port | + | HTTP portas, kuriuo bus pasiekiami servisai mašinoje | 80 |
+    | https_port | + | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
+    | host_external_url | - | Kompiuterio URL, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
+    | smtp_host | - |SMTP serveris, laiškų siuntimui | 80 |
+    | smtp_port | - |SMTP portas | 587 |
+    | smtp_username | - | SMTP serverio vartotojas | olia@gmail.com |
+    | smtp_password | - | SMTP slaptažodis |  |
 
-4. Instaliuokite
+1. Instaliuokite
 
-    ```bash
-    make install -j4
-    ```
+    >`make install -j4`
 
     Skriptas parsiųs reikalingus failus, paleis *docker* konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
     Sistema bus sudiegta *<deploy_dir>* direktorijoje
@@ -100,7 +110,7 @@ Servisai valdomi su *docker-compose* komanda:
 ## Išinstaliavimas
 
 ```bash
-make clean
+    make clean
 ```
 
 Komandą reikia vykdyti *admin* teisėmis, pvz.: `sudo sh -c 'make clean'`.
