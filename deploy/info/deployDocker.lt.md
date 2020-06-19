@@ -68,7 +68,6 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     | rabbitmq_pass | + | Eilės serviso slaptažodis ||
     | mongo_pass | + |DB slaptažodis ||
     | http_port | + | HTTP portas, kuriuo bus pasiekiami servisai mašinoje | 80 |
-    | https_port | + | HTTPS portas, kuriuo bus pasiekiami servisai | 443 |
     | host_external_url | - | Kompiuterio URL, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
     | smtp_host | - |SMTP serveris, laiškų siuntimui | 80 |
     | smtp_port | - |SMTP portas | 587 |
@@ -84,16 +83,23 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 ## Patikrinimas
 
-Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
-
 Patikrinkite ar visi servisai veikia su *docker-compose*:
 
 ```bash
-    cd <deploy_dir>
-    docker-compose ps
+    make status
 ```
 
 Visi servisai turi būti *Up* būsenoje.
+
+Patikrinkite ar servisas gali priimti užklausas:
+
+```bash
+    make status-service
+```
+
+Turi grąžinti užklausos kodą 200.
+
+Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
 
 ## Servisų sustabdymmas/valdymas
 

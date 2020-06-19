@@ -14,11 +14,10 @@ mongo_pass=
 
 ## ports
 http_port=80
-https_port=443
 
 ## URL to acces from outside
 ## host_external_url=https://list.airenas.eu:7080
-host_external_url=http//localhost
+host_external_url=http//server
 
 ## SMTP settings
 ## for email sending

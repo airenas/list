@@ -33,13 +33,10 @@ validate:
 	@$(if $(strip $(rabbitmq_pass)),echo "rabbitmq_pass = ****",echo No rabbitmq_pass set && exit 1)
 	@$(if $(strip $(mongo_pass)),echo "mongo_pass = ****",echo No mongo_pass set && exit 1)
 	@$(if $(strip $(http_port)),echo "http_port = $(http_port)",echo No http_port set && exit 1)
-	@$(if $(strip $(https_port)),echo "https_port = $(https_port)",echo No https_port set && exit 1)
-
 
 ########################################################################################################
 $(install_dir)/.env.done: $(install_dir)/.init.done validate
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
-	echo "LIST_TRAEFIK_HTTPS_EXT_PORT=$(https_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
 	echo "LIST_MONGO_PASS=$(mongo_pass)" >> $(deploy_dir)/.env 
 	echo "LIST_MONGO_URL=mongodb://list:$(mongo_pass)@mongo:27017" >> $(deploy_dir)/.env 
@@ -134,6 +131,8 @@ install: run
 ########################################################################################################
 status: 
 	cd $(deploy_dir) && docker-compose ps
+status-service: 
+	wget -SO- http://localhost:$(http_port)/ausis/transcriber/live?full=1 2>&1	
 ########################################################################################################
 clean: clean-docker clean-dir 
 
