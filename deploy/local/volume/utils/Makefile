@@ -20,6 +20,9 @@ $(dwn_dir)/.$(apps).done: | $(dwn_dir)
 $(apps_dir)/.$(apps).done: $(dwn_dir)/.$(apps).done | $(apps_dir)
 	tar xvzf $(dwn_dir)/$(apps).tar.gz -C $(apps_dir)
 	touch $@
+$(dwn_dir)/.$(file).done: | $(dwn_dir)
+	wget --no-check-certificate -O $(dwn_dir)/$(file).tar.gz $(dwn_url)/$(file).tar.gz
+	touch $@	
 $(models_dir)/.$(file).done: $(dwn_dir)/.$(file).done | $(models_dir)
 	tar xvzf $(dwn_dir)/$(file).tar.gz -C $(models_dir)
 	touch $@	

@@ -68,19 +68,6 @@ $(srv)_pod_name:
 $(srv)_cmd: $(srv)_pod_name
 	$(eval $(srv)_cmd := kubectl exec -it $($(srv)_pod_name))	
 #####################################################################################
-copy_models: 
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/20_04_17-2g /models/ac/
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/19_11_18-3g /models/ac/
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/graph_w63g /models/ac/
-
-copy_rnnlm: 
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/rnnlm/v1 /models/rnnlm/
-
-copy_lm: 
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v3 /models/lm/
-	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v1 /models/lm/
-
-#####################################################################################
 prepare-secrets:
 	cd secrets && ./generate.sh
 install-secrets:
@@ -93,11 +80,19 @@ install-volumes: install-vh
 ########### DATA ####################################################################
 copy-apps: vh_cmd
 	$(vh_cmd) make apps=apps-1.0 install-apps
+copy-models: vh_cmd
+	$(vh_cmd) make file=ac-1.0 install-data
+copy-lm: vh_cmd
+	$(vh_cmd) make file=lm-1.0 install-data
+copy-diarization: vh_cmd
+	$(vh_cmd) make file=diarization-1.0 install-data
+copy-punctuation: vh_cmd
+	$(vh_cmd) make file=punctuation-1.0 install-data
 init-storage: vh_cmd
 	$(vh_cmd) make init-storage
 copy-config:
 	./volume-helper/copyModel.sh models/config/ /models/config
-copy-data: copy-apps copy-config init-storage copy-models copy_lm copy-diarization copy-punctuation
+copy-data: copy-apps copy-config init-storage copy-models copy-lm copy-diarization copy-punctuation
 clean-data: vh_cmd
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	$(vh_cmd) make clean-data clean-apps
