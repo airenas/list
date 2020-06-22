@@ -3,6 +3,7 @@ apps_dir=/apps
 dwn_url?=https://prn509.vdu.lt:7080/testdata
 models_dir=/models
 dwn_dir=/downloads
+storage_dir=/filestorage
 apps=apps-1.0
 ##################################################################################################
 ## Colors

@@ -21,9 +21,6 @@ clean-vh:
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	kubectl delete -f volume-helper
 #####################################################################################
-copy_config:
-	./volume-helper/copyModel.sh models/config/ /models/config
-#####################################################################################
 proxy-upload:
 	kubectl -n aft port-forward svc/upload $(LOCAL_PORT_UPLOAD):8000
 info-upload:
@@ -56,7 +53,7 @@ vh_pod_name:
 vh_cmd: vh_pod_name
 	$(eval vh_cmd := kubectl exec -it $(vh_pod_name))
 #####################################################################################
-connect_vh: vh_cmd
+connect-vh: vh_cmd
 	$(vh_cmd) /bin/sh
 #####################################################################################
 connect: $(srv)_cmd
@@ -71,12 +68,6 @@ $(srv)_pod_name:
 $(srv)_cmd: $(srv)_pod_name
 	$(eval $(srv)_cmd := kubectl exec -it $($(srv)_pod_name))	
 #####################################################################################
-init_filestorage: vh_cmd
-	$(vh_cmd) -- mkdir -p /filestorage/decoded/audio
-	$(vh_cmd) -- mkdir -p /filestorage/decoded/trans
-	$(vh_cmd) -- mkdir -p /filestorage/results
-	$(vh_cmd) -- mkdir -p /filestorage/logs
-#####################################################################################
 copy_models: 
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/20_04_17-2g /models/ac/
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/ac/19_11_18-3g /models/ac/
@@ -88,6 +79,7 @@ copy_rnnlm:
 copy_lm: 
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v3 /models/lm/
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v1 /models/lm/
+
 #####################################################################################
 prepare-secrets:
 	cd secrets && ./generate.sh
@@ -98,17 +90,17 @@ clean-secrets:
 #####################################################################################
 install-volumes: install-vh
 	kubectl apply -f deployments/volumes.yml
-clean-volumes:
-	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
-	
-########### APPS ####################################################################
-
-########### APPS ####################################################################
-copy_apps: 
-	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
-install-apps: vh_cmdt
+########### DATA ####################################################################
+copy-apps: vh_cmd
 	$(vh_cmd) make apps=apps-1.0 install-apps
-install: install-apps	
+init-storage: vh_cmd
+	$(vh_cmd) make init-storage
+copy-config:
+	./volume-helper/copyModel.sh models/config/ /models/config
+copy-data: copy-apps copy-config init-storage copy-models copy_lm copy-diarization copy-punctuation
+clean-data: vh_cmd
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
+	$(vh_cmd) make clean-data clean-apps
 #####################################################################################
 install-services:
 	kubectl apply -f deployments/
