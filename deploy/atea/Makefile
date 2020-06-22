@@ -15,10 +15,10 @@ show-deployments:
 show-services: 
 	kubectl get services
 #####################################################################################
-init_vh: 
+install-vh: 
 	kubectl apply -f volume-helper
-stop_vh: 
-	kubectl delete deployment vh
+clean-vh: 
+	kubectl delete -f volume-helper
 #####################################################################################
 copy_config:
 	./volume-helper/copyModel.sh models/config/ /models/config
@@ -94,6 +94,13 @@ install-secrets:
 	kubectl apply -f secrets
 clean-secrets:
 	rm -f secrets/secrets.yml
+#####################################################################################
+install-volumes: install-vh
+	kubectl apply -f deployments/volumes.yml
+clean-volumes:
+	
+########### APPS ####################################################################
+
 ########### APPS ####################################################################
 copy_apps: 
 	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
@@ -101,15 +108,15 @@ install-apps: vh_cmdt
 	$(vh_cmd) make apps=apps-1.0 install-apps
 install: install-apps	
 #####################################################################################
-redeploy:
+install-services:
 	kubectl apply -f deployments/
+clean-services:
+	kubectl delete -f deployments/	
 #####################################################################################
 delete-prometheus:
 	kubectl delete deployment prometheus | true
 restart-prometheus: delete-prometheus
 	kubectl apply -f deployments/metrics.yml
 #####################################################################################
-clean:
-
 .PHONY:
-	ku_po init_vh stop_vh test_upload
+	show-pods install-vh clean-vh
