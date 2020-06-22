@@ -18,6 +18,7 @@ show-services:
 install-vh: 
 	kubectl apply -f volume-helper
 clean-vh: 
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	kubectl delete -f volume-helper
 #####################################################################################
 copy_config:
@@ -98,6 +99,7 @@ clean-secrets:
 install-volumes: install-vh
 	kubectl apply -f deployments/volumes.yml
 clean-volumes:
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	
 ########### APPS ####################################################################
 
@@ -111,6 +113,7 @@ install: install-apps
 install-services:
 	kubectl apply -f deployments/
 clean-services:
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	kubectl delete -f deployments/	
 #####################################################################################
 delete-prometheus:
@@ -118,5 +121,4 @@ delete-prometheus:
 restart-prometheus: delete-prometheus
 	kubectl apply -f deployments/metrics.yml
 #####################################################################################
-.PHONY:
-	show-pods install-vh clean-vh
+.PHONY: show-pods install-vh clean-vh 
