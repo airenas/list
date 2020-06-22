@@ -4,4 +4,4 @@ Transkribatoriaus IT sprendimas gali būti diegiamas vienoje fizinėje ar virtua
 
 - Apašymas kaip diegti naudojant *Docker* [čia](deployDocker.lt.md).
 
-- Naudojant *Kubernettes*. Diekite naudojant [Atea instrukcijas kaip pavyzdį](../atea/README.md).
+- Naudojant *Kubernettes*. Diekite naudojant [Atea instrukcijas kaip pavyzdį](../atea/README.lt.md).
