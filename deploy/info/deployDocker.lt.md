@@ -51,7 +51,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 1. Parsisiųskite diegimo skriptus (ši git repositorija):
 
     `git clone https://bitbucket.org/airenas/list.git`
-    
+
     `cd list/deploy/run-docker`
 
     Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
