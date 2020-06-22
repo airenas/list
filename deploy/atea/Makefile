@@ -23,25 +23,25 @@ stop_vh:
 copy_config:
 	./volume-helper/copyModel.sh models/config/ /models/config
 #####################################################################################
-proxy_upload:
+proxy-upload:
 	kubectl -n aft port-forward svc/upload $(LOCAL_PORT_UPLOAD):8000
-info_upload:
+info-upload:
 	curl -i http://localhost:$(LOCAL_PORT_UPLOAD)/live?full=1
-test_upload:
+test-upload:
 	./utils/test.sh proxy_upload info_upload
 #####################################################################################
-proxy_status:
+proxy-status:
 	kubectl -n aft port-forward svc/status $(LOCAL_PORT_STATUS):8000
-info_status:
+info-status:
 	curl -i http://localhost:$(LOCAL_PORT_STATUS)/live?full=1
-test_status:
+test-status:
 	./utils/test.sh proxy_status info_status	
 #####################################################################################
-proxy_result:
+proxy-result:
 	kubectl -n aft port-forward svc/result $(LOCAL_PORT_RESULT):8000
-info_result:
+info-result:
 	curl -i http://localhost:$(LOCAL_PORT_RESULT)/live?full=1
-test_result:
+test-result:
 	./utils/test.sh proxy_result info_result		
 #####################################################################################
 proxy-prometheus:
@@ -87,10 +87,17 @@ copy_rnnlm:
 copy_lm: 
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v3 /models/lm/
 	./volume-helper/copyModel.sh $(LOCAL_MODELS_DIR)/lm/v1 /models/lm/
+#####################################################################################
+prepare-secrets:
+	cd secrets && ./generate.sh
+install-secrets:
+	kubectl apply -f secrets
+clean-secrets:
+	rm -f secrets/secrets.yml
 ########### APPS ####################################################################
 copy_apps: 
 	./volume-helper/copyModel.sh $(KALDI_APPS_DIR) /apps/
-install-apps: vh_cmd
+install-apps: vh_cmdt
 	$(vh_cmd) make apps=apps-1.0 install-apps
 install: install-apps	
 #####################################################################################
