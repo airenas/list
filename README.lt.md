@@ -7,6 +7,7 @@ Repozitorijoje yra:
 - [Kaldi transkribavimo skriptai](src/decode),
 - [dokumentacija](architecture),
 - [diegimo skriptai](deploy/README.lt.md).
+- [konteinerių paruošimas/kompiliavimas](deploy/local/README.lt.md).
 
 Transkribatoriaus servisų kodas [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo)
 
