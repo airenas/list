@@ -34,9 +34,15 @@ validate:
 	@$(if $(strip $(rabbitmq_pass)),echo "rabbitmq_pass = ****",echo No rabbitmq_pass set && exit 1)
 	@$(if $(strip $(mongo_pass)),echo "mongo_pass = ****",echo No mongo_pass set && exit 1)
 	@$(if $(strip $(http_port)),echo "http_port = $(http_port)",echo No http_port set && exit 1)
+	@$(if $(strip $(smtp_username)),echo "smtp_username = $(smtp_username)",echo No smtp_username set)
+ifneq ($(strip $(smtp_username)),)
+	@$(if $(strip $(smtp_password)),echo "smtp_password = ****",echo No smtp_password set && exit 1)
+	@$(if $(strip $(host_external_url)),echo "host_external_url = $(host_external_url)",echo No host_external_url set && exit 1)
+endif
 
 ########################################################################################################
 $(install_dir)/.env.done: $(install_dir)/.init.done validate
+	printf "\n" >> $(deploy_dir)/.env
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
 	echo "LIST_MONGO_PASS=$(mongo_pass)" >> $(deploy_dir)/.env 
@@ -49,7 +55,11 @@ $(install_dir)/.env.done: $(install_dir)/.init.done validate
 	echo "SMTP_USERNAME=$(smtp_username)" >> $(deploy_dir)/.env 
 	echo "SMTP_PASSWORD=$(smtp_password)" >> $(deploy_dir)/.env 
 	echo "MAIL_URL=$(host_external_url)/ausis/results/{{ID}}" >> $(deploy_dir)/.env 
-
+ifeq ($(strip $(smtp_username)),)
+	echo "SENDINFORMMESSAGES=false" >> $(deploy_dir)/.env 
+else
+	echo "SENDINFORMMESSAGES=true" >> $(deploy_dir)/.env 
+endif
 	touch $@
 
 $(install_dir)/.dir.done: $(install_dir)/.init.done
