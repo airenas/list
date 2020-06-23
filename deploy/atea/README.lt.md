@@ -12,19 +12,19 @@
 
 ## Apie
 
-Transkribatoriaus IT sprendimas susideda iš keleto konteinerizuotų servisų. Pagrindinis transkribavimo servisas remiasi Kaldi programine įranga. Taip pat naudojami *sox*, *ffmeg* įrankiai garsinio failo pradinei analizei ir apdorojimui. Garsinis failas skaidomas pagal kalbėtoją su *LIUM SpkDiarization* paketu. Duomenų saugojimui ir transkribavimo proceso valdymui naudojami *MongoDB* ir *RabbitMQ* servisai.
+Transkribatoriaus IT sprendimas susideda iš keleto konteinerizuotų servisų. Pagrindinis transkribavimo servisas remiasi *Kaldi* programine įranga. Taip pat naudojami *sox*, *ffmeg* įrankiai garsinio failo pradinei analizei ir apdorojimui. Garsinis failas skaidomas pagal kalbėtoją su *LIUM SpkDiarization* paketu. Duomenų saugojimui ir transkribavimo proceso valdymui naudojami *MongoDB* ir *RabbitMQ* servisai.
 
 ## Papildomi duomenys
 
 Transkribatoriaus IT sprendimas naudoja papildomus duomenų failus, kuriuos pateikia tiekėjas (VDU). Jie parsiunčiami instaliavimo metu:
 
-- Kaldi formato šnekos modelius.
+- *Kaldi* formato šnekos modeliai.
 
-- Specialiai konteinerizuotiems servisams paruoštus Kaldi binarinius įrankius ir skriptus.
+- Specialiai konteinerizuotiems servisams paruošti *Kaldi* binariniai įrankiai ir skriptai.
 
-- Skaidymo pagal kalbėtoją modelius.
+- Skaidymo pagal kalbėtoją modeliai.
 
-- Tensorflow skyrybos ženklų atstatymo modelius.
+- *Tensorflow* skyrybos ženklų atstatymo modeliai.
 
 ## Prieš diegiant
 
@@ -42,7 +42,7 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 
     `cd list/deploy/atea`
 
-    Docker diegimo skriptai yra direktorijoje yra *list/deploy/atea*.
+    Diegimo skriptai yra direktorijoje yra *list/deploy/atea*.
 
 1. Paruoškite slaptažodžius *rabbitmq* eilė servisui ir mongo DB (*secrets/secrets.yml* failas):
 
