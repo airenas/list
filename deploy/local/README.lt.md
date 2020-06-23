@@ -7,14 +7,14 @@ Kodo kompiliavimas ir *docker* konteinerių paruošimas realizuotas *make* skrip
 
 1. Parsisiųskite ir paruoškite servisų kodo repozitoriją [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo). Instrukcija [čia](https://bitbucket.org/airenas/listgo/src/master/README.lt.md).
 
-1. Sukonfigūruokite [deploy/local/Makefile.options](local/Makefile.options). Nustatykite direktorijas:
+1. Sukonfigūruokite [deploy/local/Makefile.options](Makefile.options). Nustatykite direktorijas:
 
     - *GO_SRC_DIR* - lokali direktorija, kur parsiųsta [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo)
     - *SRC_DIR* - nuoroda į šios repozitorijos *src* direktoriją
 
 ## Konteinerio paruošimas
 
-1. Pakeiskite serviso versiją, jei reikia, faile [deploy/local/Makefile.options](local/Makefile.options)
+1. Pakeiskite serviso versiją, jei reikia, faile [deploy/local/Makefile.options](Makefile.options)
 
 1. Paruoškite konteinerį:
 
