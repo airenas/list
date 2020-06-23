@@ -23,7 +23,7 @@
         <div class="upload-input-width">
           <div class="upload-file-container">
             <mat-form-field class="upload-file-control">
-              <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3"
+              <input id="hiddenFileInput" hidden type="file" accept=".wav,.mp3,.mp4,.m4a"
                 (change)="filesChange($event.target.files)">
               <input id="fileInput" matInput placeholder="Failas" readonly="true" [(ngModel)]="selectedFileName"
                 (click)="openInput()" matTooltip="Pasirinkite failą">
