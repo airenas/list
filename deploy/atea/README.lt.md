@@ -1,10 +1,37 @@
 # Diegimo instrukcija ATEA Kubernetes
 
-Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
+## Dokumento paskirtis
+
+Šiame dokumente aprašoma:
+
+- Transkribatoriaus IT sprendimo diegimas į kubernetes klasterį.
+
+- Transkribatoriaus IT sprendimo atnaujinimo procedūra.
+
+- Transkribatoriaus IT sprendimo pašalinimo procedūra.
+
+## Apie
+
+Transkribatoriaus IT sprendimas susideda iš keleto konteinerizuotų servisų. Pagrindinis transkribavimo servisas remiasi Kaldi programine įranga. Taip pat naudojami *sox*, *ffmeg* įrankiai garsinio failo pradinei analizei ir apdorojimui. Garsinis failas skaidomas pagal kalbėtoją su *LIUM SpkDiarization* paketu. Duomenų saugojimui ir transkribavimo proceso valdymui naudojami *MongoDB* ir *RabbitMQ* servisai.
+
+## Papildomi duomenys
+
+Transkribatoriaus IT sprendimas naudoja papildomus duomenų failus, kuriuos pateikia tiekėjas (VDU). Jie parsiunčiami instaliavimo metu:
+
+- Kaldi formato šnekos modelius.
+
+- Specialiai konteinerizuotiems servisams paruoštus Kaldi binarinius įrankius ir skriptus.
+
+- Skaidymo pagal kalbėtoją modelius.
+
+- Tensorflow skyrybos ženklų atstatymo modelius.
 
 ## Prieš diegiant
 
+Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
+
 - diegimo skriptai naudoja pagalbinius įrankius *git*, *make*, *pwgen*, *rsync*, *kubectl*. Įsitikinkite, kad jie suinstaliuoti sistemoje.
+- kubernetes klasteris, į kurį diegiama, turi sukonfigūruotą vardų sritį: *aft*.
 - *kubectl* gali prisijungti prie ATEA k8s. Patikrinkite, kad  `kubectl get pods` komada veikia ir prisijungia prie ATEA k8s.
 
 ## Diegimas
@@ -33,7 +60,7 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 
     `make install-volumes`
 
-1. Sukopijuokite modelius ir pagalbinius binarinius failus į k8s saugyklas:
+1. Sukopijuokite modelius ir pagalbinius binarinius failus į k8s saugyklas (gali užtrukti iki kelių valandų):
 
     `make copy-data`
 
@@ -77,7 +104,7 @@ Analogiškai, kaip *Upload* serviso patikrinimas: `make proxy-result`. Kitame te
 
     `make copy-data`
 
-## Ištrynimas
+## Pašalinimas
 
 1. Ištrinkite servisus:
 
@@ -87,7 +114,7 @@ Analogiškai, kaip *Upload* serviso patikrinimas: `make proxy-result`. Kitame te
 
     `make clean-data`
 
-1. Ištrinkite pagalbinį duomenų servisą:
+1. Ištrinkite pagalbinę duomenų serviso applikaciją:
 
     `make clean-vh`
 
