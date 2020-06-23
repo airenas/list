@@ -1,20 +1,18 @@
 # LiST
 
-[Lietuviškai](README.lt.md)
+Transkribatoriaus IT sprendimas
 
-Lithuanian Speech Transcription
+Repozitorijoje yra:
 
-The repository contains:
+- [Kaldi transkribavimo skriptai](src/decode),
+- [dokumentacija](architecture),
+- [diegimo skriptai](deploy/README.lt.md).
 
-- scripts for transcription using Kaldi,
-- architecture documentation,
-- deployment scripts.
-
-For transcription service code look at [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo)
+Transkribatoriaus servisų kodas [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo)
 
 ---
 
-## Author
+## Autorius
 
 Airenas Vaičiūnas
 
@@ -24,7 +22,7 @@ Airenas Vaičiūnas
 
 ---
 
-## License
+## Licencija
 
 Copyright © 2020, [Airenas Vaičiūnas](https://bitbucket.org/airenas).
 Released under the [The 3-Clause BSD License](LICENSE).
