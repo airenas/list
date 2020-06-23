@@ -9,8 +9,7 @@ Repozitorijoje yra:
 - [diegimo skriptai](deploy/README.lt.md),
 - [konteinerių paruošimas/kompiliavimas](deploy/local/README.lt.md).
 
-Transkribatoriaus servisų kodas [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo)
-Servisų API aprašymas: [čia](https://app.swaggerhub.com/apis/aireno/Transkipcija/)
+Transkribatoriaus servisų kodas [bitbucket.org/airenas/listgo](https://bitbucket.org/airenas/listgo). Servisų API aprašymas: [čia](https://app.swaggerhub.com/apis/aireno/Transkipcija/)
 
 ---
 
