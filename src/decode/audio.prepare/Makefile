@@ -49,3 +49,9 @@ $(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
 	$(CHECK_FORMAT_CMD)
 	$(CHECK_LEN_CMD)
+
+$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.m4a | $(OUTPUT_ROOT)
+	tsk=m4a;id=$*;. $(APP_DIR)/m_start.sh $@
+	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
+	$(CHECK_FORMAT_CMD)
+	$(CHECK_LEN_CMD)
