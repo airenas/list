@@ -16,14 +16,14 @@ $(deploy_dir)/volumes/models:
 	mkdir -p $@		
 $(deploy_dir)/volumes/models/config:
 	mkdir -p $@
-$(deploy_dir)/volumes/models/apps:
+$(deploy_dir)/volumes/apps:
 	mkdir -p $@	
 $(dwn_dir):
 	mkdir -p $@	
 $(install_dir):
 	mkdir -p $@		
 ########################################################################################################
-$(install_dir)/.init.done: validate | $(deploy_dir)
+$(install_dir)/.init.done: validate | $(deploy_dir) $(install_dir)
 	cp docker-compose.yml $(deploy_dir)/docker-compose.yml
 	cp .env $(deploy_dir)/.env
 	touch $@
