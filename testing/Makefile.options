@@ -1,3 +1,3 @@
-test_dir=20200619
-config=atea.config
+test_dir=20200623
+config=vdu.config
 model=words_v3

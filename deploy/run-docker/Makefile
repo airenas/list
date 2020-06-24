@@ -66,6 +66,8 @@ $(install_dir)/.dir.done: $(install_dir)/.init.done
 	mkdir -p $(deploy_dir)/volumes/mongo
 	mkdir -p $(deploy_dir)/volumes/rabbitmq
 	mkdir -p $(deploy_dir)/volumes/fileStorage
+	mkdir -p $(deploy_dir)/volumes/fileStorage/logs
+	mkdir -p $(deploy_dir)/volumes/fileStorage/results
 	touch $@
 
 ########################################################################################################
