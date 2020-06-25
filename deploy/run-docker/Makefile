@@ -1,12 +1,12 @@
 include Makefile.options
 ########################################################################################################
 dwn_dir=$(deploy_dir)/dwn
-install_dir=$(deploy_dir)/install
+install_dir=$(deploy_dir)/.install
 rec_file=$(deploy_dir)/volumes/models/config/recognizers.map.yml
 dwn_url=https://prn509.vdu.lt:7080/testdata
 ########################################################################################################
-models_dwn=$(patsubst %, $(install_dir)/.%.done.dwn, $(models))
-models_conf=$(patsubst %, $(install_dir)/.%.done.conf, $(models))
+models_extracted=$(patsubst %, $(install_dir)/.%.extracted, $(models))
+models_conf=$(patsubst %, $(install_dir)/.%.conf, $(models))
 ########################################################################################################
 $(deploy_dir):
 	mkdir -p $@
@@ -71,15 +71,15 @@ $(install_dir)/.dir.done: $(install_dir)/.init.done
 	touch $@
 
 ########################################################################################################
-$(install_dir)/.%.apps.dwn: $(dwn_dir)/%.tar.gz | $(deploy_dir)/volumes/apps
+$(install_dir)/.%.apps.extracted: $(install_dir)/.%.dwn | $(deploy_dir)/volumes/apps
 	tar xvzf $(dwn_dir)/$*.tar.gz -C $(deploy_dir)/volumes/apps
 	touch $@
 ########################################################################################################
-$(dwn_dir)/%.tar.gz: | $(dwn_dir)
+$(install_dir)/.%.dwn: | $(dwn_dir)
 	wget --no-check-certificate -O $@ $(dwn_url)/$*.tar.gz	
 
-$(install_dir)/.%.data.dwn: $(dwn_dir)/%.tar.gz | $(install_dir) $(deploy_dir)/volumes/models
-	tar xvzf $^ -C $(deploy_dir)/volumes/models
+$(install_dir)/.%.data.extracted: $(install_dir)/.%.dwn | $(deploy_dir)/volumes/models
+	tar xvzf $(dwn_dir)/$*.tar.gz -C $(deploy_dir)/volumes/models
 	touch $@
 ########################################################################################################
 $(rec_file): $(deploy_dir)/volumes/models/config
@@ -109,25 +109,25 @@ $(install_dir)/.tei.done.conf: | $(install_dir) $(rec_file)
 	grep -qxF 'tei: words_v3' $(rec_file) || echo 'tei: words_v3' >> $(rec_file) 
 	touch $@	
 ########################################################################################################
-$(deploy_dir)/install/.ben-tel.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.ben-tel.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.ben.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.ben.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.adm-tel.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.adm-tel.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.adm.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.adm.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.tei-tel.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.tei-tel.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.tei.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.tei.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.med-tel.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.med-tel.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@
-$(deploy_dir)/install/.med.done.dwn: $(install_dir)/.lm-1.0.data.dwn $(install_dir)/.ac-1.0.data.dwn 
+$(deploy_dir)/install/.med.done.extracted: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.ac-1.0.data.extracted 
 	touch $@		
 ########################################################################################################
-init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.apps-1.0.apps.dwn \
-	$(install_dir)/.punctuation-1.0.data.dwn $(install_dir)/.diarization-1.0.data.dwn $(models_dwn) $(models_conf)
+init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.apps-1.0.apps.extracted \
+	$(install_dir)/.punctuation-1.0.data.extracted $(install_dir)/.diarization-1.0.data.extracted $(models_extracted) $(models_conf)
 
 $(install_dir)/.prom.done: $(install_dir)/.env.done
 	mkdir -p $(deploy_dir)/volumes/prometheus
@@ -152,6 +152,4 @@ clean-dir:
 clean-docker:
 	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
 ########################################################################################################
-.SECONDARY:
-
 .PHONY: validate clean run init install
