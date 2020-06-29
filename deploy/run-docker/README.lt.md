@@ -19,7 +19,7 @@ Aparatūrai:
 | Platform | x86_64 | | |
 | CPU | 64-bit, 2 branduoliai | 8 branduoliai | |
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
-| RAM  | 16 Gb | 32 Gb | |
+| RAM | 24 Gb | 32 Gb | |
 
 Operacinė sistema: Linux OS 64-bit. Turi būti sudiegta:
 
