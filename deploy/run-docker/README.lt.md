@@ -21,7 +21,7 @@ Aparatūrai:
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
 | RAM | 24 Gb | 32 Gb | |
 
-Operacinė sistema: Linux OS 64-bit. Turi būti sudiegta:
+Operacinė sistema: Linux OS 64-bit (papildomai žiūrėkite [reikalavimus Docker instaliacijai](https://docs.docker.com/engine/install/). Turi būti sudiegta:
 
 | Komponentas | Min versija | URL |
 | ---|-|-|
