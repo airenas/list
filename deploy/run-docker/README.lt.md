@@ -2,7 +2,7 @@
 
 ## Apie
 
-Transkribatroriaus IT sprendimas yra realizuotas *Docker* komponentais. Visa sistema sukonfigūruota ir paruošta paleisti su *docker-compose* konfigūraciniu failu. Sistemos darbui taip pat reikalingi kai kurie papildomi (nedokerizuoti) binariniai vykdomieji failai ir lietuvių kalbos atpažinimo modelių failai. Diegient Jums reikės:
+Transkribatroriaus IT sprendimas yra realizuotas *Docker* komponentais. Visa sistema sukonfigūruota ir paruošta paleisti su *docker-compose* konfigūraciniu failu. Sistemos darbui taip pat reikalingi kai kurie papildomi (nedokerizuoti) binariniai vykdomieji failai ir lietuvių kalbos atpažinimo modelių failai. Diegiant Jums reikės:
 
 - atlikti pakeitimus konfiguraciniame faile,
 
@@ -21,7 +21,7 @@ Aparatūrai:
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
 | RAM | 24 Gb | 32 Gb | |
 
-Operacinė sistema: Linux OS 64-bit (papildomai žiūrėkite [reikalavimus Docker instaliacijai](https://docs.docker.com/engine/install/). Turi būti sudiegta:
+Operacinė sistema: Linux OS 64-bit (papildomai žiūrėkite [reikalavimus Docker instaliacijai](https://docs.docker.com/engine/install/)). Turi būti sudiegta:
 
 | Komponentas | Min versija | URL |
 | ---|-|-|
@@ -66,8 +66,8 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     | ---|-|-|-|
     | *deploy_dir* | + | Pilnas kelias iki instaliavimo direktorijos mašinoje. Šioje direktorijoje bus atsiųsti modeliai, sukurtas pakatalogis darbiniams transkribatoriaus failams | /home/user/list
     | *models* | + | Instaliuojami modeliai. Galimi pasirinkimai: *ben*(bendrinis modelis),  *ben-tel* (bendrinis modelis, telefoninė kokybė), *adm* (administracinis), *adm-tel*, *tei* (teisinis), *tei-tel*, *med* (medicininis), *med-tel* | ben adm-tel |
-    | rabbitmq_pass | + | Eilės serviso slaptažodis ||
-    | mongo_pass | + |DB slaptažodis ||
+    | rabbitmq_pass | + | Eilės serviso slaptažodis. Nurodykite slaptažodį, kurį servisai naudos prisijungimui prie eilės serviso. Pvz.: sugeneruokite su `pwgen 20 1` ||
+    | mongo_pass | + | DB slaptažodis. Nurodykite slaptažodį, kurį servisai naudos prisijungimui prie vidinės DB. Pvz.: sugeneruokite su `pwgen 20 1` ||
     | http_port | + | HTTP portas, kuriuo bus pasiekiami servisai mašinoje | 80 |
     | host_external_url | - | Kompiuterio URL, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
     | smtp_host | - |SMTP serveris, laiškų siuntimui | 80 |
