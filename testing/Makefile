@@ -75,7 +75,8 @@ $(test_dir)/.upload.done: $(test_dir)/.data.done
 	@echo "Sending data to server $(UPLOAD_SERVICE)"
 	export UPLOAD_SERVICE=$(UPLOAD_SERVICE); \
 	export SKIP_NUM_JOIN=1; \
-		ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list
+		ls -1 $(test_dir)/testdata/wav/t_aft_4*.wav | xargs -n1 -P10 scripts/send.sh $(model) > $(test_dir)/file.list; \
+		ls -1 $(test_dir)/testdata/wav/t_aft_5*.wav | xargs -n1 -P10 scripts/send.sh $(model_med) >> $(test_dir)/file.list;
 	touch $(test_dir)/.upload.done
 	
 upload-to-server: $(test_dir)/.upload.done
@@ -112,12 +113,17 @@ calc-wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
 compare: $(test_dir)/recognized.f.txt	$(test_dir)/ref.txt
 	vimdiff $(test_dir)/ref.txt $(test_dir)/recognized.f.txt
+calc-wer-sentence: $(test_dir)/recognized.f.txt
+	scripts/compute-wer --mode=present --verbose=10 \
+		ark:$(test_dir)/testdata/txt/ref.txt  "ark:cat $(test_dir)/recognized.f.txt | grep $(snt) |"
 #####################################################################################
 info: 
-	@echo "UPLOAD: $(UPLOAD_SERVICE)"
-	@echo "STATUS: $(STATUS_SERVICE)"
-	@echo "RESULT: $(RESULT_SERVICE)"
-	@echo "Dir:    $(test_dir)"
+	@echo "UPLOAD		: $(UPLOAD_SERVICE)"
+	@echo "STATUS		: $(STATUS_SERVICE)"
+	@echo "RESULT		: $(RESULT_SERVICE)"
+	@echo "Dir		: $(test_dir)"
+	@echo "Model		: $(model)"
+	@echo "Model med	: $(model_med)"
 	
 #####################################################################################
 clean: clean-upload
