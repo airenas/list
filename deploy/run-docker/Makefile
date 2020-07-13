@@ -128,7 +128,7 @@ $(install_dir)/.med.done: $(install_dir)/.lm-1.0.data.extracted $(install_dir)/.
 	touch $@		
 ########################################################################################################
 init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.apps-1.0.apps.extracted \
-	$(install_dir)/.punctuation-1.0.data.extracted $(install_dir)/.diarization-1.0.data.extracted $(models_done) $(models_conf)
+	$(install_dir)/.punctuation-2.0.data.extracted $(install_dir)/.diarization-1.0.data.extracted $(models_done) $(models_conf)
 
 $(install_dir)/.prom.done: $(install_dir)/.env.done
 	mkdir -p $(deploy_dir)/volumes/prometheus
