@@ -31,9 +31,6 @@ spec:
       - name: filestorage-vol
         persistentVolumeClaim:
           claimName: filestorage      
-      - name: punctuationstorage-vol
-        persistentVolumeClaim:
-          claimName: punctuationstorage                                 
       containers:
       - name: vh
         image: airenas/list-volume-helper:1.1.800
@@ -48,5 +45,3 @@ spec:
           mountPath: /mongo
         - name: filestorage-vol
           mountPath: /filestorage  
-        - name: punctuationstorage-vol
-          mountPath: /pmodels

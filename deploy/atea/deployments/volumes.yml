@@ -114,35 +114,6 @@ spec:
      requests:
        storage: 1Gi  
 ---       
-## punctuation model persistence volumes
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: punctuationstorage
-  namespace: aft
-spec:
-  capacity:
-    storage: 2Gi
-  accessModes:
-    - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Retain
-  hostPath:
-    path: "/aft/punctuationstorage"
-    type: DirectoryOrCreate
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: punctuationstorage
-  namespace: aft
-spec:
-  accessModes:
-  - ReadWriteOnce
-  volumeName: punctuationstorage
-  resources:
-     requests:
-       storage: 2Gi   
----       
 ## models persistence volumes
 apiVersion: v1
 kind: PersistentVolume

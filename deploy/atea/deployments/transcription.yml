@@ -670,9 +670,9 @@ spec:
       nodeSelector:
         nodetype: transcriber
       volumes:
-      - name: punctuationstorage-vol
+      - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: punctuationstorage
+          claimName: modelstorage-2        
       containers:
       - name: tensorflow
         image: tensorflow/serving:1.14.0
@@ -680,9 +680,9 @@ spec:
         - name: MODEL_NAME
           value: punctuation  
         - name: MODEL_BASE_PATH
-          value: /models/model
+          value: /models/punctuation/models
         volumeMounts:
-        - name: punctuationstorage-vol 
+        - name: modelstorage-vol
           mountPath: /models
 ---
 ### punctuation service
@@ -720,18 +720,20 @@ spec:
       nodeSelector:
         nodetype: transcriber
       volumes:
-      - name: punctuationstorage-vol
+      - name: modelstorage-vol
         persistentVolumeClaim:
-          claimName: punctuationstorage
+          claimName: modelstorage-2        
       containers:
       - name: punctuation
-        image: airenas/list-punctuation-service:2.1.669
+        image: airenas/list-punctuation-service:2.2.834
         env:
         - name: TF_URL
           value: tensorflow:8500  
+        - name: MODELDIR
+          value: /models/punctuation/2.0    
         volumeMounts:
-        - name: punctuationstorage-vol 
-          mountPath: /model
+        - name: modelstorage-vol
+          mountPath: /models
 ### clean service
 ---
 apiVersion: v1

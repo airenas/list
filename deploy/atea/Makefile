@@ -87,7 +87,7 @@ copy-lm: vh_cmd
 copy-diarization: vh_cmd
 	$(vh_cmd) make file=diarization-1.0 install-data
 copy-punctuation: vh_cmd
-	$(vh_cmd) make file=punctuation-1.0 install-data
+	$(vh_cmd) make file=punctuation-2.0 install-data
 init-storage: vh_cmd
 	$(vh_cmd) make init-storage
 copy-config:

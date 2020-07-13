@@ -104,6 +104,10 @@ Analogiškai, kaip *Upload* serviso patikrinimas: `make proxy-result`. Kitame te
 
     `make copy-data`
 
+1. Atnaujinkite servisus:
+
+    `make install-services`
+
 ## Pašalinimas
 
 1. Ištrinkite servisus:
