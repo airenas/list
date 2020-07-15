@@ -15,6 +15,10 @@ apps_dir=../local/kaldi/apps
 remote_service_dir=services
 remote_volumes_dir=$(HOME_DIR)/list.volumes
 remote_acme_file=$(HOME_DIR)/$(remote_service_dir)/traefik/acme.json
+
+remote_dwn_dir=$(remote_volumes_dir)/dwn
+remote_models_dir=$(remote_volumes_dir)/models
+dwn_url?=https://prn509.vdu.lt:7080/testdata
 #####################################################################################
 voice_files=$(dist_dir)/voice/lab_ALL.htsvoice
 $(dist_dir)/voice/%: $(voice_dir)/%  
@@ -77,8 +81,13 @@ copy_lm:
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
 copy_diarization: 
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/diarization/v1/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/diarization/	
-copy_punctuation: 
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/punctuation/h256_w200k/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/h256_w200k/		
+copy_punctuation: install-punctuation-2.0.data
+########### DWN #####################################################################
+fake-%.dwn: 
+	$(SSH_CMD) "mkdir -p $(remote_dwn_dir)"
+	$(SSH_CMD) "wget --no-check-certificate -O $(remote_dwn_dir)/$*.tar.gz $(dwn_url)/$*.tar.gz"
+install-%.data: fake-%.dwn
+	$(SSH_CMD) "tar xvzf $(remote_dwn_dir)/$*.tar.gz -C $(remote_models_dir)"
 ########### END #####################################################################
 ########### APPS ####################################################################
 copy_apps: 
