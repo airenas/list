@@ -231,21 +231,21 @@ services:
     image: tensorflow/serving:1.14.0
     environment:
       MODEL_NAME: punctuation
-      MODEL_BASE_PATH: /models/model
+      MODEL_BASE_PATH: /models
     volumes:
-      - punctModelsStorage:/models
+      - ${LIST_VOLUMES_DIR}/models/punctuation/models:/models
     restart: unless-stopped 
   
   punctuation-service:
     image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
-      - punctModelsStorage:/model
+      - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
     environment:
       TF_URL: tensorflow:8500
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
-     - "traefik.port=8080"  
+     - "traefik.port=8000"  
   
   clean-service:
     image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
@@ -349,12 +349,6 @@ volumes:
       type: none
       device: ${LIST_VOLUMES_DIR}models
       o: bind  
-
-  punctModelsStorage:
-    driver_opts:
-      type: none
-      device: ${LIST_VOLUMES_DIR}h256_w200k
-      o: bind                
 
   rabbitmq:
     driver_opts:
