@@ -43,7 +43,7 @@ t2.2.1: $(test_dir)/.data.done
 t2.2.2: _tr_status	
 t3.1: $(test_dir)/.data.done | $(test_dir)/result
 	echo "tr id = $(tr_id)"
-	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/resultFinal.txt -o $(test_dir)/result/t_aft_11.txt
+	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/result.txt -o $(test_dir)/result/t_aft_11.txt
 	cat $(test_dir)/result/t_aft_11.txt
 	diff $(test_dir)/testdata/txt/t_aft_11.txt $(test_dir)/result/t_aft_11.txt
 t3.2: $(test_dir)/.data.done | $(test_dir)/result
@@ -67,7 +67,7 @@ t4.2.1: $(test_dir)/.data.done
 t4.2.2: _tr_status	
 t4.2.3: $(test_dir)/.data.done | $(test_dir)/result
 	echo "tr id = $(tr_id)"
-	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/resultFinal.txt -o $(test_dir)/result/t_aft_13.txt
+	curl -X GET -k $(RESULT_SERVICE)/result/$(tr_id)/result.txt -o $(test_dir)/result/t_aft_13.txt
 	cat $(test_dir)/result/t_aft_13.txt
 	diff $(test_dir)/testdata/txt/t_aft_13.txt $(test_dir)/result/t_aft_13.txt
 #####################################################################################
