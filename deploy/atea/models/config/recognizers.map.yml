@@ -14,3 +14,7 @@ general_telephonic: words_v3
 medicine_telephonic: words_v3
 law_telephonic: words_v3
 administration_telephonic: words_v3
+
+ben: ben-2.0
+adm: adm-1.0
+tei: tei-1.0
