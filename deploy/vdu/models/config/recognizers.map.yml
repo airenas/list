@@ -1,6 +1,6 @@
-default: words_v1
+default: ben-2.0
 phones: phones_v0
-words_v0: words_v0
 words_v1: words_v1
 words_v2: words_v2
 words_v3: words_v3
+ben: ben-2.0
