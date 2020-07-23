@@ -1,0 +1,10 @@
+-include Makefile.options.local
+
+INITIAL_FILE?=am-10.tar.gz
+INITIAL_DIR?=am
+
+WORK_DIR?=data
+
+NAME?=ben
+VERSION?=2.0
+

@@ -72,3 +72,4 @@ src/tools/int.to.word/tmp/**
 testing/testdata/**
 testing/tcorpus/**
 deploy/run-docker/Makefile.options
+**/Makefile.options.local
