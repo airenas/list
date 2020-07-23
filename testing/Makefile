@@ -80,6 +80,9 @@ $(test_dir)/.upload.done: $(test_dir)/.data.done
 	touch $(test_dir)/.upload.done
 	
 upload-to-server: $(test_dir)/.upload.done
+recognizers:
+	curl -k $(UPLOAD_SERVICE)/recognizers | jq
+
 #####################################################################################
 transcription-status: $(test_dir)/file.list
 	export STATUS_SERVICE=$(STATUS_SERVICE); cat $(test_dir)/file.list | xargs -n2 -P20 scripts/status.sh | sort	
