@@ -1,7 +1,8 @@
 -include Makefile.options
 MAIN_DIR=${CURDIR}/../..
 OUT_DIR=$(WORK_DIR)/am/$(NAME)-$(VERSION)
-OUT_FILE=am-$(NAME)$-(VERSION).tar.gz
+OUT_NAME=$(NAME)-$(VERSION)
+OUT_FILE=am-$(NAME)-$(VERSION).tar.gz
 #################################################################################################
 info:
 	@echo "Input		: $(INITIAL_FILE)"
@@ -9,7 +10,7 @@ info:
 	@echo "Vocab		: $(VOCAB_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
 	@echo "Output		: $(WORK_DIR)/$(OUT_FILE)"
-	@echo "TrainStep 	: $(STEP)"
+#	@echo "Target		: $(target_files)"
 #################################################################################################
 $(WORK_DIR):
 	mkdir -p $@
@@ -18,6 +19,8 @@ $(WORK_DIR)/initial:
 $(WORK_DIR)/new:
 	mkdir -p $@
 $(OUT_DIR):
+	mkdir -p $@
+$(WORK_DIR)/config:
 	mkdir -p $@
 ########################################################################################################
 $(WORK_DIR)/.extracted: $(INITIAL_FILE) | $(WORK_DIR)/initial
@@ -30,15 +33,17 @@ files=lmwt wip cmvn_opts final.mdl HCLG.fst phones.txt word_boundary.int words.t
 	ivector_extractor/splice_opts ivector_extractor/num_jobs ivector_extractor/final.ie ivector_extractor/final.dubm ivector_extractor/online_cmvn.conf \
 	ivector_extractor/final.ie.id ivector_extractor/final.mat ivector_extractor/global_cmvn.stats \
 	info
-
 target_files=$(patsubst %, $(OUT_DIR)/%, $(files))
+
+conf_files=$(OUT_NAME)/scripts/rescore.preload.sh $(OUT_NAME)/scripts/decode.preload.sh $(OUT_NAME)/scripts/decode.sh $(OUT_NAME)/scripts/rescore.sh $(OUT_NAME).yml
+target_conf_files=$(patsubst %, $(WORK_DIR)/config/%, $(conf_files))
 #################################################################################################
 $(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
 	cat $< | gunzip > $@
 $(OUT_DIR)/phones.txt: $(PHONES_FILE) | $(OUT_DIR)
 	cp $< $@
 $(OUT_DIR)/words.txt: $(VOCAB_FILE) | $(OUT_DIR)
-	cp $< $@ 
+	cp $< $@
 $(OUT_DIR)/%: $(WORK_DIR)/initial/$(INITIAL_DIR)/% $(WORK_DIR)/.extracted | $(OUT_DIR)
 	mkdir -p `dirname $@`
 	cp $< $@
@@ -46,10 +51,28 @@ $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Zip date      : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
-$(WORK_DIR)/$(OUT_FILE): $(target_files)
-	cd $(WORK_DIR) && tar -czvf $(OUT_FILE) rnnlm
+$(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial/config/words_v3/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
+	mkdir -p `dirname $@`
+	cp $< $@
+$(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config/
+	echo 'name: $(OUT_NAME)' > $@
+	echo 'description: Žodžių atpažintuvas - $(OUT_NAME).' >> $@
+	echo "date_created: $$(date -Idate)" >> $@
+	echo 'settings:' >> $@
+	echo '  models_root: /models/am/$(OUT_NAME)' >> $@
+	echo '  scripts_dir: /models/config/$(OUT_NAME)/scripts/' >> $@
+	echo '  lm_dir: /models/lm/$(OUT_NAME)/' >> $@
+	echo '  rnnlm_dir: /models/rnnlm/2.0/' >> $@
+	echo '  punctuate: true' >> $@
+	echo '  transcription-preload_key: $(OUT_NAME)' >> $@
+	echo '  transcription-preload_cmd: /models/config/$(OUT_NAME)/scripts/decode.preload.sh' >> $@
+	echo '  rescore-preload_key: $(OUT_NAME)' >> $@
+	echo '  rescore-preload_cmd: /models/config/$(OUT_NAME)/scripts/rescore.preload.sh' >> $@
 #################################################################################################
-build: info $(WORK_DIR)/.extracted $(target_files)
+$(WORK_DIR)/$(OUT_FILE): $(target_files) $(target_conf_files)
+	cd $(WORK_DIR) && tar -czvf $(OUT_FILE) am config
+#################################################################################################
+build: info $(WORK_DIR)/.extracted $(target_files) $(target_conf_files) $(WORK_DIR)/$(OUT_FILE)
 #################################################################################################
 clean:
 	rm -rf $(WORK_DIR)
