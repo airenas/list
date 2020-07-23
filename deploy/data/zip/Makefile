@@ -4,6 +4,7 @@ OUT_DIR=$(WORK_DIR)/am/$(NAME)-$(VERSION)
 OUT_NAME=$(NAME)-$(VERSION)
 OUT_FILE=am-$(NAME)-$(VERSION).tar.gz
 OUT_LM_FILE=lm-$(NAME)-$(VERSION).tar.gz
+OUT_CONFIG_FILE=config-$(NAME)-$(VERSION).tar.gz
 #################################################################################################
 info:
 	@echo "Input		: $(INITIAL_FILE)"
@@ -12,6 +13,8 @@ info:
 	@echo "LM 	        : $(LM_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
 	@echo "Output		: $(WORK_DIR)/$(OUT_FILE)"
+        @echo "                 : $(WORK_DIR)/$(OUT_CONFIG_FILE)"
+        @echo "                 : $(WORK_DIR)/$(OUT_LM_FILE)"
 #	@echo "Target		: $(target_files)"
 #################################################################################################
 $(WORK_DIR):
@@ -84,13 +87,17 @@ $(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config/
 	echo '  rescore-preload_key: $(OUT_NAME)' >> $@
 	echo '  rescore-preload_cmd: /models/config/$(OUT_NAME)/scripts/rescore.preload.sh' >> $@
 #################################################################################################
-$(WORK_DIR)/$(OUT_FILE): $(target_files) $(target_conf_files)
-	cd $(WORK_DIR) && tar -czvf $(OUT_FILE) am config
+$(WORK_DIR)/$(OUT_FILE): $(target_files)
+	cd $(WORK_DIR) && tar -czvf $(OUT_FILE) am
+#################################################################################################
+$(WORK_DIR)/$(OUT_CONFIG_FILE): $(target_conf_files)
+	cd $(WORK_DIR) && tar -czvf $(OUT_CONFIG_FILE) config
 #################################################################################################
 $(WORK_DIR)/$(OUT_LM_FILE): $(target_lm_files)
 	cd $(WORK_DIR) && tar -czvf $(OUT_LM_FILE) lm
 #################################################################################################
-build: info $(WORK_DIR)/.extracted $(target_files) $(target_conf_files) $(WORK_DIR)/$(OUT_FILE)
+build: info $(WORK_DIR)/.extracted $(WORK_DIR)/$(OUT_FILE)
+build-config: info $(WORK_DIR)/.extracted  $(WORK_DIR)/$(OUT_CONFIG_FILE)
 build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
 #################################################################################################
 clean:
