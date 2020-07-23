@@ -3,11 +3,13 @@ MAIN_DIR=${CURDIR}/../..
 OUT_DIR=$(WORK_DIR)/am/$(NAME)-$(VERSION)
 OUT_NAME=$(NAME)-$(VERSION)
 OUT_FILE=am-$(NAME)-$(VERSION).tar.gz
+OUT_LM_FILE=lm-$(NAME)-$(VERSION).tar.gz
 #################################################################################################
 info:
 	@echo "Input		: $(INITIAL_FILE)"
 	@echo "FST		: $(FST_FILE)"
 	@echo "Vocab		: $(VOCAB_FILE)"
+	@echo "LM 	        : $(LM_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
 	@echo "Output		: $(WORK_DIR)/$(OUT_FILE)"
 #	@echo "Target		: $(target_files)"
@@ -15,6 +17,8 @@ info:
 $(WORK_DIR):
 	mkdir -p $@
 $(WORK_DIR)/initial:
+	mkdir -p $@
+$(WORK_DIR)/lm/$(OUT_NAME):
 	mkdir -p $@
 $(WORK_DIR)/new:
 	mkdir -p $@
@@ -37,6 +41,9 @@ target_files=$(patsubst %, $(OUT_DIR)/%, $(files))
 
 conf_files=$(OUT_NAME)/scripts/rescore.preload.sh $(OUT_NAME)/scripts/decode.preload.sh $(OUT_NAME)/scripts/decode.sh $(OUT_NAME)/scripts/rescore.sh $(OUT_NAME).yml
 target_conf_files=$(patsubst %, $(WORK_DIR)/config/%, $(conf_files))
+
+lm_files=G.fst words.txt info
+target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 #################################################################################################
 $(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
 	cat $< | gunzip > $@
@@ -50,6 +57,14 @@ $(OUT_DIR)/%: $(WORK_DIR)/initial/$(INITIAL_DIR)/% $(WORK_DIR)/.extracted | $(OU
 $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Zip date      : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
+#################################################################################################
+$(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(LM_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
+	cat $< | gunzip > $@
+$(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(VOCAB_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
+	cp $< $@
+$(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
+	echo "Zip date      : $$(date -Isec)" > $@
+	echo "Words         : $$(wc -l $(WORK_DIR)/lm/$(OUT_NAME)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
 $(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial/config/words_v3/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
 	mkdir -p `dirname $@`
@@ -72,7 +87,11 @@ $(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config/
 $(WORK_DIR)/$(OUT_FILE): $(target_files) $(target_conf_files)
 	cd $(WORK_DIR) && tar -czvf $(OUT_FILE) am config
 #################################################################################################
+$(WORK_DIR)/$(OUT_LM_FILE): $(target_lm_files)
+	cd $(WORK_DIR) && tar -czvf $(OUT_LM_FILE) lm
+#################################################################################################
 build: info $(WORK_DIR)/.extracted $(target_files) $(target_conf_files) $(WORK_DIR)/$(OUT_FILE)
+build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
 #################################################################################################
 clean:
 	rm -rf $(WORK_DIR)
