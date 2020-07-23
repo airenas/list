@@ -13,8 +13,8 @@ info:
 	@echo "LM 	        : $(LM_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
 	@echo "Output		: $(WORK_DIR)/$(OUT_FILE)"
-        @echo "                 : $(WORK_DIR)/$(OUT_CONFIG_FILE)"
-        @echo "                 : $(WORK_DIR)/$(OUT_LM_FILE)"
+	@echo "                 : $(WORK_DIR)/$(OUT_CONFIG_FILE)"
+	@echo "                 : $(WORK_DIR)/$(OUT_LM_FILE)"
 #	@echo "Target		: $(target_files)"
 #################################################################################################
 $(WORK_DIR):
@@ -72,7 +72,7 @@ $(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
 $(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial/config/words_v3/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
 	mkdir -p `dirname $@`
 	cp $< $@
-$(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config/
+$(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config
 	echo 'name: $(OUT_NAME)' > $@
 	echo 'description: Žodžių atpažintuvas - $(OUT_NAME).' >> $@
 	echo "date_created: $$(date -Idate)" >> $@
@@ -96,6 +96,7 @@ $(WORK_DIR)/$(OUT_CONFIG_FILE): $(target_conf_files)
 $(WORK_DIR)/$(OUT_LM_FILE): $(target_lm_files)
 	cd $(WORK_DIR) && tar -czvf $(OUT_LM_FILE) lm
 #################################################################################################
+prepare: info $(WORK_DIR)/.extracted
 build: info $(WORK_DIR)/.extracted $(WORK_DIR)/$(OUT_FILE)
 build-config: info $(WORK_DIR)/.extracted  $(WORK_DIR)/$(OUT_CONFIG_FILE)
 build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
