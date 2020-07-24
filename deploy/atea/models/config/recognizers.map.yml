@@ -1,16 +1,16 @@
-default: words_v3
+default: ben-2.0
 
 words_v3: words_v3
 
-general_standard: words_v3
-medicine_standard: words_v3
-law_standard: words_v3
-administration_standard: words_v3
+general_standard: ben-2.0
+medicine_standard: med-1.0
+law_standard: tei-1.0
+administration_standard: adm-1.0
 
-general_telephonic: words_v3
-medicine_telephonic: words_v3
-law_telephonic: words_v3
-administration_telephonic: words_v3
+general_telephonic: ben-2.0
+medicine_telephonic: med-1.0
+law_telephonic: tei-1.0
+administration_telephonic: adm-1.0
 
 ben: ben-2.0
 adm: adm-1.0
