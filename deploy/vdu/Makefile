@@ -25,7 +25,7 @@ $(dist_dir)/voice/%: $(voice_dir)/%
 	mkdir -p $(@D)
 	cp $< $@
 ########### CONFIG ##################################################################
-copy_config: 
+copy-config: 
 	$(RSYNC_CMD) models $(USER)@$(SERVER_URL):$(remote_volumes_dir)/
 
 ########### SERVICES ################################################################
@@ -58,19 +58,18 @@ exec-into:
 	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose exec $(srv) /bin/bash"
 
-
 status:
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose ps"
 ssh:
 	$(SSH_CMD)
 ########### END SERVICES ############################################################
 ########### MODELS ##################################################################
-copy_models: install-am-ben-2.0.data install-config-ben-2.0.data
-copy_rnnlm: install-rnnlm-2.0.data
-copy_lm: install-lm-ben-2.0.data
+install-models: install-am-ben-2.0.data install-config-ben-2.0.data
+install-rnnlm: install-rnnlm-2.0.data
+install-lm: install-lm-ben-2.0.data
 copy_diarization: 	
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/diarization/v1/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/diarization/	
-copy_punctuation: install-punctuation-2.0.data
+install-punctuation: install-punctuation-2.0.data
 ########### DWN #####################################################################
 fake-%.dwn: 
 	$(SSH_CMD) "mkdir -p $(remote_dwn_dir)"
