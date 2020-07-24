@@ -49,7 +49,7 @@ lm_files=G.fst words.txt info
 target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 #################################################################################################
 $(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
-	cat $< | gunzip > $@
+	pv $< | gunzip > $@
 $(OUT_DIR)/phones.txt: $(PHONES_FILE) | $(OUT_DIR)
 	cp $< $@
 $(OUT_DIR)/words.txt: $(VOCAB_FILE) | $(OUT_DIR)
