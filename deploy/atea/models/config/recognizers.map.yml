@@ -1,8 +1,5 @@
 default: words_v3
 
-words_v0: words_v0
-words_v1: words_v1
-words_v2: words_v2
 words_v3: words_v3
 
 general_standard: words_v3
@@ -18,3 +15,4 @@ administration_telephonic: words_v3
 ben: ben-2.0
 adm: adm-1.0
 tei: tei-1.0
+med: med-1.0
