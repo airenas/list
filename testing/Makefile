@@ -122,6 +122,11 @@ compare: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
 calc-wer-sentence: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
 	scripts/compute-wer --mode=present --verbose=10 \
 		ark:$(test_dir)/ref.f.txt  "ark:cat $(test_dir)/recognized.f.txt | grep $(snt) |"
+$(test_dir)/wer-every.txt: $(test_dir)/wer.txt
+	ls -1 $(test_dir)/result/*.txt | xargs -n 1 -I {} sh -c "f=\$$(basename {});echo \$$f; $(MAKE) calc-wer-sentence snt=\$$f" \
+		| grep WER | awk '{print $$2}' > $@		
+calc-wer-by-one: $(test_dir)/wer-every.txt
+	cat $(test_dir)/wer-every.txt
 #####################################################################################
 info: 
 	@echo "UPLOAD		: $(UPLOAD_SERVICE)"
