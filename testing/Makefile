@@ -1,6 +1,6 @@
 -include Makefile.options
 -include $(config)
-wordfix_dir=../../lm-scripts/wordfix
+wordfix_dir?=../../lm-scripts/wordfix
 #####################################################################################
 file?=1.wav
 upload: 
@@ -107,18 +107,21 @@ $(test_dir)/recognized.txt: $(test_dir)/result/.done | $(test_dir)/result/fixed
 $(test_dir)/recognized.f.txt: $(test_dir)/recognized.txt
 		cat $(test_dir)/recognized.txt | perl $(wordfix_dir)/filter.pl $(wordfix_dir) > $(test_dir)/recognized.f.txt
 
-$(test_dir)/wer.txt: $(test_dir)/recognized.f.txt
+$(test_dir)/ref.f.txt: $(test_dir)/ref.txt
+		cat $< | perl $(wordfix_dir)/filter.pl $(wordfix_dir) > $@
+
+$(test_dir)/wer.txt: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
 	scripts/compute-wer --mode=present \
-		ark:$(test_dir)/testdata/txt/ref.txt  ark:$(test_dir)/recognized.f.txt > $(test_dir)/wer.txt
+		ark:$(test_dir)/ref.f.txt  ark:$(test_dir)/recognized.f.txt > $(test_dir)/wer.txt
 $(test_dir)/ref.txt: $(test_dir)/.data.done
 	cat $(test_dir)/testdata/txt/ref.txt | sed 's/ *$$//g' > $@
 calc-wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
-compare: $(test_dir)/recognized.f.txt	$(test_dir)/ref.txt
-	vimdiff $(test_dir)/ref.txt $(test_dir)/recognized.f.txt
-calc-wer-sentence: $(test_dir)/recognized.f.txt
+compare: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
+	vimdiff $(test_dir)/ref.f.txt $(test_dir)/recognized.f.txt
+calc-wer-sentence: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
 	scripts/compute-wer --mode=present --verbose=10 \
-		ark:$(test_dir)/testdata/txt/ref.txt  "ark:cat $(test_dir)/recognized.f.txt | grep $(snt) |"
+		ark:$(test_dir)/ref.f.txt  "ark:cat $(test_dir)/recognized.f.txt | grep $(snt) |"
 #####################################################################################
 info: 
 	@echo "UPLOAD		: $(UPLOAD_SERVICE)"

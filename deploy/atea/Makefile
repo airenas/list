@@ -82,17 +82,28 @@ copy-apps: vh_cmd
 	$(vh_cmd) make apps=apps-1.0 install-apps
 copy-models: vh_cmd
 	$(vh_cmd) make file=ac-1.0 install-data
+	$(vh_cmd) make file=am-ben-2.0 install-data 
+	$(vh_cmd) make file=config-ben-2.0 install-data
+	$(vh_cmd) make file=am-adm-1.0 install-data 
+	$(vh_cmd) make file=config-adm-1.0 install-data
+	$(vh_cmd) make file=am-tei-1.0 install-data 
+	$(vh_cmd) make file=config-tei-1.0 install-data
 copy-lm: vh_cmd
 	$(vh_cmd) make file=lm-1.0 install-data
+	$(vh_cmd) make file=lm-ben-2.0 install-data
+	$(vh_cmd) make file=lm-adm-1.0 install-data
+	$(vh_cmd) make file=lm-tei-1.0 install-data
 copy-diarization: vh_cmd
 	$(vh_cmd) make file=diarization-1.0 install-data
 copy-punctuation: vh_cmd
 	$(vh_cmd) make file=punctuation-2.0 install-data
+copy-rnnlm: vh_cmd
+	$(vh_cmd) make file=rnnlm-2.0 install-data	
 init-storage: vh_cmd
 	$(vh_cmd) make init-storage
 copy-config:
 	./volume-helper/copyModel.sh models/config/ /models/config
-copy-data: copy-apps copy-config init-storage copy-models copy-lm copy-diarization copy-punctuation
+copy-data: copy-apps copy-config init-storage copy-models copy-lm copy-diarization copy-punctuation copy-rnnlm
 clean-data: vh_cmd
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	$(vh_cmd) make clean-data clean-apps

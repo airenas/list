@@ -24,10 +24,6 @@ voice_files=$(dist_dir)/voice/lab_ALL.htsvoice
 $(dist_dir)/voice/%: $(voice_dir)/%  
 	mkdir -p $(@D)
 	cp $< $@
-#####################################################################################
-copy_local: 
-	rsync -r -e -P $(src_dir)/decode/models/words_rnnlm/scripts models/config/words_v2
-
 ########### CONFIG ##################################################################
 copy_config: 
 	$(RSYNC_CMD) models $(USER)@$(SERVER_URL):$(remote_volumes_dir)/
@@ -69,17 +65,10 @@ ssh:
 	$(SSH_CMD)
 ########### END SERVICES ############################################################
 ########### MODELS ##################################################################
-copy_models: 
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/20_04_17-2g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/phones_v0 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/graph_w63g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/ac/19_11_18-3g $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/ac/
-copy_rnnlm: 
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/rnnlm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/rnnlm/
-copy_lm: 
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v3 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
-	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/lm/v1 $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/lm/
-copy_diarization: 
+copy_models: install-am-ben-2.0.data install-config-ben-2.0.data
+copy_rnnlm: install-rnnlm-2.0.data
+copy_lm: install-lm-ben-2.0.data
+copy_diarization: 	
 	$(RSYNC_S_CMD) $(LOCAL_MODELS_DIR)/diarization/v1/* $(USER)@$(SERVER_URL):$(remote_volumes_dir)/models/diarization/	
 copy_punctuation: install-punctuation-2.0.data
 ########### DWN #####################################################################
