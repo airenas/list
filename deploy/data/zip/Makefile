@@ -62,7 +62,7 @@ $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
 $(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(LM_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
-	cat $< | gunzip > $@
+	pv $< | gunzip > $@
 $(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(VOCAB_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
