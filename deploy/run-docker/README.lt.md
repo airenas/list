@@ -90,7 +90,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
 
-## Servisų sustabdymmas/valdymas
+## Servisų sustabdymas/valdymas
 
 Servisai valdomi su *docker-compose* komanda:
 
