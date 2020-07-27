@@ -113,9 +113,11 @@ clean-data: vh_cmd
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	$(vh_cmd) make clean-data clean-apps
 #####################################################################################
-install-services:
+deployments/%.yml: deployments/%.yml.template Makefile.options
+	cat deployments/$*.yml.template | envsubst > $@
+install-services: deployments/kafka.integration.yml deployments/metrics.yml deployments/transcription.yml
 	kubectl apply -f deployments/
-clean-services:
+clean-services: deployments/kafka.integration.yml deployments/metrics.yml deployments/transcription.yml
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	kubectl delete -f deployments/	
 #####################################################################################

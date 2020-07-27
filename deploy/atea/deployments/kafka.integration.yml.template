@@ -21,7 +21,7 @@ spec:
           claimName: kafkaintegrationstorage
       containers:
       - name: kafka-integration
-        image: airenas/list-kafka-integration-service:1.2.779
+        image: ${DOCKER_REPO}kafka-integration-service:${KAFKA_INTEGRATION_VERSION}
         env:
         - name: KAFKA_BROKERS
           value: kafka-svc.atea.svc.cluster.local:9092
@@ -44,3 +44,5 @@ spec:
         volumeMounts:
         - name: kafkaintegration-vol 
           mountPath: /idsmap
+      imagePullSecrets:
+        - name: semantikacred    

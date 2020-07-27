@@ -59,7 +59,6 @@ deploy/local/clean/deploy/**
 deploy/atea/ki/**
 deploy/vdu/Makefile.options
 deploy/local/kaldi/apps/**
-deploy/atea/Makefile.options
 testing/2020**/**
 testing/scripts/compute-wer
 testing/2019**/**

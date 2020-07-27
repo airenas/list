@@ -46,4 +46,4 @@ spec:
         - name: filestorage-vol
           mountPath: /filestorage
       imagePullSecrets:
-        - name: semantikacred      
+        - name: semantikacred    
