@@ -33,7 +33,7 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 - diegimo skriptai naudoja pagalbinius įrankius *git*, *make*, *pwgen*, *rsync*, *kubectl*. Įsitikinkite, kad jie suinstaliuoti sistemoje.
 - kubernetes klasteris, į kurį diegiama, turi sukonfigūruotą vardų sritį: *aft*.
 - *kubectl* gali prisijungti prie ATEA k8s. Patikrinkite, kad  `kubectl get pods` komada veikia ir prisijungia prie ATEA k8s.
-- turite slaptažodžius prisijungti prie *sematikadocker.vdu.lt* repositorijos
+- turite slaptažodžius prisijungti prie *sematikadocker.vdu.lt* repositorijos.
 
 ## Diegimas
 
