@@ -33,6 +33,7 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 - diegimo skriptai naudoja pagalbinius įrankius *git*, *make*, *pwgen*, *rsync*, *kubectl*. Įsitikinkite, kad jie suinstaliuoti sistemoje.
 - kubernetes klasteris, į kurį diegiama, turi sukonfigūruotą vardų sritį: *aft*.
 - *kubectl* gali prisijungti prie ATEA k8s. Patikrinkite, kad  `kubectl get pods` komada veikia ir prisijungia prie ATEA k8s.
+- turite slaptažodžius prisijungti prie *sematikadocker.vdu.lt* repositorijos
 
 ## Diegimas
 
@@ -55,6 +56,10 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 1. Ištrinkite *secrets.yml* lokalų filą:
 
     `make clean-secrets`
+
+1. Paruoškite slaptažodžius prisijungti prie *semantikadocker.vdu.lt* repositorijos:
+
+    `kubectl create secret docker-registry semantikacred --docker-server=semantikadocker.vdu.lt --docker-username=<<SEMANTIKA_DOCKER_REPO_VARTOTOJAS>> --docker-password=<<SEMANTIKA_DOCKER_REPO_SLAPTAŽODIS>> --docker-email=semantika@vdu.lt`
 
 1. Paruoškite k8s saugyklas:
 
