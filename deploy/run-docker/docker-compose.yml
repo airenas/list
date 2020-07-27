@@ -18,7 +18,7 @@ services:
       - "traefik.health.port=8080"
 
   web:
-    image: airenas/list-ear-app:${EAR_APP_VERSION}
+    image: ${DOCKER_REPO}ear-app:${EAR_APP_VERSION}
     restart: unless-stopped
     environment:
       BASE_HREF: /${URL}/
@@ -28,7 +28,7 @@ services:
      - "traefik.http.port=8000"
 
   upload-service:
-    image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
+    image: ${DOCKER_REPO}upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
@@ -46,7 +46,7 @@ services:
      - "traefik.port=8000"  
   
   result-service:
-    image: airenas/list-result-service:${RESULT_SERVICE_VERSION}
+    image: ${DOCKER_REPO}result-service:${RESULT_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
@@ -59,7 +59,7 @@ services:
      - "traefik.port=8000"     
 
   status-service:
-    image: airenas/list-status-service:${STATUS_SERVICE_VERSION}
+    image: ${DOCKER_REPO}status-service:${STATUS_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - mongo
@@ -74,7 +74,7 @@ services:
      - "traefik.port=8000" 
   
   manager-service:
-    image: airenas/list-manager-service:${MANAGER_SERVICE_VERSION}
+    image: ${DOCKER_REPO}manager-service:${MANAGER_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - mongo
@@ -87,7 +87,7 @@ services:
       SENDINFORMMESSAGES: ${SENDINFORMMESSAGES} 
 
   audio-prepare-service:
-    image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
+    image: ${DOCKER_REPO}audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -101,7 +101,7 @@ services:
       - modelsStorage:/models 
 
   diarization-service:
-    image: airenas/list-diarization-service:${DIARIZATION_SERVICE_VERSION}
+    image: ${DOCKER_REPO}diarization-service:${DIARIZATION_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -116,7 +116,7 @@ services:
       - modelsStorage:/models 
 
   transcription-dispatcher-service:
-    image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -133,7 +133,7 @@ services:
       - modelsStorage:/models      
   
   transcription-service:
-    image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
+    image: ${DOCKER_REPO}transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -148,7 +148,7 @@ services:
       - modelsStorage:/models
   
   rescore-dispatcher-service:
-    image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -166,7 +166,7 @@ services:
       - modelsStorage:/models
 
   rescore-service:
-    image: airenas/list-rescore-service:${TR_RESCORE_SERVICE_VERSION}
+    image: ${DOCKER_REPO}rescore-service:${TR_RESCORE_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -181,7 +181,7 @@ services:
       - modelsStorage:/models        
   
   result-make-service:
-    image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
+    image: ${DOCKER_REPO}result-make-service:${TR_RESULT_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -197,7 +197,7 @@ services:
       - modelsStorage:/models 
 
   inform-service:
-    image: airenas/list-inform-service:${INFORM_SERVICE_VERSION}
+    image: ${DOCKER_REPO}inform-service:${INFORM_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
@@ -221,7 +221,7 @@ services:
     restart: unless-stopped 
   
   punctuation-service:
-    image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
+    image: ${DOCKER_REPO}punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
       - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
@@ -232,7 +232,7 @@ services:
      - "traefik.port=8000"  
   
   clean-service:
-    image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
+    image: ${DOCKER_REPO}clean-service:${CLEAN_SERVICE_VERSION}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
@@ -259,7 +259,7 @@ services:
     - "traefik.port=9090"   
 
   metrics-collector:
-    image: airenas/list-metrics-collector:${METRICS_COLLECTOR_VERSION}
+    image: ${DOCKER_REPO}metrics-collector:${METRICS_COLLECTOR_VERSION}
     restart: unless-stopped
 
   node-exporter:

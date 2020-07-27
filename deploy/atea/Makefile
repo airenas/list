@@ -15,9 +15,13 @@ show-deployments:
 show-services: 
 	kubectl get services
 #####################################################################################
-install-vh: 
+volume-helper/helper.yml: Makefile.options
+	cat volume-helper/helper.yml.template | envsubst > $@
+
+install-vh: volume-helper/helper.yml 
 	kubectl apply -f volume-helper
-clean-vh: 
+
+clean-vh: volume-helper/helper.yml 
 	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	kubectl delete -f volume-helper
 #####################################################################################
@@ -121,3 +125,5 @@ restart-prometheus: delete-prometheus
 	kubectl apply -f deployments/metrics.yml
 #####################################################################################
 .PHONY: show-pods install-vh clean-vh 
+
+.EXPORT_ALL_VARIABLES:

@@ -33,7 +33,7 @@ spec:
           claimName: filestorage      
       containers:
       - name: vh
-        image: airenas/list-volume-helper:1.1.800
+        image: ${DOCKER_REPO}volume-helper:${VOLUME_HELPER_VERSION}
         volumeMounts:
         - name: appstorage-vol 
           mountPath: /apps
