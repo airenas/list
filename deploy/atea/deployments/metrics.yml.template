@@ -136,9 +136,11 @@ spec:
         nodetype: transcriber
       containers:
       - name: metrics-collector
-        image: airenas/list-metrics-collector:0.1.623
+        image: ${DOCKER_REPO}metrics-collector:${METRICS_COLLECTOR_VERSION}
         ports:
         - containerPort: 8000
+      imagePullSecrets:
+        - name: semantikacred
 ---
 ### node exporter
 apiVersion: v1
@@ -174,7 +176,7 @@ spec:
       nodeSelector:
         nodetype: transcriber
       containers:
-      - name: metrics-collector
+      - name: node-exporter
         image: prom/node-exporter:v0.18.1
         ports:
         - containerPort: 9100
