@@ -19,7 +19,7 @@ $(dist_dir)/.build: $(main_dir) $(main_dir)/src $(main_dir)/src/environments/env
 
 build: updateVersion $(dist_dir)/.build
 ########### DOCKER ##################################################################
-tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
+tag=$(docker_prefix)$(service):$(version).$(commit_count)
 
 dbuild: build
 	docker build -t $(tag) ./

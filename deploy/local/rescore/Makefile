@@ -4,7 +4,7 @@ dist_dir=$(CURDIR)/deploy
 executable_name=cmdWorkerService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=rescore-service
-tag=airenas/$(docker_container_prefix)$(service):$(TR_RESCORE_SERVICE_VERSION).$(commit_count)
+tag=$(docker_prefix)$(service):$(TR_RESCORE_SERVICE_VERSION).$(commit_count)
 
 #####################################################################################
 tools=send.metric pipe.runner \

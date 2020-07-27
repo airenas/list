@@ -17,7 +17,7 @@ $(dist_dir)/$(executable_name): $(main_dir)/$(executable_name)
 
 copy: $(dist_dir)/$(executable_name)
 ########### DOCKER ##################################################################
-tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
+tag=$(docker_prefix)$(service):$(version).$(commit_count)
 
 dbuild: $(dist_dir)/$(executable_name)
 	docker build -t $(tag) ./

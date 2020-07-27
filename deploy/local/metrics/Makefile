@@ -4,7 +4,7 @@ dist_dir=$(CURDIR)/deploy
 executable_name=metricsCollector
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=metrics-collector
-tag=airenas/$(docker_container_prefix)$(service):$(METRICS_COLLECTOR_VERSION).$(commit_count)
+tag=$(docker_prefix)$(service):$(METRICS_COLLECTOR_VERSION).$(commit_count)
 
 #####################################################################################
 $(dist_dir):

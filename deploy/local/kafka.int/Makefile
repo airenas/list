@@ -11,7 +11,7 @@ $(dist_dir)/$(executable_name): $(GO_SRC_DIR)
 
 build: $(dist_dir)/$(executable_name)
 #####################################################################################
-tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
+tag=$(docker_prefix)$(service):$(version).$(commit_count)
 
 dbuild: $(dist_dir)/$(executable_name)
 	docker build -t $(tag) ./

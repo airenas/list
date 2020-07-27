@@ -31,7 +31,7 @@ $(dist_dir)/%.sh: $(scripts_dir)/%.sh | $(dist_dir)/cmd
 	cp $< $@
 copy: $(dist_dir)/cmd/Makefile
 ########### DOCKER ##################################################################
-tag=airenas/$(docker_container_prefix)$(service):$(version).$(commit_count)
+tag=$(docker_prefix)$(service):$(version).$(commit_count)
 
 dbuild: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name) $(dist_tools_files) $(dist_scripts_files)
 	docker build -t $(tag) ./

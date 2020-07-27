@@ -1,6 +1,10 @@
 -include ../Makefile.options
+
+#####################################################################################
+clean:
+	@echo "Done"
 ########### DOCKER ##################################################################
-tag=airenas/$(docker_container_prefix)volume-helper:1.1.$(commit_count)
+tag=$(docker_prefix)volume-helper:1.1.$(commit_count)
 dbuild: 
 	docker build -t $(tag) ./
 
