@@ -74,3 +74,4 @@ testing/tcorpus/**
 deploy/run-docker/Makefile.options
 **/Makefile.options.local
 testing/ateav2.config
+deploy/atea/volume-helper/helper.yml

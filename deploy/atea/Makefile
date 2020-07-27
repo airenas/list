@@ -15,7 +15,7 @@ show-deployments:
 show-services: 
 	kubectl get services
 #####################################################################################
-volume-helper/helper.yml: Makefile.options
+volume-helper/helper.yml: Makefile.options volume-helper/helper.yml.template
 	cat volume-helper/helper.yml.template | envsubst > $@
 
 install-vh: volume-helper/helper.yml 

@@ -44,4 +44,6 @@ spec:
         - name: mongo-vol
           mountPath: /mongo
         - name: filestorage-vol
-          mountPath: /filestorage  
+          mountPath: /filestorage
+      imagePullSecrets:
+        - name: semantikacred      
