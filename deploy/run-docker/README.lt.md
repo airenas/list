@@ -56,6 +56,9 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
     Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
 
+1. Prijunkite *docker* prie *semantikadocker.vdu.lt* repositorijos:
+    `docker login -u <<SEMANTIKA_DOCKER_REPO_VARTOTOJAS>> -p <<SEMANTIKA_DOCKER_REPO_SLAPTAŽODIS>>`
+
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
     `cp Makefile.options.template Makefile.options`
