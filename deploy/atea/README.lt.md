@@ -57,7 +57,7 @@ Diegimo instrukcija ir pagalbiniai skriptai paruošti Linux OS.
 
     `make clean-secrets`
 
-1. Paruoškite slaptažodžius prisijungti prie *semantikadocker.vdu.lt* repositorijos:
+1. Instaliuokite slaptažodžius prisijungti prie *semantikadocker.vdu.lt* repositorijos į k8s:
 
     `kubectl create secret docker-registry semantikacred --docker-server=semantikadocker.vdu.lt --docker-username=<<SEMANTIKA_DOCKER_REPO_VARTOTOJAS>> --docker-password=<<SEMANTIKA_DOCKER_REPO_SLAPTAŽODIS>> --docker-email=semantika@vdu.lt`
 
