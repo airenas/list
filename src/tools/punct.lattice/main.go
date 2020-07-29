@@ -112,8 +112,8 @@ func getWords(data []*lattice.Part, i int, to int) []string {
 	for ; i < to; i++ {
 		for _, w := range data[i].Words {
 			if w.Main == lattice.MainInd {
-				if w.Word != lattice.SilWord {
-					res = append(res, trimWord(w.Word))
+				if w.Text != lattice.SilWord {
+					res = append(res, trimWord(w.Text))
 				}
 			}
 		}
@@ -131,16 +131,16 @@ func addPunctuatioData(data []*lattice.Part, i int, to int, pResp *punctuation.R
 	for ; i < to; i++ {
 		for _, w := range data[i].Words {
 			if w.Main == lattice.MainInd {
-				if w.Word != lattice.SilWord {
+				if w.Text != lattice.SilWord {
 					pw, pp, err := getPunctuation(pResp, crI)
 					if err != nil {
 						return errors.Wrapf(err, "can't get punctuation for index %d", crI)
 					}
 					w.Punct = pp
-					if strings.HasPrefix(w.Word, "<") && !strings.HasPrefix(pw, "<") {
-						w.Word = "<" + pw + ">"
+					if strings.HasPrefix(w.Text, "<") && !strings.HasPrefix(pw, "<") {
+						w.Text = "<" + pw + ">"
 					} else {
-						w.Word = pw
+						w.Text = pw
 					}
 					crI++
 				}

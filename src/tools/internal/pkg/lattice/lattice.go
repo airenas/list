@@ -17,7 +17,8 @@ type Word struct {
 	Main  string
 	From  string
 	To    string
-	Word  string
+	Text  string
+	Words []string // may be several words separated by '_'
 	Punct string
 }
 
@@ -28,7 +29,7 @@ type Part struct {
 	Words   []*Word
 }
 
-//SilWord indicate ssil word in lattice
+//SilWord indicate sil word in lattice
 var SilWord = "<eps>"
 
 //MainInd ord line indicator
@@ -70,7 +71,8 @@ func Read(src io.Reader) ([]*Part, error) {
 			w.Main = strs[0]
 			w.From = strs[1]
 			w.To = strs[2]
-			w.Word = strs[3]
+			w.Text = strs[3]
+			w.Words = splitWord(w.Text)
 			if len(strs) > 4 {
 				w.Punct = strs[4]
 			}
@@ -95,7 +97,7 @@ func Write(data []*Part, writer io.Writer) error {
 			if w.Punct != "" {
 				punct = " " + w.Punct
 			}
-			_, err = fmt.Fprintf(writer, "%s %s %s %s%s\n", w.Main, w.From, w.To, w.Word, punct)
+			_, err = fmt.Fprintf(writer, "%s %s %s %s%s\n", w.Main, w.From, w.To, w.Text, punct)
 			if err != nil {
 				return err
 			}
@@ -142,7 +144,7 @@ func getLastWordDuration(data []*Word) time.Duration {
 	for i := len(data) - 1; i >= 0; i-- {
 		w := data[i]
 		if w.Main == MainInd {
-			if w.Word != SilWord {
+			if w.Text != SilWord {
 				return Duration(w.To)
 			}
 		}
@@ -153,10 +155,17 @@ func getLastWordDuration(data []*Word) time.Duration {
 func getFirstWordDuration(data []*Word) time.Duration {
 	for _, w := range data {
 		if w.Main == MainInd {
-			if w.Word != SilWord {
+			if w.Text != SilWord {
 				return Duration(w.From)
 			}
 		}
 	}
 	return 0
+}
+
+func splitWord(s string) []string {
+	if s == "_" {
+		return []string{s}
+	}
+	return strings.Split(s, "_")
 }

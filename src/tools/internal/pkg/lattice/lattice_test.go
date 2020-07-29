@@ -13,8 +13,8 @@ func TestWrite(t *testing.T) {
 	p := make([]*Part, 1)
 	p[0] = &Part{Num: 1, Speaker: "S1"}
 	p[0].Words = make([]*Word, 2)
-	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Word: "word"}
-	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Word: "word2"}
+	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word"}
+	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2"}
 	var b bytes.Buffer
 	Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n", string(b.Bytes()))
@@ -24,12 +24,12 @@ func TestWriteSeveral(t *testing.T) {
 	p := make([]*Part, 2)
 	p[0] = &Part{Num: 1, Speaker: "S1"}
 	p[0].Words = make([]*Word, 2)
-	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Word: "word"}
-	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Word: "word2"}
+	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word"}
+	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2"}
 	p[1] = &Part{Num: 2, Speaker: "S2"}
 	p[1].Words = make([]*Word, 2)
-	p[1].Words[0] = &Word{Main: "1", From: "fr", To: "to", Word: "word"}
-	p[1].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Word: "word2"}
+	p[1].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word"}
+	p[1].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2"}
 	var b bytes.Buffer
 	Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n# 2 S2\n1 fr to word\n1 fr1 to2 word2\n\n", string(b.Bytes()))
@@ -39,8 +39,8 @@ func TestWritePunc(t *testing.T) {
 	p := make([]*Part, 1)
 	p[0] = &Part{Num: 1, Speaker: "S1"}
 	p[0].Words = make([]*Word, 2)
-	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Word: "word", Punct: ","}
-	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Word: "word2", Punct: "."}
+	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word", Punct: ","}
+	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2", Punct: "."}
 	var b bytes.Buffer
 	Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word ,\n1 fr1 to2 word2 .\n\n", string(b.Bytes()))
@@ -56,7 +56,39 @@ func TestRead(t *testing.T) {
 	assert.Equal(t, "1", p[0].Words[0].Main)
 	assert.Equal(t, "fr", p[0].Words[0].From)
 	assert.Equal(t, "to", p[0].Words[0].To)
-	assert.Equal(t, "word", p[0].Words[0].Word)
+	assert.Equal(t, "word", p[0].Words[0].Text)
+	assert.Equal(t, []string{"word"}, p[0].Words[0].Words)
+}
+
+func TestReadUnderscoreWords(t *testing.T) {
+	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to word_x\n"))
+
+	assert.Equal(t, 1, len(p))
+	assert.Equal(t, 1, p[0].Num)
+	assert.Equal(t, "S1", p[0].Speaker)
+	assert.Equal(t, "1", p[0].Words[0].Main)
+	assert.Equal(t, "fr", p[0].Words[0].From)
+	assert.Equal(t, "to", p[0].Words[0].To)
+	assert.Equal(t, "word_x", p[0].Words[0].Text)
+	assert.Equal(t, []string{"word", "x"}, p[0].Words[0].Words)
+}
+
+func TestReadUnderscoreWords2(t *testing.T) {
+	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to word_x_y\n"))
+
+	assert.Equal(t, 1, len(p))
+	assert.Equal(t, 1, p[0].Num)
+	assert.Equal(t, "word_x_y", p[0].Words[0].Text)
+	assert.Equal(t, []string{"word", "x", "y"}, p[0].Words[0].Words)
+}
+
+func TestReadUnderscore(t *testing.T) {
+	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to _\n"))
+
+	assert.Equal(t, 1, len(p))
+	assert.Equal(t, 1, p[0].Num)
+	assert.Equal(t, "_", p[0].Words[0].Text)
+	assert.Equal(t, []string{"_"}, p[0].Words[0].Words)
 }
 
 func TestReadPunct(t *testing.T) {
@@ -65,7 +97,7 @@ func TestReadPunct(t *testing.T) {
 	assert.Equal(t, 1, len(p))
 	assert.Equal(t, 1, len(p[0].Words))
 	assert.Equal(t, ".", p[0].Words[0].Punct)
-	assert.Equal(t, "word", p[0].Words[0].Word)
+	assert.Equal(t, "word", p[0].Words[0].Text)
 }
 
 func TestRead_Fail(t *testing.T) {

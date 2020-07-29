@@ -26,9 +26,9 @@ func TestAll(t *testing.T) {
 	assert.NotNil(t, d)
 	pr := punctuatorMock.VerifyWasCalled(pegomock.Once()).Punctuate(pegomock.AnyStringSlice()).GetCapturedArguments()
 	assert.Equal(t, []string{"w", "w2", "w3", "w4"}, pr)
-	assert.Equal(t, "W", d[0].Words[0].Word)
+	assert.Equal(t, "W", d[0].Words[0].Text)
 	assert.Equal(t, ",", d[0].Words[0].Punct)
-	assert.Equal(t, "w4", d[1].Words[1].Word)
+	assert.Equal(t, "w4", d[1].Words[1].Text)
 	assert.Equal(t, ".", d[1].Words[1].Punct)
 }
 
@@ -148,9 +148,9 @@ func TestAddPunctuation(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
 	addPunctuatioData(d, 3, 4, makeTestPResp("w5 w6", "W5, w6."))
-	assert.Equal(t, "W5", d[3].Words[1].Word)
+	assert.Equal(t, "W5", d[3].Words[1].Text)
 	assert.Equal(t, ",", d[3].Words[1].Punct)
-	assert.Equal(t, "w6", d[3].Words[3].Word)
+	assert.Equal(t, "w6", d[3].Words[3].Text)
 	assert.Equal(t, ".", d[3].Words[3].Punct)
 }
 
@@ -158,7 +158,7 @@ func TestAddPunctuation_RestoreBracket(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
 	addPunctuatioData(d, 4, 5, makeTestPResp("w7 w8", "W7, w8."))
-	assert.Equal(t, "<W7>", d[4].Words[0].Word)
+	assert.Equal(t, "<W7>", d[4].Words[0].Text)
 	assert.Equal(t, ",", d[4].Words[0].Punct)
 }
 

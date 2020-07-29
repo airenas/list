@@ -68,7 +68,7 @@ func getWebVTT(data []*lattice.Part) string {
 		}
 		for _, w := range p.Words {
 			if w.Main == lattice.MainInd {
-				if w.Word != lattice.SilWord {
+				if w.Text != lattice.SilWord {
 					if td.to != nil && (lattice.Duration(w.From)-lattice.Duration(td.to.To)) > 500*time.Millisecond {
 						write(td)
 					}
@@ -102,7 +102,7 @@ func add(td *tdata, w *lattice.Word) {
 		td.from = w
 	}
 	td.to = w
-	td.sep = writeWord(&td.sbLine, w.Word, td.sep)
+	td.sep = writeWord(&td.sbLine, w.Text, td.sep)
 	td.sep = writePunct(&td.sbLine, w.Punct)
 }
 
