@@ -18,6 +18,16 @@ func TestGetText(t *testing.T) {
 	assert.Equal(t, "w w2", text)
 }
 
+func TestGetTextUnderscore(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 fr to w_x_y
+1 fr1 to2 w2
+`))
+	text := getText(lat)
+	assert.Equal(t, "w x y w2", text)
+}
+
 func TestGetText_SkipSil(t *testing.T) {
 	lat, _ := lattice.Read(strings.NewReader(
 		`# 1 S1
@@ -79,7 +89,7 @@ func TestGetText_NewLineSil(t *testing.T) {
 	assert.Equal(t, "w\nw2", text)
 }
 
-func TestGetText_ShhorSil_NoNewLine(t *testing.T) {
+func TestGetText_ShortSil_NoNewLine(t *testing.T) {
 	lat, _ := lattice.Read(strings.NewReader(
 		`# 1 S1
 1 0 1 w
