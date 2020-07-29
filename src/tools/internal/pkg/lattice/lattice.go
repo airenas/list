@@ -97,7 +97,7 @@ func Write(data []*Part, writer io.Writer) error {
 			if w.Punct != "" {
 				punct = " " + w.Punct
 			}
-			_, err = fmt.Fprintf(writer, "%s %s %s %s%s\n", w.Main, w.From, w.To, w.Text, punct)
+			_, err = fmt.Fprintf(writer, "%s %s %s %s%s\n", w.Main, w.From, w.To, getText(w.Words), punct)
 			if err != nil {
 				return err
 			}
@@ -168,4 +168,8 @@ func splitWord(s string) []string {
 		return []string{s}
 	}
 	return strings.Split(s, "_")
+}
+
+func getText(words []string) string {
+	return strings.Join(words, "_")
 }

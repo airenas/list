@@ -113,7 +113,9 @@ func getWords(data []*lattice.Part, i int, to int) []string {
 		for _, w := range data[i].Words {
 			if w.Main == lattice.MainInd {
 				if w.Text != lattice.SilWord {
-					res = append(res, trimWord(w.Text))
+					for _, wrd := range w.Words {
+						res = append(res, trimWord(wrd))
+					}
 				}
 			}
 		}
@@ -132,17 +134,23 @@ func addPunctuatioData(data []*lattice.Part, i int, to int, pResp *punctuation.R
 		for _, w := range data[i].Words {
 			if w.Main == lattice.MainInd {
 				if w.Text != lattice.SilWord {
-					pw, pp, err := getPunctuation(pResp, crI)
-					if err != nil {
-						return errors.Wrapf(err, "can't get punctuation for index %d", crI)
+					for wi, wrd := range w.Words {
+						pw, pp, err := getPunctuation(pResp, crI)
+						if err != nil {
+							return errors.Wrapf(err, "can't get punctuation for index %d", crI)
+						}
+						if wi == (len(w.Words) - 1) { // take just last one
+							w.Punct = pp
+						}
+						if (wi == 0) { // change just first word
+							if strings.HasPrefix(wrd, "<") && !strings.HasPrefix(pw, "<") {
+								w.Words[wi] = "<" + pw + ">"
+							} else {
+								w.Words[wi] = pw
+							}
+						}
+						crI++
 					}
-					w.Punct = pp
-					if strings.HasPrefix(w.Text, "<") && !strings.HasPrefix(pw, "<") {
-						w.Text = "<" + pw + ">"
-					} else {
-						w.Text = pw
-					}
-					crI++
 				}
 			}
 		}

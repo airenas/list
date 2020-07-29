@@ -26,7 +26,7 @@ func TestAll(t *testing.T) {
 	assert.NotNil(t, d)
 	pr := punctuatorMock.VerifyWasCalled(pegomock.Once()).Punctuate(pegomock.AnyStringSlice()).GetCapturedArguments()
 	assert.Equal(t, []string{"w", "w2", "w3", "w4"}, pr)
-	assert.Equal(t, "W", d[0].Words[0].Text)
+	assert.Equal(t, "W", d[0].Words[0].Words[0])
 	assert.Equal(t, ",", d[0].Words[0].Punct)
 	assert.Equal(t, "w4", d[1].Words[1].Text)
 	assert.Equal(t, ".", d[1].Words[1].Punct)
@@ -148,9 +148,9 @@ func TestAddPunctuation(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
 	addPunctuatioData(d, 3, 4, makeTestPResp("w5 w6", "W5, w6."))
-	assert.Equal(t, "W5", d[3].Words[1].Text)
+	assert.Equal(t, "W5", d[3].Words[1].Words[0])
 	assert.Equal(t, ",", d[3].Words[1].Punct)
-	assert.Equal(t, "w6", d[3].Words[3].Text)
+	assert.Equal(t, "w6", d[3].Words[3].Words[0])
 	assert.Equal(t, ".", d[3].Words[3].Punct)
 }
 
@@ -158,7 +158,7 @@ func TestAddPunctuation_RestoreBracket(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
 	addPunctuatioData(d, 4, 5, makeTestPResp("w7 w8", "W7, w8."))
-	assert.Equal(t, "<W7>", d[4].Words[0].Text)
+	assert.Equal(t, "<W7>", d[4].Words[0].Words[0])
 	assert.Equal(t, ",", d[4].Words[0].Punct)
 }
 
@@ -189,6 +189,26 @@ func makeTestLattice() []*lattice.Part {
 0 fr to word
 `))
 	return res
+}
+
+func TestAddPunctuation_Underscore(t *testing.T) {
+	initTest(t)
+	d, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 fr to w_x
+1 fr1 to2 w2_x_y
+
+`))
+	addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w x w2 x y,"))
+	assert.Equal(t, []string{"w", "x"}, d[0].Words[0].Words)
+	assert.Equal(t, "", d[0].Words[0].Punct)
+	assert.Equal(t, []string{"w2", "x", "y"}, d[0].Words[1].Words)
+	assert.Equal(t, ",", d[0].Words[1].Punct)
+	addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w X W2. X, y,"))
+	assert.Equal(t, []string{"w", "x"}, d[0].Words[0].Words)
+	assert.Equal(t, "", d[0].Words[0].Punct)
+	assert.Equal(t, []string{"W2", "x", "y"}, d[0].Words[1].Words)
+	assert.Equal(t, ",", d[0].Words[1].Punct)
 }
 
 func makeTestPResp(orig, punct string) *punctuation.Response {
