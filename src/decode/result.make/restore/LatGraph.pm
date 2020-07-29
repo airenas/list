@@ -62,6 +62,7 @@ sub new {
       _name => shift,
       _frameRate => shift,
       _startTime => shift,
+      _endTime   => shift,
       _frameBased => shift,
       _n_tm => {}, # in frames
       _in   => {},
@@ -676,10 +677,17 @@ sub print_sorted {
             $line .= '<'.$edge->{ph}.'>' if ($P[$j] eq 'P' && defined $edge->{ph}); # Phone sequence
             if ($P[$j] eq 'O') { # output for editor
                if ($edge->{word_id} == -1) { # new joint number
-                  $line .= $edge->{text};
+                  my $word = $edge->{text};
+                  # pasaliname priedus 1-as 2-u
+                  $word = $main::rev_map_digits_N{$word} if (defined $main::rev_map_digits_N{$word});
+                  $line .= $word;
                   }
                elsif (main::int2word($edge->{word_id}) ne '<unk>') {
-                  $line .= main::int2word($edge->{word_id});
+                  my $word = main::int2word($edge->{word_id});
+                  # jei pasaliname jungiamuosius bruksnius tarp zodziu - redaktoriuje jie sulimpa
+                  # pasaliname priedus 1-as 2-u
+                  $word = $main::rev_map_digits_N{$word} if (defined $main::rev_map_digits_N{$word});
+                  $line .= $word;
                   }
                else {
                   $line .= '<'.main::phones2letters($edge->{ph}).'>';

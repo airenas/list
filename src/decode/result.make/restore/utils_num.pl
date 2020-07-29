@@ -20,7 +20,62 @@ binmode(STDOUT, ":utf8");
 my $dirname = dirname(__FILE__);
 require "$dirname/lt.pl";
  
-my @order = ("t\Q$::u_ilgoji\Ekst\.", "mln\.", "mlrd\.", "trln\.");
+#my @order = ("t\Q$::u_ilgoji\Ekst\.", "mln\.", "mlrd\.", "trln\.");  # 2000-aisiais -> 2 tûkst.-aisiais
+my @order = ("1000", "mln\.", "mlrd\.", "trln\.");                    # 2000-aisiais -> 2 1000-aisiais
+
+# Numeriams skaityti
+our %map_digits_N = (
+   '0' => '0-is',
+   '1' => '1-as',
+   '2' => '2-u',
+   '3' => '3-ys',
+   '4' => '4-i',
+   '5' => '5-i',
+   '6' => '6-i',
+   '7' => '7-i',
+   '8' => '8-i',
+   '9' => '9-i',
+   );
+our %rev_map_digits_N = reverse %map_digits_N;
+
+# Used to compute text length in characters (this text does not appear in corpus)
+# to compute probabilities of different wordings
+our %map_num_comp_to_word = (
+   "0" => "nulis",
+   "1" => "vienas",
+   "2" => "du",
+   "3" => "trys",
+   "4" => "keturi",
+   "5" => "penki",
+   "6" => "\Q$::sh\Ee\Q$::sh\Ei",
+   "7" => "septyni",
+   "8" => "a\Q$::sh\Etuoni",
+   "9" => "devyni",
+   "10" => "de\Q$::sh\Eimt",
+   "11" => "vienuolika",
+   "12" => "dvylika",
+   "13" => "trylika",
+   "14" => "keturiolika",
+   "15" => "penkiolika",
+   "16" => "\Q$::sh\Ee\Q$::sh\Eiolika",
+   "17" => "septyniolika",
+   "18" => "a\Q$::sh\Etuoniolika",
+   "19" => "devyniolika",
+   "20" => "dvide\Q$::sh\Eimt",
+   "30" => "trisde\Q$::sh\Eimt",
+   "40" => "keturiasde\Q$::sh\Eimt",
+   "50" => "penkiasde\Q$::sh\Eimt",
+   "60" => "\Q$::sh\Ee\Q$::sh\Eiasde\Q$::sh\Eimt",
+   "70" => "septyniasde\Q$::sh\Eimt",
+   "80" => "a\Q$::sh\Etuoniasde\Q$::sh\Eimt",
+   "90" => "devyniasde\Q$::sh\Eimt",
+   "100" => "\Q$::sh\Eimtas",
+   "1000" => "t\Q$::u_ilgoji\Ekstantis", 
+   "t\Q$::u_ilgoji\Ekst\." => "t\Q$::u_ilgoji\Ekstantis", 
+   "mln\." => "milijonas", 
+   "mlrd\." => "milijardas", 
+   "trln\." => "trilijonas",
+   );
 
 ###############################################################################
 #
@@ -28,12 +83,30 @@ my @order = ("t\Q$::u_ilgoji\Ekst\.", "mln\.", "mlrd\.", "trln\.");
 #
 ###############################################################################
 
+# Converts space separated digit string from printed form to full form
+sub textp2textw {
+   my ( $str ) = @_;
+
+   return $str if ($::sent_filter_type eq 'SEP_REST');
+
+   my $new_str = '';
+   my @comp = split(/ /, $str);
+   for(my $i=0; $i<scalar @comp; $i++) {
+      $new_str .= ' ' if ($i > 0);
+      $new_str .= $map_num_comp_to_word{$comp[$i]};
+      }
+ 
+   return $new_str;
+   }
+
 # Converts number into text
 # reiketu papildyti vns. dgs. vienareiksminimu 100-as,o 2 100-ai,ø
 sub int2text {
    my ( $num ) = @_;
    my $o;
    my $i;
+
+   return $num if ($::sent_filter_type eq 'SEP_REST');
 
    #print "$num\n";
    my @digits = split('', reverse $num); 
@@ -83,6 +156,7 @@ sub int2text {
          }
       }
 
+   $text =~ s/\s*$//; # revove trailing space
    return($text);
    }
 

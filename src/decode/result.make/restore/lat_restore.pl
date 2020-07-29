@@ -32,8 +32,10 @@ require "$dirname/utils_num.pl";
 binmode(STDIN, ":utf8");
 binmode(STDOUT, ":utf8");
 
+# TODO kai --join-num 0.1 $deb_lat = 139 duoda "Lattice no. 139 has 1 broken segments"
+
 our $debug = 0;
-my $deb_lat;# = 96;# = 45;# = 184; # = 190;# = 183; # = 192; # = 33; ## = 210; # = 39; #203;#  = 190;# = 208;
+my $deb_lat; # = 139;# = 96;# = 45;# = 184; # = 190;# = 183; # = 192; # = 33; ## = 210; # = 39; #203;#  = 190;# = 208;
 # 33 - <eps>
 # 39 - 600 vs. 649
 ###############################################################################
@@ -48,15 +50,35 @@ my $L3 = shift @ARGV; # multiple-path lattice with phone-ids
 $main::symtab_w = shift @ARGV; # word symbol table
 $main::symtab_p = shift @ARGV; # phone symbol table
 
+# joins two adjacent segments if they belong to the same speaker and 
+# their summary length is inferior to $max_sum_duration sec (long text is bad for VVT)
 our $join_spk = 0;
+our $max_sum_duration = 100000.0; # default join all sections belonging to the same speaker 
+# joins adjacent numbers e.g. 9 1000 6 100 50 2 -> 9652
+# if they are not separated by silence longer than $max_intra_sil sec
 our $join_num = 0;
 our $max_intra_sil = 0.03;
 
 while (scalar @ARGV > 0) {
-   $join_spk = 1 if ($ARGV[0] eq '--join-spk');
-   $join_num = 1 if ($ARGV[0] eq '--join-num');
-   $max_intra_sil = $ARGV[0] if ($ARGV[0] =~ m/^[0-9\.]+$/);
-   shift @ARGV;
+   if ($ARGV[0] eq '--join-spk') {
+      $join_spk = 1;
+      shift @ARGV;
+      if ($ARGV[0] =~ m/^[0-9\.]+$/) {
+         $max_sum_duration = $ARGV[0]; 
+         shift @ARGV;
+         }
+      }
+   elsif ($ARGV[0] eq '--join-num') {
+      $join_num = 1;
+      shift @ARGV;
+      if ($ARGV[0] =~ m/^[0-9\.]+$/) {
+         $max_intra_sil = $ARGV[0]; 
+         shift @ARGV;
+         }
+      }
+   else { # not accepted
+      shift @ARGV;
+      }
    }
 
 if (!defined $L1 || !defined $L2 || !defined $L3 || !defined $main::symtab_w || !defined $main::symtab_p) {
@@ -109,12 +131,12 @@ sub read_lats {
          push @$lats_ref, $lat; # store lattice hash in the array
          }
       elsif ($nb_entries == 0 && $i+1 < $lcount && $lines[$i+1] !~ m/^$/) { # header
-         $lines[$i] =~ m/---([\.0-9]+)-/;
-         if (! defined ($1)) {
-            print STDERR "$0: cannot detect start time in the file name '$lines[$i]'\n";
+         $lines[$i] =~ m/---([\.0-9]+)-([\.0-9]+)/;
+         if (! defined ($1) || ! defined ($2)) {
+            print STDERR "$0: cannot detect start/end times in the file name '$lines[$i]'\n";
             exit -1;
             }
-         $lat = LatGraph->new($lines[$i], $frameRate, $1, $frameBased);
+         $lat = LatGraph->new($lines[$i], $frameRate, $1, $2, $frameBased);
          }
       elsif ( $nb_entries == 3 ) { # edge / word     
          if ($frameBased == 1) {   
@@ -179,21 +201,32 @@ sub reduce_out {
    my ( $lats_ref ) = @_;
 
    my $last_spk = -1;
+   my $lasti    = -1;
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
       next if (defined $deb_lat && $i != $deb_lat); # debug
-      next if ($$lats_ref[$i]->is_empty() == 1);
+      next if ($$lats_ref[$i]->is_empty() == 1); # skip initial empty lattices
       my $keys_ref = $$lats_ref[$i]->reduce_out();
       $$lats_ref[$i]->{_name} =~ m/-S([0-9]+)---/;
       if (! defined ($1)) {
          print STDERR "$0: cannot detect speaker name in the file name '$$lats_ref[$i]->{_name}'\n";
          exit -1;
          }
-      if ($join_spk == 0 || $last_spk == -1 || $1 != $last_spk) {
+      if ($join_spk == 0 || $last_spk == -1 || $1 != $last_spk || $$lats_ref[$i]->{_endTime} - $$lats_ref[$lasti]->{_startTime} > $max_sum_duration) {
          print "\n" if ($i > 0);         # newline between sections
          print '# '.($i+1).' S'.$1."\n"; # new section header
+         $lasti = $i;
          }
       $last_spk = $1;
       $$lats_ref[$i]->print_sorted($keys_ref, 'STO');
+ 
+      # print following empty lattices
+      my $j;
+      for($j=$i+1; $j<scalar @$lats_ref; $j++) {
+         last if ($$lats_ref[$j]->is_empty() == 0); 
+         $keys_ref = $$lats_ref[$j]->reduce_out();
+         $$lats_ref[$j]->print_sorted($keys_ref, 'STO'); 
+         }
+      $i = $j-1;
       }
    }
 #-----------------------------
@@ -279,7 +312,7 @@ print_lats(\@s_L1, 'SNTIWP') if ($debug == 1);
 
 connect_nums(\@s_L1) if ($join_num == 1);
 # Print text hypotheses
-reduce_out(\@s_L1);
+reduce_out(\@s_L1); # cia spausdina rezultata
 #print_lats(\@L1, 'STO');
 #print_lats(\@L1, 'SNTIWP');
 
