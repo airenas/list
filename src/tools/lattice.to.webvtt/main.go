@@ -102,7 +102,7 @@ func add(td *tdata, w *lattice.Word) {
 		td.from = w
 	}
 	td.to = w
-	td.sep = writeWord(&td.sbLine, w.Text, td.sep)
+	td.sep = writeWord(&td.sbLine, strings.Join(w.Words, " "), td.sep)
 	td.sep = writePunct(&td.sbLine, w.Punct)
 }
 

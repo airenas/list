@@ -22,6 +22,16 @@ func TestGetWebVTT(t *testing.T) {
 	assert.Equal(t, "\n00:00.010 --> 00:02.020\nw w2\n", text)
 }
 
+func TestGetWebVTT_Underscore(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 0.01 1.02 w_x_y
+1 1.02 2.02 w2_a
+`))
+	text := getWebVTT(lat)
+	assert.Equal(t, "\n00:00.010 --> 00:02.020\nw x y w2 a\n", text)
+}
+
 func TestGetWebVTT_Several(t *testing.T) {
 	lat, _ := lattice.Read(strings.NewReader(
 		`# 1 S1
