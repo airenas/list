@@ -82,7 +82,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
     `make install -j4`
 
-    Skriptas parsiųs reikalingus failus, paleis *docker* konteinerius. Priklausomai nuo inteneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
+    Skriptas parsiųs reikalingus failus, paleis *docker* konteinerius. Priklausomai nuo interneto ryšio diegimas gali užtrukti nuo 30 min iki kelių valandų.
     Sistema bus sudiegta *<deploy_dir>* direktorijoje
 
 ## Patikrinimas
@@ -105,7 +105,20 @@ Servisai valdomi su *docker-compose* komanda:
     docker-compose up -d
 ```
 
-## Išinstaliavimas
+## Duomenų atnaujinimas
+
+1. Atnaujinus duomenis, bus pakeista ir ši repositorija su nuorodomis į naujus modelių failus. Patikrinkite, kad turite naujausius skriptus:
+
+    `git pull`
+
+1. Atnaujinkite servisus/duomenis:
+
+```bash
+    make clean-docker
+    make install -j4
+```
+
+## Pašalinimas
 
 ```bash
     make clean

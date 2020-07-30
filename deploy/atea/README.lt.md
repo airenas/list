@@ -93,11 +93,11 @@ Analogiškai, kaip *Upload* serviso patikrinimas: `make proxy-result`. Kitame te
 
 ## Servisų atnaujinimas
 
-1. Padarome pakeitimus faile deployments/transcription.yml.
+1. Padarykite pakeitimus faile deployments/transcription.yml.
 
-1. Išsaugome pakeitimus git repozitorijoje.
+1. Išsaugokite pakeitimus git repozitorijoje.
 
-1. Vykdome komandą: `make install-services`
+1. Vykdykite komandą: `make install-services`
 
 ## Duomenų atnaujinimas
 
