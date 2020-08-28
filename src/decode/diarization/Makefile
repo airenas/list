@@ -6,11 +6,7 @@
 
 OUTPUT_ROOT?=/decoded
 INPUT_ROOT?=/audio.prepared
-APPS_ROOT?=/diarization
 KALDI_ROOT?=/kaldi
-LOCALCLASSPATH?=$(APPS_ROOT)/lib/LIUM_SpkDiarization-4.2.jar
-DO_MUSIC_DETECTION=no
-JAVA_BIN?=java
 
 .SECONDARY:
 .DELETE_ON_ERROR:
@@ -34,9 +30,11 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
 	echo "Number of speakers = $(NUMBER_OF_SPEAKERS)"
 	rm -rf `dirname $@`
 	mkdir -p `dirname $@`
-	echo "$* 1 0 1000000000 U U U 1" >  `dirname $@`/show.uem.seg;
-	if [ $(DO_MUSIC_DETECTION) = yes ]; then diarization_opts="-m"; fi; \
-	(export LOCALCLASSPATH=$(LOCALCLASSPATH); export JAVA_BIN=$(JAVA_BIN); export MODELS_ROOT=$(MODELS_ROOT); $(APPS_ROOT)/diarization.sh $$diarization_opts $^ `dirname $@`/show.uem.seg)
+	if [ -z "$(NUMBER_OF_SPEAKERS)" ]; \
+		then diarization_opts="--min_speakers=1 --max_speakers=100"; \
+		else diarization_opts="--min_speakers=$(NUMBER_OF_SPEAKERS) --max_speakers=$(NUMBER_OF_SPEAKERS)"; fi; \
+	echo "diarization_opts=$$diarization_opts"; \
+	(cd /app; python3 /app/main.py --wav_path=$^ --seg_path=$@ $$diarization_opts)
 
 $(OUTPUT_ROOT)/diarization/%/show.fixed.seg: $(OUTPUT_ROOT)/diarization/%/show.seg 
 	$(APP_DIR)/fix.segments $< $@
