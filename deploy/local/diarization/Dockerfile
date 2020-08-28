@@ -6,6 +6,8 @@ VOLUME ["/data"]
 VOLUME ["/models"]
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y build-essential
+
 COPY deploy/cmdWorkerService /app-list/
 COPY config.yaml /app-list/
 COPY deploy/send.metric /app-list/

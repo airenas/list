@@ -36,7 +36,7 @@ dpush: dbuild
 	docker push $(tag)
 	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
 ########### END #####################################################################
-redeploy: build copy
+redeploy: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name) $(dist_tools_files)
 	$(call dc-deploy,..,$(service))
 #####################################################################################
 clean:
