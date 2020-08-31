@@ -252,6 +252,22 @@ describe('ResultsComponent', () => {
     });
   }));
 
+  it('should call download - LatRestored', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    component.menuTrigger.openMenu();
+    let arg: string;
+    const dwnSpy = spyOn(component.fileKeeper, 'download').and.callFake(function (a: string) { arg = a; });
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      fixture.debugElement.query(By.css('#dfLatRescore')).nativeElement.click();
+      fixture.detectChanges();
+      expect(dwnSpy).toHaveBeenCalledTimes(1);
+      expect(arg).toBe('lat.restored.txt');
+    });
+  }));
+
   it('should have hidden file buttons when in progress', async(() => {
     const r = { status: Status.Transcription, id: 'id', error: '', recognizedText: '', progress: 0 };
     component.onResult(r);

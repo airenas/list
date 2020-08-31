@@ -60,7 +60,7 @@ class FileURLKeeper {
   constructor(private config: Config) {
   }
 
-  static latRestoredURL: 'lat.restored.txt';
+  static latRestoredURL = 'lat.restored.txt';
 
   contains = false;
   result: string;
