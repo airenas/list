@@ -1,3 +1,4 @@
+import { EditorURLProviderService } from './../service/editor-urlprovider.service';
 import { MicrophoneFactory } from './../utils/microphone';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -31,6 +32,7 @@ import { TestMicrophoneFactory } from '../utils/microphone.specs';
 import { TestAudioPlayerFactory } from '../utils/audio.player.specs';
 import { TestParamsProviderService } from '../service/params-provider.service.spec';
 import { Recognizer } from '../api/recognizer';
+import { RouterTestingModule } from '@angular/router/testing';
 
 @Injectable()
 export class MockTestService implements TranscriptionService {
@@ -57,7 +59,7 @@ export class MockSubscriptionService implements ResultSubscriptionService {
 
 @Injectable()
 export class MockActivatedRoute {
-  snapshot = { paramMap: new Map(), queryParamMap: new Map()};
+  snapshot = { paramMap: new Map(), queryParamMap: new Map() };
 }
 
 export class FileHelper {
@@ -89,7 +91,8 @@ export class TestHelper {
     MatTabsModule, MatButtonModule, MatInputModule, FormsModule,
     MatSnackBarModule, MatProgressBarModule, MatProgressSpinnerModule,
     MatCardModule, NgxFilesizeModule, MatSelectModule, MatMenuModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterTestingModule
   ],
   providers: [{ provide: APP_BASE_HREF, useValue: '/' },
   { provide: ParamsProviderService, useClass: TestParamsProviderService },
@@ -98,7 +101,8 @@ export class TestHelper {
   { provide: ActivatedRoute, useClass: MockActivatedRoute },
   { provide: Config, useClass: Config },
   { provide: AudioPlayerFactory, useClass: TestAudioPlayerFactory },
-  { provide: MicrophoneFactory, useClass: TestMicrophoneFactory }
+  { provide: MicrophoneFactory, useClass: TestMicrophoneFactory },
+  { provide: EditorURLProviderService, useClass: EditorURLProviderService }
   ],
   bootstrap: [],
   exports: [

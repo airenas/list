@@ -273,6 +273,30 @@ describe('ResultsComponent', () => {
     });
   }));
 
+  it('should have hidden editor button on start', async(() => {
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(false);
+    });
+  }));
+
+  it('should have hidden editor button when in progress', async(() => {
+    const r = { status: Status.Transcription, id: 'id', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(false);
+    });
+  }));
+
+  it('should display editor button when completed', async(() => {
+    const r = { status: Status.Completed, id: 'id', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(true);
+    });
+  }));
+
   it('should display error', async(() => {
     const r = { status: Status.Rescore, id: 'x', error: 'olia', errorCode: ErrorCode.ServiceError, progress: 0 };
     component.onResult(r);
@@ -305,6 +329,19 @@ describe('ResultsComponent', () => {
       spyOn(component, 'showErrDetails');
       fixture.debugElement.query(By.css('#errorDiv')).nativeElement.click();
       expect(component.showErrDetails).toHaveBeenCalled();
+    });
+  }));
+
+  it('should click editor button', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    const editorSpy = spyOn(component, 'openEditor').and.callFake(function () { });
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      fixture.debugElement.query(By.css('#openEditorButton')).nativeElement.click();
+      fixture.detectChanges();
+      expect(editorSpy).toHaveBeenCalledTimes(1);
     });
   }));
 
