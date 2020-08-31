@@ -1,42 +1,19 @@
 import { TestBed, inject } from '@angular/core/testing';
 
-import { WebsocketURLProviderService } from './websocket-urlprovider.service';
 import { TestAppModule } from '../base/test.app.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Config } from '../config';
+import { MockLocation } from './websocket-urlprovider.service.spec';
+import { EditorURLProviderService } from './editor-urlprovider.service';
 
-class MockLocation implements Location {
-  ancestorOrigins: DOMStringList;
-  hash: string; host: string;
-  hostname: string;
-  href: string;
-  origin: string;
-  pathname: string;
-  port: string;
-  protocol: string;
-  search: string;
-  assign(url: string): void {
-  }
-
-  reload(forcedReload?: boolean): void {
-  }
-
-  replace(url: string): void {
-  }
-
-  toString(): string {
-    return '';
-  }
-}
-
-describe('WebsocketURLProviderService', () => {
+describe('EditorURLProviderService', () => {
   let location: MockLocation;
   let config: Config;
 
   beforeEach(() => {
     config = new Config();
     TestBed.configureTestingModule({
-      providers: [WebsocketURLProviderService,
+      providers: [EditorURLProviderService,
         { provide: Config, useValue: config }
       ],
       imports: [TestAppModule, RouterTestingModule.withRoutes([])]
@@ -48,42 +25,34 @@ describe('WebsocketURLProviderService', () => {
     location.pathname = '/';
   });
 
-  it('should be created', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
+  it('should be created', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
     expect(service).toBeTruthy();
   }));
 
-  it('returns ws', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = 'olia';
-    expect(service.getURLInternal(location, 'result')).toEqual('ws://host:8000/olia');
+  it('should use url from config', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
+    config.editorUrl = 'olia/';
+    expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
+      .toContain('http//host:8000/olia/?');
   }));
 
-  it('returns path from config', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = 'olia';
-    expect(service.getURLInternal(location, 'result')).toEqual('ws://host:8000/olia');
-  }));
-
-  it('use pathname', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = 'olia';
-    location.pathname = '/lala';
-    expect(service.getURLInternal(location, '')).toEqual('ws://host:8000/lala/olia');
-  }));
-
-  it('strip router path', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = 'olia';
+  it('should strip router path', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
+    config.editorUrl = 'olia/';
     location.pathname = '/lala/result';
-    expect(service.getURLInternal(location, 'result')).toEqual('ws://host:8000/lala/olia');
+    expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
+      .toContain('http//host:8000/lala/olia/?audio=');
   }));
 
-  it('handles double slash', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = '/olia';
+  it('should add audio param', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
+    config.editorUrl = 'olia/';
     location.pathname = '/lala/result';
-    expect(service.getURLInternal(location, '/result')).toEqual('ws://host:8000/lala/olia');
+    expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
+      .toContain('audio=' + encodeURIComponent('http//host:8000/lala/audio/id') + '&');
   }));
 
-  it('handles no slashes', inject([WebsocketURLProviderService], (service: WebsocketURLProviderService) => {
-    config.subscribeUrl = 'olia';
-    location.pathname = 'lala/result';
-    expect(service.getURLInternal(location, '/result')).toEqual('ws://host:8000/lala/olia');
+  it('should add lattice param', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
+    config.editorUrl = 'olia/';
+    location.pathname = '/lala/result';
+    expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
+      .toContain('&lattice=' + encodeURIComponent('http//host:8000/lala/result/id/lattice/lat.txt'));
   }));
-
 });

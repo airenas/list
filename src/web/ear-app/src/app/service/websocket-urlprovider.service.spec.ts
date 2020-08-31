@@ -5,7 +5,7 @@ import { TestAppModule } from '../base/test.app.module';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Config } from '../config';
 
-class MockLocation implements Location {
+export class MockLocation implements Location {
   ancestorOrigins: DOMStringList;
   hash: string; host: string;
   hostname: string;
