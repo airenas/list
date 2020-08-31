@@ -9,6 +9,7 @@ export class Config {
     public subscribeUrl: string;
     public audioUrl: string;
     public resultUrl: string;
+    public editorUrl: string;
 
     constructor() {
         const prefix = '';
@@ -18,5 +19,6 @@ export class Config {
         this.subscribeUrl = prefix + environment.statusUrl + 'subscribe';
         this.audioUrl = prefix + environment.resultUrl + 'audio/';
         this.resultUrl = prefix + environment.resultUrl + 'result/';
+        this.editorUrl = environment.editorUrl;
     }
 }

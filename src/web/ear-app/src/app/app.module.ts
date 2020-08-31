@@ -29,6 +29,7 @@ import { ParamsProviderService, LocalStorageParamsProviderService } from './serv
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { WebsocketURLProviderService } from './service/websocket-urlprovider.service';
 import { MicrophoneFactory } from './utils/microphone';
+import { EditorURLProviderService } from './service/editor-urlprovider.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,7 @@ import { MicrophoneFactory } from './utils/microphone';
     ReactiveFormsModule, MatTooltipModule, MatMenuModule
   ],
   providers: [Config,
-    WebsocketURLProviderService,
+    WebsocketURLProviderService, EditorURLProviderService,
     { provide: ParamsProviderService, useClass: LocalStorageParamsProviderService },
     { provide: ResultSubscriptionService, useClass: WSResultSubscriptionService },
     { provide: TranscriptionService, useClass: HttpTranscriptionService },
