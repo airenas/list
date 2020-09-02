@@ -24,7 +24,7 @@ worker=diarization
 ###############################################################################
 
 # Speaker diarization
-$(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%.wav
+$(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%/prepared.wav
 	tsk=split;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	echo "Number of speakers = $(NUMBER_OF_SPEAKERS)"
@@ -43,7 +43,7 @@ $(OUTPUT_ROOT)/diarization/%/show.fixed.seg: $(OUTPUT_ROOT)/diarization/%/show.s
 $(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
 	$(logb) $@
 	mkdir -p `dirname $@`
-	cat $< | awk 'NR==1 { printf "%s %s/%s.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
+	cat $< | awk 'NR==1 { printf "%s %s/%s/prepared.wav", $$1, "$(INPUT_ROOT)", $$1 }' | LC_ALL=C sort > $@
 	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
