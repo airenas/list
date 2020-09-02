@@ -77,3 +77,5 @@ deploy/atea/volume-helper/helper.yml
 deploy/atea/deployments/kafka.integration.yml
 deploy/atea/deployments/metrics.yml
 deploy/atea/deployments/transcription.yml
+sfgparse/**
+src/decode/audio.prepare/fs/**

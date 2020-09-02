@@ -11,6 +11,7 @@
 
 OUTPUT_ROOT?=/audio.prepared
 INPUT_ROOT?=/audio.in
+DENOISE_APP?=${APP_DIR}/sfg
 
 
 MIN_LEN?=0.5
@@ -29,29 +30,46 @@ worker=audio.prepare
 ###############################################################################
 
 $(OUTPUT_ROOT):
-	mkdir $(OUTPUT_ROOT)
+	mkdir -p $(OUTPUT_ROOT)
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.wav | $(OUTPUT_ROOT)
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.wav | $(OUTPUT_ROOT)
 	tsk=wav;id=$*;. $(APP_DIR)/m_start.sh $@
+	mkdir -p `dirname $@`
 	sox $< -c 1 -b 16 $@ rate -v 16k 
 	$(CHECK_FORMAT_CMD)
 	$(CHECK_LEN_CMD)
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp3 | $(OUTPUT_ROOT)
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.mp3 | $(OUTPUT_ROOT)
 	tsk=mp3;id=$*;. $(APP_DIR)/m_start.sh $@
-	
+	mkdir -p `dirname $@`
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k
 	$(CHECK_FORMAT_CMD)
 	$(CHECK_LEN_CMD)
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
 	tsk=mp4;id=$*;. $(APP_DIR)/m_start.sh $@
+	mkdir -p `dirname $@`
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
 	$(CHECK_FORMAT_CMD)
 	$(CHECK_LEN_CMD)
 
-$(OUTPUT_ROOT)/%.wav: $(INPUT_ROOT)/%.m4a | $(OUTPUT_ROOT)
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.m4a | $(OUTPUT_ROOT)
 	tsk=m4a;id=$*;. $(APP_DIR)/m_start.sh $@
+	mkdir -p `dirname $@`
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
 	$(CHECK_FORMAT_CMD)
 	$(CHECK_LEN_CMD)
+
+###############################################################################
+$(OUTPUT_ROOT)/%/prepared.wav: $(OUTPUT_ROOT)/%/converted.wav
+ifeq ($(DENOISE), true)
+	tsk=denoise;id=$*;. $(APP_DIR)/m_start.sh $@
+	echo "main ()" > $(OUTPUT_ROOT)/$*/denoise.cfg
+	echo "{" >> $(OUTPUT_ROOT)/$*/denoise.cfg
+	echo '	olasynth("$^", 0, "$@");' >> $(OUTPUT_ROOT)/$*/denoise.cfg
+	echo "}" >> $(OUTPUT_ROOT)/$*/denoise.cfg
+	echo "Run denoise"
+	${DENOISE_APP} $(OUTPUT_ROOT)/$*/denoise.cfg -nofinish
+else
+	cp $^ $@
+endif

@@ -1,0 +1,19 @@
+-include Makefile.options
+
+test_dir=fs
+id?=123
+DENOISE_APP=../../../sfgparse/sfg
+
+.EXPORT_ALL_VARIABLES:
+
+test: 
+	${MAKE} ${test_dir}/decoded/audio/${id}/prepared.wav
+
+test-m4a: 
+	${MAKE} ${test_dir}/decoded/audio/m4a/prepared.wav
+
+test-denoise: 
+	${MAKE} DENOISE=true ${test_dir}/decoded/audio/${id}/prepared.wav		
+
+clean:
+	rm -rf ${test_dir}/decoded/audio/${id}
