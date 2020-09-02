@@ -1,4 +1,4 @@
-OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
-INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/audio.prepared
-APPS_ROOT=/home/airenas/projects/list/volumes/apps/diarization
-MODELS_ROOT=/home/airenas/projects/list/volumes/models/diarization
+OUTPUT_ROOT=fs/decoded
+INPUT_ROOT=fs/decoded/audio
+APP_DIR=../scripts
+KALDI_ROOT=../../../deploy/local/kaldi/apps/kaldi

@@ -79,3 +79,4 @@ deploy/atea/deployments/metrics.yml
 deploy/atea/deployments/transcription.yml
 sfgparse/**
 src/decode/audio.prepare/fs/**
+src/decode/diarization/fs/**
