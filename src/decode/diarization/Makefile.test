@@ -1,7 +1,7 @@
 -include Makefile.options
 
 test_dir=fs
-id?=123
+id?=0110db5a-c0a1-4787-84d2-6f09ed8f6c33
 DENOISE_APP=../../../sfgparse/sfg
 DIARIZATION_APP=$(MAKE) -f Makefile.test fakeSeg; echo cmdparams 
 

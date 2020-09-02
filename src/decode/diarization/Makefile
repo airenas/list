@@ -46,7 +46,7 @@ $(OUTPUT_ROOT)/diarization/%/show.fixed.seg: $(OUTPUT_ROOT)/diarization/%/show.s
 $(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
 	$(logb) $@
 	mkdir -p `dirname $@`
-	cat $< | awk 'NR==1 { printf "prepared %s/%s/prepared.wav", "$(INPUT_ROOT)", $* }' | LC_ALL=C sort > $@
+	cat $< | awk 'NR==1 { printf "prepared %s/%s/prepared.wav", "$(INPUT_ROOT)", "$*" }' | LC_ALL=C sort > $@
 	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/utt2spk: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 
