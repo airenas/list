@@ -43,6 +43,16 @@ services:
      - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
      - "traefik.http.port=8000"
 
+  editor:
+    image: airenas/list-editor-app:0.1.1
+    restart: unless-stopped
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
+     - "traefik.http2.frontend.rule=PathPrefixStrip:/${URL}/editor/"
+     - "traefik.http.port=80"   
+     - "traefik.http2.port=80"   
+
   upload-service:
     image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
