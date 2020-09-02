@@ -5,6 +5,7 @@ executable_name=cmdWorkerService
 main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=audio-prepare-service
 version=$(AUDIO_PREPARE_SERVICE_VERSION)
+denoise_dir=../../../sfgparse
 #####################################################################################
 $(dist_dir):
 	mkdir -p $@
@@ -13,7 +14,7 @@ $(dist_dir)/$(executable_name): $(GO_SRC_DIR) | $(dist_dir)
 	@echo -n "$(GREEN)Build:$(C_NC) $(executable_name)\n"
 #####################################################################################
 tools_dir=$(SRC_DIR)/tools
-tools=send.metric m_shell.sh m_start.sh m_end.sh
+tools=send.metric m_shell.sh m_start.sh m_end.sh sfg
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
 scripts_dir=$(SRC_DIR)/decode/scripts
@@ -29,7 +30,9 @@ $(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/audio.prepare/Makefile | $(dist_dir)
 	cp $< $@
 $(dist_dir)/%.sh: $(scripts_dir)/%.sh | $(dist_dir)/cmd
 	cp $< $@
-copy: $(dist_dir)/cmd/Makefile
+$(dist_dir)/sfg: $(denoise_dir)/sfg | $(dist_dir)
+	cp $< $@
+copy: $(dist_dir)/cmd/Makefile $(dist_dir)/$(executable_name) $(dist_tools_files) $(dist_scripts_files)
 ########### DOCKER ##################################################################
 tag=$(docker_prefix)$(service):$(version).$(commit_count)
 

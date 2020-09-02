@@ -8,6 +8,7 @@ WORKDIR /app
 
 COPY deploy/cmdWorkerService /app/
 COPY deploy/send.metric /app/
+COPY deploy/sfg /app/
 COPY deploy/*.sh /app/
 COPY config.yaml /app/
 
