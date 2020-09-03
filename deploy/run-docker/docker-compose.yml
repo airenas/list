@@ -237,9 +237,6 @@ services:
       - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
     environment:
       TF_URL: tensorflow:8500
-    labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/punctuation/"
-     - "traefik.port=8000"  
   
   clean-service:
     image: ${DOCKER_REPO}clean-service:${CLEAN_SERVICE_VERSION}
@@ -297,9 +294,6 @@ services:
       - mongo:/data/db
     restart: unless-stopped     
     command: mongod --logpath=/dev/null # --quiet
-    labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/mongo/"
-     - "traefik.port=27017"
 
   rabbitmq:
     image: "rabbitmq:3.7-management"
@@ -314,9 +308,6 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
-    labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
-     - "traefik.port=15672"  
 
 # ########### volumes 
 volumes:
