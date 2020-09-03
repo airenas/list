@@ -5,7 +5,7 @@ fileStorage:
     patterns: |
         audio.in/{ID}.*
         audio.prepared/{ID}.*
-        decoded/audio/segmented/{ID}
+        decoded/audio/{ID}
         decoded/diarization/{ID}
         decoded/trans/{ID}
         results/{ID}
