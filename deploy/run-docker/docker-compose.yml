@@ -261,6 +261,7 @@ services:
     depends_on:
     - node-exporter
     - metrics-collector
+    restart: unless-stopped
     labels:  
     - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
     - "traefik.port=9090"   
