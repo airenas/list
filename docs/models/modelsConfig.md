@@ -36,6 +36,7 @@ settings:
   lm_dir: /models/lm/v3/
   rnnlm_dir: /models/rnnlm/v1/
   punctuate: true  # do need to punctuate result
+  denoise: false # do use implemented denoise algorythm
 
   # transcription preload commands - may be shared between models if key is the same
   transcription-preload_key: words_v3
