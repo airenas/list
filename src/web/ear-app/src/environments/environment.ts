@@ -7,7 +7,7 @@ export const environment = {
   sendFileUrl: 'transcriber/',
   statusUrl: 'status.service/',
   resultUrl: 'result.service/',
-  editorUrl: 'editor/',
+  editorUrl: 'editor/#/remote-import/',
   version: 'DEV'
 };
 

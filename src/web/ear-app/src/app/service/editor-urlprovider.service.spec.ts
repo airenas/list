@@ -32,27 +32,27 @@ describe('EditorURLProviderService', () => {
   it('should use url from config', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
     config.editorUrl = 'olia/';
     expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
-      .toContain('http//host:8000/olia/?');
+      .toContain('http//host:8000/olia/');
   }));
 
   it('should strip router path', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
     config.editorUrl = 'olia/';
     location.pathname = '/lala/result';
     expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
-      .toContain('http//host:8000/lala/olia/?audio=');
+      .toContain('http//host:8000/lala/olia/');
   }));
 
   it('should add audio param', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
     config.editorUrl = 'olia/';
     location.pathname = '/lala/result';
     expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
-      .toContain('audio=' + encodeURIComponent('http//host:8000/lala/audio/id') + '&');
+      .toContain('/' + encodeURIComponent('http//host:8000/lala/audio/id'));
   }));
 
   it('should add lattice param', inject([EditorURLProviderService], (service: EditorURLProviderService) => {
     config.editorUrl = 'olia/';
     location.pathname = '/lala/result';
     expect(service.getURLInternal(location, 'result', 'audio/id', 'result/id/lattice/lat.txt'))
-      .toContain('&lattice=' + encodeURIComponent('http//host:8000/lala/result/id/lattice/lat.txt'));
+      .toContain('/' + encodeURIComponent('http//host:8000/lala/result/id/lattice/lat.txt') + '/');
   }));
 });

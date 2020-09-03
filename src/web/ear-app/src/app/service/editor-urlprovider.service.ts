@@ -16,8 +16,8 @@ export class EditorURLProviderService {
     mainUrl = this.addURL(mainUrl, basePathURL);
     let result = mainUrl;
     result = this.addURL(result, this.config.editorUrl);
-    result = result + '?audio=' + encodeURIComponent(this.addURL(mainUrl, audioURL));
-    result = result + '&lattice=' + encodeURIComponent(this.addURL(mainUrl, latticeURL));
+    result = this.addURL(result, encodeURIComponent(this.addURL(mainUrl, latticeURL)));
+    result = this.addURL(result, encodeURIComponent(this.addURL(mainUrl, audioURL)));
     return result;
   }
 
