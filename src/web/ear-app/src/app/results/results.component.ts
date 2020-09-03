@@ -1,3 +1,4 @@
+import { EditorURLProviderService } from './../service/editor-urlprovider.service';
 import { ResultSubscriptionService } from './../service/result-subscription.service';
 import { TranscriptionResult } from './../api/transcription-result';
 import { MatMenuTrigger } from '@angular/material/menu';
@@ -48,9 +49,19 @@ class AudioURLKeeper {
       this.lastLoadedURL = this.URL;
     }
   }
+
+  getURL() {
+    return this.URL;
+  }
 }
 
 class FileURLKeeper {
+
+  constructor(private config: Config) {
+  }
+
+  static latRestoredURL = 'lat.restored.txt';
+
   contains = false;
   result: string;
   resultFinal: string;
@@ -90,7 +101,7 @@ class FileURLKeeper {
     },
     {
       id: 'dfLatRescore',
-      url: 'lat.restored.txt',
+      url: FileURLKeeper.latRestoredURL,
       title: 'Grafas redagavimui (.txt)'
     },
     {
@@ -105,9 +116,6 @@ class FileURLKeeper {
     },
   ];
 
-  constructor(private config: Config) {
-  }
-
   setID(result: TranscriptionResult) {
     this.contains = false;
     if (result == null || result.status !== Status.Completed) {
@@ -118,8 +126,12 @@ class FileURLKeeper {
     this.URLPrefix = this.config.resultUrl + result.id;
   }
 
+  getURL(URLSufix: string) {
+    return this.URLPrefix + '/' + URLSufix;
+  }
+
   download(URLSufix: string) {
-    const URL = this.URLPrefix + '/' + URLSufix;
+    const URL = this.getURL(URLSufix);
     window.open(URL, '_blank');
   }
 }
@@ -147,7 +159,8 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
   constructor(protected transcriptionService: TranscriptionService, protected snackBar: MatSnackBar,
     private route: ActivatedRoute, private paramsProviderService: ParamsProviderService,
     private resultSubscriptionService: ResultSubscriptionService,
-    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory, private config: Config) {
+    private cdr: ChangeDetectorRef, private audioPlayerFactory: AudioPlayerFactory, private config: Config,
+    private editorUrlSrvice: EditorURLProviderService) {
     super(transcriptionService, snackBar);
   }
 
@@ -246,5 +259,12 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
       this.showInfo('Detalus klaidų rodymas įjungtas');
       this.setError();
     }
+  }
+
+  openEditor() {
+    const url = this.editorUrlSrvice.getURL(this.audioURLKeeper.getURL(),
+      this.fileKeeper.getURL(FileURLKeeper.latRestoredURL));
+    console.log('Editor: ' + decodeURIComponent(url));
+    window.open(url, '_self');
   }
 }

@@ -252,6 +252,22 @@ describe('ResultsComponent', () => {
     });
   }));
 
+  it('should call download - LatRestored', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    component.menuTrigger.openMenu();
+    let arg: string;
+    const dwnSpy = spyOn(component.fileKeeper, 'download').and.callFake(function (a: string) { arg = a; });
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      fixture.debugElement.query(By.css('#dfLatRescore')).nativeElement.click();
+      fixture.detectChanges();
+      expect(dwnSpy).toHaveBeenCalledTimes(1);
+      expect(arg).toBe('lat.restored.txt');
+    });
+  }));
+
   it('should have hidden file buttons when in progress', async(() => {
     const r = { status: Status.Transcription, id: 'id', error: '', recognizedText: '', progress: 0 };
     component.onResult(r);
@@ -270,6 +286,30 @@ describe('ResultsComponent', () => {
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeFileButton')))).toBe(false);
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#latticeTxtFileButton')))).toBe(false);
       expect(TestHelper.Visible(fixture.debugElement.query(By.css('#nBestFileButton')))).toBe(false);
+    });
+  }));
+
+  it('should have hidden editor button on start', async(() => {
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(false);
+    });
+  }));
+
+  it('should have hidden editor button when in progress', async(() => {
+    const r = { status: Status.Transcription, id: 'id', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(false);
+    });
+  }));
+
+  it('should display editor button when completed', async(() => {
+    const r = { status: Status.Completed, id: 'id', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      expect(TestHelper.Visible(fixture.debugElement.query(By.css('#openEditorButton')))).toBe(true);
     });
   }));
 
@@ -305,6 +345,19 @@ describe('ResultsComponent', () => {
       spyOn(component, 'showErrDetails');
       fixture.debugElement.query(By.css('#errorDiv')).nativeElement.click();
       expect(component.showErrDetails).toHaveBeenCalled();
+    });
+  }));
+
+  it('should click editor button', async(() => {
+    const r = { status: Status.Completed, id: 'iddddd', error: '', recognizedText: '', progress: 0 };
+    component.onResult(r);
+    fixture.detectChanges();
+    const editorSpy = spyOn(component, 'openEditor').and.callFake(function () { });
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      fixture.debugElement.query(By.css('#openEditorButton')).nativeElement.click();
+      fixture.detectChanges();
+      expect(editorSpy).toHaveBeenCalledTimes(1);
     });
   }));
 
