@@ -265,6 +265,6 @@ export class ResultsComponent extends BaseComponent implements OnInit, OnDestroy
     const url = this.editorUrlSrvice.getURL(this.audioURLKeeper.getURL(),
       this.fileKeeper.getURL(FileURLKeeper.latRestoredURL));
     console.log('Editor: ' + decodeURIComponent(url));
-    window.open(url, '_self');
+    window.open(url);
   }
 }
