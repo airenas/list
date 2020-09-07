@@ -20,7 +20,7 @@ $(dist_dir)/%: $(tools_dir)/% | $(dist_dir)
 	@echo -n "$(GREEN)Build:$(C_NC) $*\n"
 build: $(dist_dir)/$(executable_name) $(dist_tools_files)
 #####################################################################################
-$(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/diarization/Makefile
+$(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/diarization-alt/Makefile
 	mkdir -p $(@D)
 	cp $< $@
 $(dist_dir)/%.sh: $(SRC_DIR)/decode/scripts/%.sh | $(dist_dir)
