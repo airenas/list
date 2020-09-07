@@ -80,3 +80,4 @@ deploy/atea/deployments/transcription.yml
 sfgparse/**
 src/decode/audio.prepare/fs/**
 src/decode/diarization/fs/**
+src/decode/diarization-alt/fs/**
