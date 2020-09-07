@@ -1,0 +1,20 @@
+worker:
+    name: Diarization
+    queue: Diarization
+    command: make /data/decoded/trans/{ID}/.diarization.done
+    workingDir: /cmd/
+    logFile: /data/logs/{ID}.log
+
+recognizerConfig:
+    path: /models/config/
+
+# messageServer: 
+#     broker: amqp://list:list@rabbitmq:5672/
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"

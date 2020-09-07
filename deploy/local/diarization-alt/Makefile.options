@@ -1,0 +1,6 @@
+OUTPUT_ROOT=/data/decoded
+INPUT_ROOT=/data/decoded/audio
+APPS_ROOT=/apps/diarization
+KALDI_ROOT=/apps/kaldi
+MODELS_ROOT=/models/diarization
+APP_DIR=/app-list
