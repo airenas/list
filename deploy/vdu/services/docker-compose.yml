@@ -127,7 +127,7 @@ services:
       - modelsStorage:/models 
 
   diarization-service:
-    image: airenas/list-diarization-service:${DIARIZATION_SERVICE_VERSION}
+    image: airenas/list-${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq
