@@ -111,7 +111,7 @@ services:
       - modelsStorage:/models 
 
   diarization-service:
-    image: ${DOCKER_REPO}diarization-service:${DIARIZATION_SERVICE_VERSION}
+    image: ${DOCKER_REPO}${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
     restart: unless-stopped
     depends_on: 
       - rabbitmq

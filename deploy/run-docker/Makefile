@@ -3,7 +3,7 @@ include Makefile.options
 dwn_dir=$(deploy_dir)/dwn
 install_dir=$(deploy_dir)/.install
 rec_file=$(deploy_dir)/volumes/models/config/recognizers.map.yml
-dwn_url=https://prn509.vdu.lt:7080/testdata
+dwn_url=https://semantikadocker.vdu.lt/models
 ########################################################################################################
 models_done=$(patsubst %, $(install_dir)/.%.done, $(models))
 models_conf=$(patsubst %, $(install_dir)/.%.conf, $(models))
