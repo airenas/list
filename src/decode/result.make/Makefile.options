@@ -1,7 +1,7 @@
-OUTPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
-RESULTS_ROOT=/home/airenas/projects/list/volumes/fileStorage/results
-INPUT_ROOT=/home/airenas/projects/list/volumes/fileStorage/decoded
+OUTPUT_ROOT?=fs/decoded
+RESULTS_ROOT?=fs/results
+APP_DIR?=../scripts
 APPS_ROOT=/home/airenas/projects/list/volumes/apps/kaldi
-MODELS_ROOT=/home/airenas/hdd/list/ac/20_04_17-2g
+MODELS_ROOT=/home/airenas/hdd/list/am/ben-2.0
 PR_EXEC=/home/airenas/projects/list/src/tools/punct.file/punct.file
 PR_URL=http://airenas.eu/punctuation/punctuation

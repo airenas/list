@@ -10,6 +10,13 @@ APPS_ROOT?=/kaldi
 FINAL_PASS=2-pass
 APP_DIR?=/app
 
+###############################################################################
+LATTICE_TO_TEXT_APP?=$(APP_DIR)/lattice.to.text
+INT_TO_WORD_APP?=$(APP_DIR)/int.to.word
+LATTICE_TO_WEBVTT_APP?=$(APP_DIR)/lattice.to.webvtt
+SEND_METRIC_APP?=${APP_DIR}/send.metric
+###############################################################################
+
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
 log=echo $$(date +'%Y-%m-%d %T')
@@ -48,19 +55,19 @@ $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
 	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
 	
 	mkdir -p $(RESULTS_ROOT)/$*/
-	$(APP_DIR)/lattice.to.text $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
+	$(LATTICE_TO_TEXT_APP) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	tsk=lattice2textFinal;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(RESULTS_ROOT)/$*/
-	$(APP_DIR)/lattice.to.text $^ $@
+	$(LATTICE_TO_TEXT_APP) $^ $@
 
 $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	tsk=lattice2webvtt;id=$*;. $(APP_DIR)/m_start.sh $@
 	
 	mkdir -p $(RESULTS_ROOT)/$*/
-	$(APP_DIR)/lattice.to.webvtt $^ $@
+	$(LATTICE_TO_WEBVTT_APP) $^ $@
 
 $(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
@@ -78,14 +85,14 @@ $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=prepareLat;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	gunzip -c $^ | lattice-copy ark:- ark,t:- | \
-		$(APP_DIR)/int.to.word -f 3 -v $(MODELS_ROOT)/words.txt > $@
+		$(INT_TO_WORD_APP) -f 3 -v $(MODELS_ROOT)/words.txt > $@
 
 $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=lattice2n10;id=$*;. $(APP_DIR)/m_start.sh $@
 	gunzip -c $^ | \
 	  lattice-to-nbest --n=10 ark:- ark:- | \
 		lattice-copy ark:- ark,t:- | \
-		$(APP_DIR)/int.to.word -f 3 -v $(MODELS_ROOT)/words.txt > $@		
+		$(INT_TO_WORD_APP) -f 3 -v $(MODELS_ROOT)/words.txt > $@		
 
 #restore lattice
 $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
