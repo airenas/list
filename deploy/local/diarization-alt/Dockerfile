@@ -1,4 +1,4 @@
-FROM semantikadocker.vdu.lt/diarization-alt:0.2
+FROM semantikadocker.vdu.lt/diarization-alt:0.3
 LABEL Description="This image is used to host the LiST diarization-alt worker service" \ 
       Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="0.1" 
 
