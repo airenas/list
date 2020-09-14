@@ -19,9 +19,10 @@ log=echo $$(date +'%Y-%m-%d %T')
 logb=$(log): START
 loge=$(log): END
 
+###############################################################################
 DIARIZATION_APP?=$(APPS_ROOT)/diarization.sh
 FIX_SEGMENTS_APP?=$(APP_DIR)/fix.segments
-
+SEND_METRIC_APP?=${APP_DIR}/send.metric
 ###############################################################################
 ## for metrics
 SHELL=$(APP_DIR)/m_shell.sh

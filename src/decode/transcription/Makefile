@@ -13,6 +13,10 @@ PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 export train_cmd=run.pl
 export decode_cmd=run.pl
 
+###############################################################################
+SEND_METRIC_APP?=${APP_DIR}/send.metric
+###############################################################################
+
 # init symbolic directories
 steps:
 	ln -s $(APPS_ROOT)/steps

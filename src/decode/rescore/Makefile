@@ -5,6 +5,10 @@ OUTPUT_ROOT?=/decoded
 APPS_ROOT?=/kaldi
 FINAL_PASS=2-pass
 
+###############################################################################
+SEND_METRIC_APP?=${APP_DIR}/send.metric
+###############################################################################
+
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 
 # init symbolic directories

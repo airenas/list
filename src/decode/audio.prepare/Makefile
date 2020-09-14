@@ -11,8 +11,10 @@
 
 OUTPUT_ROOT?=/audio.prepared
 INPUT_ROOT?=/audio.in
+###############################################################################
 DENOISE_APP?=${APP_DIR}/sfg
-
+SEND_METRIC_APP?=${APP_DIR}/send.metric
+###############################################################################
 
 MIN_LEN?=0.5
 
