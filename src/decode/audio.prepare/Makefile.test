@@ -7,13 +7,13 @@ DENOISE_APP=../../../sfgparse/sfg
 .EXPORT_ALL_VARIABLES:
 
 test: 
-	${MAKE} ${test_dir}/decoded/audio/${id}/prepared.wav
+	${MAKE} ${test_dir}/decoded/audio/${id}/.done
 
 test-m4a: 
-	${MAKE} ${test_dir}/decoded/audio/m4a/prepared.wav
+	${MAKE} ${test_dir}/decoded/audio/m4a/.done
 
 test-denoise: 
-	${MAKE} DENOISE=true ${test_dir}/decoded/audio/${id}/prepared.wav		
+	${MAKE} DENOISE=true ${test_dir}/decoded/audio/${id}/.done
 
 clean:
 	rm -rf ${test_dir}/decoded/audio/${id}

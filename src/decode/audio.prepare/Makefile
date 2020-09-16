@@ -28,6 +28,7 @@ CHECK_LEN_CMD=ok=$$(echo "$(MIN_LEN) > $$(sox --i -D $@)" | bc -l) ;\
 SHELL=$(APP_DIR)/m_shell.sh
 .ONESHELL:
 .EXPORT_ALL_VARIABLES:
+.SECONDARY:
 worker=audio.prepare
 ###############################################################################
 
@@ -75,3 +76,11 @@ ifeq ($(DENOISE), true)
 else
 	cp $^ $@
 endif
+###############################################################################
+$(OUTPUT_ROOT)/%/len: $(OUTPUT_ROOT)/%/prepared.wav
+	sox --i -D $^ > $@
+	echo Audio len: $$(cat $@)
+###############################################################################
+$(OUTPUT_ROOT)/%/.done: $(OUTPUT_ROOT)/%/prepared.wav $(OUTPUT_ROOT)/%/len
+	touch $@
+###############################################################################
