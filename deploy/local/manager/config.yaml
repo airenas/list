@@ -4,6 +4,9 @@
 # mongo:
 #     url: mongo 
 
+speechIndicator:
+    pathPattern: /data/decoded/diarization/{ID}/show.seg
+
 # sendInformMessages: false
 
 # logger:

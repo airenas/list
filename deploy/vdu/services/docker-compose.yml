@@ -105,6 +105,8 @@ services:
     depends_on: 
       - mongo
       - rabbitmq
+    volumes:
+      - fileStorage:/data  
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
@@ -332,12 +334,11 @@ services:
       RABBITMQ_DEFAULT_USER: ${LIST_RABBITMQ_USER}
       RABBITMQ_DEFAULT_PASS: ${LIST_RABBITMQ_PASS}
       RABBITMQ_DEFAULT_VHOST: "/"
-    labels:
-      NAME: "rabbitmq"
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
     labels:
+     - "NAME=rabbitmq"
      - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
      - "traefik.port=15672"  
 
