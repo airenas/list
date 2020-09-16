@@ -1,7 +1,7 @@
 worker:
     name: AudioConvert
     queue: AudioConvert
-    command: make /data/decoded/audio/{ID}/prepared.wav
+    command: make /data/decoded/audio/{ID}/.done
     workingDir: /cmd/
     logFile: /data/logs/{ID}.log
 
