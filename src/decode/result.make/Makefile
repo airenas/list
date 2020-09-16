@@ -12,6 +12,7 @@ APP_DIR?=/app
 
 ###############################################################################
 LATTICE_TO_TEXT_APP?=$(APP_DIR)/lattice.to.text
+EMPTY_LATTICE_APP?=$(APP_DIR)/empty.lattice
 INT_TO_WORD_APP?=$(APP_DIR)/int.to.word
 LATTICE_TO_WEBVTT_APP?=$(APP_DIR)/lattice.to.webvtt
 SEND_METRIC_APP?=${APP_DIR}/send.metric
@@ -40,6 +41,7 @@ utils:
 .SECONDARY:
 .DELETE_ON_ERROR:
 
+###############################################################################
 #scale
 $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PASS)/.done
 	tsk=scale;id=$*;. $(APP_DIR)/m_start.sh $@
@@ -51,11 +53,19 @@ $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PAS
 		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
 		lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- "ark:| gzip -c > $@"
 
+###############################################################################
+ifeq ($(NO_SPEECH), true)
+$(RESULTS_ROOT)/%/result.txt: 
+	mkdir -p $(RESULTS_ROOT)/$*/
+	touch $@
+else
 $(RESULTS_ROOT)/%/result.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
 	tsk=lattice2text;id=$*;. $(APP_DIR)/m_start.sh $@
 	
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(LATTICE_TO_TEXT_APP) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@
+endif	
+###############################################################################
 
 $(RESULTS_ROOT)/%/resultFinal.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	tsk=lattice2textFinal;id=$*;. $(APP_DIR)/m_start.sh $@
@@ -77,9 +87,18 @@ $(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restore
 	mkdir -p $(RESULTS_ROOT)/$*/
 	gzip -c $^ > $@
 
+###############################################################################
+# lat.gz
+ifeq ($(NO_SPEECH), true)
+$(RESULTS_ROOT)/%/lat.gz: 
+	mkdir -p $(RESULTS_ROOT)/$*/
+	touch $@
+else
 $(RESULTS_ROOT)/%/lat.gz: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz
 	mkdir -p $(RESULTS_ROOT)/$*/
 	cp $^ $@		
+endif	
+###############################################################################
 
 $(RESULTS_ROOT)/%/lat.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 	tsk=prepareLat;id=$*;. $(APP_DIR)/m_start.sh $@
@@ -126,15 +145,29 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 		$(MODELS_ROOT)/phones.txt --join-spk $${numJoinParam} 0.03 > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt || exit 1
 	touch $@ 
 
+###############################################################################
+# punctuate task
+###############################################################################
+ifeq ($(NO_SPEECH), true)
+$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt:
+	echo Generating fake lat.restored.txt
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
+	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) $@
+else
+###############################################################################
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
 	tsk=punctuate;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
+###############################################################################
 ifeq ($(PUNCTUATE), true)
 	$(APP_DIR)/punct.lattice -u $(PR_URL) $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt $@ || exit 1
 else
 	cat $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt > $@
 endif
+###############################################################################
+endif
+###############################################################################
 
 $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/result.txt $(RESULTS_ROOT)/%/resultFinal.txt \
 			$(RESULTS_ROOT)/%/lat.txt $(RESULTS_ROOT)/%/lat.nb10.txt  \
@@ -142,5 +175,3 @@ $(RESULTS_ROOT)/%/.done: $(RESULTS_ROOT)/%/result.txt $(RESULTS_ROOT)/%/resultFi
 			$(RESULTS_ROOT)/%/lat.restored.txt \
 			$(RESULTS_ROOT)/%/lat.restored.gz
 	touch $@
-
-

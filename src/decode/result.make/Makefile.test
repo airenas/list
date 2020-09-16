@@ -5,6 +5,7 @@ OUTPUT_ROOT:=$(abspath $(OUTPUT_ROOT))
 LATTICE_TO_TEXT_APP=../../../deploy/local/result.make/deploy/lattice.to.text
 INT_TO_WORD_APP=../../../deploy/local/result.make/deploy/int.to.word
 LATTICE_TO_WEBVTT_APP=../../../deploy/local/result.make/deploy/lattice.to.webvtt
+EMPTY_LATTICE_APP=../../../deploy/local/result.make/deploy/empty.lattice
 SEND_METRIC_APP=echo SEND_METRIC: 
 ###############################################################################
 

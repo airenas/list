@@ -7,7 +7,7 @@ service=result-make-service
 tag=$(docker_prefix)$(service):$(TR_RESULT_SERVICE_VERSION).$(commit_count)
 
 #####################################################################################
-tools=punct.lattice lattice.to.text lattice.to.webvtt send.metric int.to.word \
+tools=punct.lattice lattice.to.text lattice.to.webvtt send.metric int.to.word empty.lattice \
 	m_shell.sh m_start.sh m_end.sh
 tools_dir=$(SRC_DIR)/tools
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
