@@ -10,6 +10,8 @@ WORKDIR /app
 COPY deploy/cmdWorkerService /app/
 COPY deploy/punct.lattice /app/
 COPY deploy/lattice.to.text /app/
+COPY deploy/empty.lattice /app/
+COPY deploy/fix.lattice.time /app/
 COPY deploy/lattice.to.webvtt /app/
 COPY deploy/send.metric /app/
 COPY deploy/int.to.word /app/
