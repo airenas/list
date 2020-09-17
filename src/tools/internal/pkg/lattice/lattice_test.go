@@ -133,3 +133,18 @@ func TestDurationDefault(t *testing.T) {
 	d := Duration("apoa")
 	assert.Equal(t, 0*time.Second, d)
 }
+
+func TestIsSilence(t *testing.T) {
+	assert.True(t, IsSilence(&Word{Words: []string{"<eps>"}}))
+	assert.False(t, IsSilence(&Word{Words: []string{}}))
+	assert.False(t, IsSilence(&Word{Words: []string{""}}))
+	assert.False(t, IsSilence(&Word{Words: []string{"olia", "bet"}}))
+	assert.False(t, IsSilence(&Word{Words: []string{"<eps>", "bet"}}))
+}
+
+func TestDurationToText(t *testing.T) {
+	assert.Equal(t, "2.13", DurationToText(ToDuration(2.13)))
+	assert.Equal(t, "2.00", DurationToText(ToDuration(2.001)))
+	assert.Equal(t, "0.00", DurationToText(ToDuration(0.00)))
+	assert.Equal(t, "100.54", DurationToText(ToDuration(100.539)))
+}

@@ -121,7 +121,12 @@ func Duration(str string) time.Duration {
 	if err != nil {
 		return 0
 	}
-	return time.Duration(math.Round(res*1000)) * time.Millisecond
+	return ToDuration(res)
+}
+
+//ToDuration convert second as float to duration
+func ToDuration(v float64) time.Duration {
+	return time.Duration(math.Round(v*1000)) * time.Millisecond
 }
 
 //SilDuration return duration between main last word of data[i-1] and first main word of data[i]
@@ -172,4 +177,14 @@ func splitWord(s string) []string {
 
 func getText(words []string) string {
 	return strings.Join(words, "_")
+}
+
+//IsSilence test if word is silence word
+func IsSilence(w *Word) bool {
+	return len(w.Words) == 1 && w.Words[0] == SilWord
+}
+
+//DurationToText converts duration to text
+func DurationToText(d time.Duration) string {
+	return fmt.Sprintf("%.2f", math.Round(d.Seconds()*100)/100.0)
 }
