@@ -18,7 +18,8 @@ func TestRound(t *testing.T) {
 }
 
 func TestMakeEmptyLattice(t *testing.T) {
-	assert.Equal(t, "# 1 S0000\n1 0 1.23 <eps>\n", makeEmptyLattice(1.23))
+	params := &params{len: 1.23, segmentName: "SN", silenceWord: "<ttt>"}
+	assert.Equal(t, "# 1 SN\n1 0 1.23 <ttt>\n", makeEmptyLattice(params))
 }
 
 func TestParseParams(t *testing.T) {
@@ -34,4 +35,12 @@ func TestParseParams(t *testing.T) {
 	err = fs.Parse([]string{"-l", "500"})
 	assert.Nil(t, err)
 	assert.InDelta(t, 500, params.len, 0.0001)
+
+	fs = flag.NewFlagSet("", flag.ContinueOnError)
+	takeParams(fs, params)
+	err = fs.Parse([]string{"-l", "50", "-s", "<ttt>", "-sn", "TT"})
+	assert.Nil(t, err)
+	assert.InDelta(t, 50, params.len, 0.0001)
+	assert.Equal(t, "<ttt>", params.silenceWord)
+	assert.Equal(t, "TT", params.segmentName)
 }

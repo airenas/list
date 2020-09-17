@@ -78,6 +78,9 @@ func validateParams(data *params) error {
 	if data.silenceWord == "" {
 		return errors.New("No silence word symbol specified")
 	}
+	if data.segmentName == "" {
+		return errors.New("No segment name specified")
+	}
 	return nil
 }
 

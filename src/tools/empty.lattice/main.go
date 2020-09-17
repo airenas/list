@@ -12,7 +12,9 @@ import (
 )
 
 type params struct {
-	len float64
+	len         float64
+	silenceWord string
+	segmentName string
 }
 
 func main() {
@@ -34,7 +36,7 @@ func main() {
 	}
 	defer destination.Close()
 
-	_, err = fmt.Fprint(destination, makeEmptyLattice(params.len))
+	_, err = fmt.Fprint(destination, makeEmptyLattice(params))
 	if err != nil {
 		log.Fatal(errors.Wrapf(err, "Can't write to output"))
 	}
@@ -47,19 +49,28 @@ func takeParams(fs *flag.FlagSet, data *params) {
 		fs.PrintDefaults()
 	}
 	fs.Float64Var(&data.len, "l", 0, "Len of audio file. Eg.: 1.23")
+	fs.StringVar(&data.silenceWord, "s", "<tyla>", "Silence word symbol")
+	fs.StringVar(&data.segmentName, "sn", "TYLA", "Segment name")
 }
 
 func validateParams(data *params) error {
 	if data.len <= 0 {
 		return errors.New("Wrong audio len specified")
 	}
+	if data.silenceWord == "" {
+		return errors.New("No silence word symbol specified")
+	}
+	if data.segmentName == "" {
+		return errors.New("No segment name specified")
+	}
+
 	return nil
 }
 
-func makeEmptyLattice(l float64) string {
+func makeEmptyLattice(p *params) string {
 	res := strings.Builder{}
-	res.WriteString("# 1 S0000\n")
-	res.WriteString(fmt.Sprintf("1 0 %s <eps>\n", round(l)))
+	res.WriteString(fmt.Sprintf("# 1 %s\n", p.segmentName))
+	res.WriteString(fmt.Sprintf("1 0 %s %s\n", round(p.len), p.silenceWord))
 	return res.String()
 }
 
