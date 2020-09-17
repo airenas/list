@@ -6,6 +6,7 @@ LATTICE_TO_TEXT_APP=../../../deploy/local/result.make/deploy/lattice.to.text
 INT_TO_WORD_APP=../../../deploy/local/result.make/deploy/int.to.word
 LATTICE_TO_WEBVTT_APP=../../../deploy/local/result.make/deploy/lattice.to.webvtt
 EMPTY_LATTICE_APP=../../../deploy/local/result.make/deploy/empty.lattice
+FIX_LATTICE_TIME_APP=../../../deploy/local/result.make/deploy/fix.lattice.time
 SEND_METRIC_APP=echo SEND_METRIC: 
 ###############################################################################
 

@@ -15,6 +15,7 @@ import (
 type params struct {
 	len           float64
 	silenceWord   string
+	segmentName   string
 	minSilenceLen float64 // in seconds
 }
 
@@ -52,9 +53,6 @@ func main() {
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't fix time"))
 	}
-	if params.silenceWord != "" {
-		data = changeSilenceWord(data, params)
-	}
 	err = lattice.Write(data, destination)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't write lattice"))
@@ -64,11 +62,13 @@ func main() {
 
 func takeParams(fs *flag.FlagSet, data *params) {
 	fs.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:[params] [input-file | stdin] [output-file | stdout]\n", os.Args[0])
-		flag.PrintDefaults()
+		fmt.Fprintf(fs.Output(), "Usage of %s:[params] [input-file | stdin] [output-file | stdout]\n", os.Args[0])
+		fs.PrintDefaults()
 	}
 	fs.Float64Var(&data.len, "l", 0, "Len of audio file. Eg.: 1.23")
-	fs.StringVar(&data.silenceWord, "s", "", "Silence word symbol")
+	fs.StringVar(&data.silenceWord, "s", "<tyla>", "Silence word symbol")
+	fs.StringVar(&data.segmentName, "sn", "TYLA", "Segment name")
+	fs.Float64Var(&data.minSilenceLen, "ms", 0.10, "Min missing segment len in sec to insert")
 }
 
 func validateParams(data *params) error {
@@ -84,58 +84,67 @@ func validateParams(data *params) error {
 func fixTime(data []*lattice.Part, p *params) ([]*lattice.Part, error) {
 	l := len(data)
 	audioDuration := lattice.ToDuration(p.len)
-	res := make([]*lattice.Part, len(data))
+	minLen := lattice.ToDuration(p.minSilenceLen)
+	res := make([]*lattice.Part, 0)
 	ct := time.Duration(0)
-	var lastWord *lattice.Word
 	for i := 0; i < l; i++ {
-		res[i] = &lattice.Part{Speaker: data[i].Speaker, Num: data[i].Num}
-		for j := 0; j < len(data[i].Words); j++ {
-			cw := data[i].Words[j]
-			if cw.Main == lattice.MainInd {
-				wtFrom := lattice.Duration(cw.From)
-				wtTo := lattice.Duration(cw.To)
-				if ct < wtFrom {
-					if lastWord != nil && lattice.IsSilence(lastWord) {
-						lastWord.To = cw.From
-					} else if lattice.IsSilence(cw) {
-						cw.From = lattice.DurationToText(ct)
-					} else {
-						res[i].Words = append(res[i].Words, &lattice.Word{From: lattice.DurationToText(ct),
-							To: cw.From, Words: []string{lattice.SilWord},
-							Main: lattice.MainInd})
-					}
-				}
-				lastWord = cw
-				ct = wtTo
-			}
-			res[i].Words = append(res[i].Words, cw)
+		from, to, err := getSegmentTimes(data[i])
+		if err != nil {
+			return nil, errors.Wrap(err, "Can't get times")
 		}
-		if i == l-1 {
-			if ct < audioDuration {
-				if lastWord != nil && lattice.IsSilence(lastWord) {
-					lastWord.To = lattice.DurationToText(audioDuration)
-				} else {
-					res[i].Words = append(res[i].Words, &lattice.Word{From: lattice.DurationToText(ct),
-						To: lattice.DurationToText(audioDuration), Words: []string{lattice.SilWord},
-						Main: lattice.MainInd})
-				}
-			}
+		if (from - ct) > minLen {
+			log.Printf("Insert segment from %s, to %s", lattice.DurationToText(ct), lattice.DurationToText(from))
+			res = append(res, newSegment(ct, from, p))
 		}
+		res = append(res, data[i])
+		ct = to
+	}
+	if (audioDuration - ct) > minLen {
+		log.Printf("Insert segment from %s, to %s", lattice.DurationToText(ct), lattice.DurationToText(audioDuration))
+		res = append(res, newSegment(ct, audioDuration, p))
+	}
+	// fix segment num
+	for i := 0; i < len(res); i++ {
+		res[i].Num = i + 1
 	}
 	return res, nil
 }
 
-func changeSilenceWord(data []*lattice.Part, p *params) []*lattice.Part {
-	log.Printf("Change %s to %s", lattice.SilWord, p.silenceWord)
-	minLen := lattice.ToDuration(p.minSilenceLen)
-	for i := 0; i < len(data); i++ {
-		for j := 0; j < len(data[i].Words); j++ {
-			cw := data[i].Words[j]
-			if cw.Main == lattice.MainInd && lattice.IsSilence(cw) &&
-				lattice.WordDuration(cw) >= minLen {
-				cw.Words = []string{p.silenceWord}
-			}
+func getSegmentTimes(part *lattice.Part) (time.Duration, time.Duration, error) {
+	from, err := getSegmentTimeFrom(part)
+	if err != nil {
+		return time.Duration(0), time.Duration(0), errors.Wrap(err, "Can't get from time")
+	}
+	to, err := getSegmentTimeTo(part)
+	if err != nil {
+		return time.Duration(0), time.Duration(0), errors.Wrap(err, "Can't get to time")
+	}
+	return from, to, nil
+}
+
+func getSegmentTimeFrom(part *lattice.Part) (time.Duration, error) {
+	for i := 0; i < len(part.Words); i++ {
+		cw := part.Words[i]
+		if cw.Main == lattice.MainInd {
+			return lattice.Duration(cw.From), nil
 		}
 	}
-	return data
+	return time.Duration(0), errors.New("No time")
+}
+
+func getSegmentTimeTo(part *lattice.Part) (time.Duration, error) {
+	for i := len(part.Words) - 1; i >= 0; i-- {
+		cw := part.Words[i]
+		if cw.Main == lattice.MainInd {
+			return lattice.Duration(cw.To), nil
+		}
+	}
+	return time.Duration(0), errors.New("No time")
+}
+
+func newSegment(from, to time.Duration, p *params) *lattice.Part {
+	res := &lattice.Part{Speaker: p.segmentName}
+	res.Words = append(res.Words, &lattice.Word{From: lattice.DurationToText(from),
+		To: lattice.DurationToText(to), Main: lattice.MainInd, Words: []string{p.silenceWord}})
+	return res
 }

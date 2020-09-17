@@ -13,6 +13,7 @@ APP_DIR?=/app
 ###############################################################################
 LATTICE_TO_TEXT_APP?=$(APP_DIR)/lattice.to.text
 EMPTY_LATTICE_APP?=$(APP_DIR)/empty.lattice
+FIX_LATTICE_TIME_APP?=$(APP_DIR)/fix.lattice.time
 INT_TO_WORD_APP?=$(APP_DIR)/int.to.word
 LATTICE_TO_WEBVTT_APP?=$(APP_DIR)/lattice.to.webvtt
 SEND_METRIC_APP?=${APP_DIR}/send.metric
@@ -81,9 +82,9 @@ $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 
 $(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
-	cp $^ $@
+	$(FIX_LATTICE_TIME_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '<tyla>' $^ $@
 
-$(RESULTS_ROOT)/%/lat.restored.gz: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
+$(RESULTS_ROOT)/%/lat.restored.gz: $(RESULTS_ROOT)/%/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	gzip -c $^ > $@
 
