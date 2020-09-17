@@ -68,7 +68,7 @@ func takeParams(fs *flag.FlagSet, data *params) {
 		flag.PrintDefaults()
 	}
 	fs.Float64Var(&data.len, "l", 0, "Len of audio file. Eg.: 1.23")
-	fs.StringVar(&data.silenceWord, "s", "<tyla>", "Silence word symbol")
+	fs.StringVar(&data.silenceWord, "s", "", "Silence word symbol")
 }
 
 func validateParams(data *params) error {
@@ -126,12 +126,13 @@ func fixTime(data []*lattice.Part, p *params) ([]*lattice.Part, error) {
 }
 
 func changeSilenceWord(data []*lattice.Part, p *params) []*lattice.Part {
+	log.Printf("Change %s to %s", lattice.SilWord, p.silenceWord)
 	minLen := lattice.ToDuration(p.minSilenceLen)
 	for i := 0; i < len(data); i++ {
 		for j := 0; j < len(data[i].Words); j++ {
 			cw := data[i].Words[j]
 			if cw.Main == lattice.MainInd && lattice.IsSilence(cw) &&
-				lattice.WordDuration(cw) > minLen {
+				lattice.WordDuration(cw) >= minLen {
 				cw.Words = []string{p.silenceWord}
 			}
 		}
