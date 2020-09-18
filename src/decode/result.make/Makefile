@@ -80,9 +80,15 @@ $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 	$(LATTICE_TO_WEBVTT_APP) $^ $@
 
+###############################################################################
 $(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
-	$(FIX_LATTICE_TIME_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '<tyla>' $^ $@
+ifeq ($(NO_SPEECH), true)
+	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[tyla]' $@
+else
+	$(FIX_LATTICE_TIME_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[tyla]' $^ $@
+endif
+###############################################################################
 
 $(RESULTS_ROOT)/%/lat.restored.gz: $(RESULTS_ROOT)/%/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
@@ -153,7 +159,7 @@ ifeq ($(NO_SPEECH), true)
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt:
 	echo Generating fake lat.restored.txt
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/punctuated
-	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) $@
+	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '<eps>' $@
 else
 ###############################################################################
 $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/restore/.done
