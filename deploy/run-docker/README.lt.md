@@ -56,8 +56,9 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
     Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
 
-1. Prijunkite *docker* prie *semantikadocker.vdu.lt* repozitorijos:
-    `docker login -u <<SEMANTIKA_DOCKER_REPO_VARTOTOJAS>> -p <<SEMANTIKA_DOCKER_REPO_SLAPTAŽODIS>> semantikadocker.vdu.lt`
+1. Pasirinkite diegimo versiją:
+
+    `git checkout v1.1`
 
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
@@ -91,7 +92,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Patikrinkite ar servisas gali priimti užklausas: `make status-service`. Turi grąžinti užklausos kodą 200.
 
-1. Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti puslapis.
+1. Atidarykite URL naršyklėje: *<host_external_url>/ausis/*. Turi atsidaryti demo puslapis.
 
 ## Servisų sustabdymas/valdymas
 
@@ -110,6 +111,12 @@ Servisai valdomi su *docker-compose* komanda:
 1. Atnaujinus duomenis, bus pakeista ir ši repositorija su nuorodomis į naujus modelių failus. Patikrinkite, kad turite naujausius skriptus:
 
     `git pull`
+
+1. Pasirinkite norimą versiją:
+
+    `git checkout <VERSIJA>`
+
+    Versija turi priskirtą *git* žymą. Galimas versijas galite sužinoti su komanda: `git tag`.
 
 1. Atnaujinkite servisus/duomenis:
 
