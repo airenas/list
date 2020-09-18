@@ -19,6 +19,9 @@ info:
 services:
 	curl -X GET https://$(semantika_cred)@semantikadocker.vdu.lt/v2/_catalog | jq
 
+generate-install-doc:
+	(cd ../run-docker && pandoc README.lt.md -o tran-readme.lt.pdf)
+
 versions:
 	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
 	curl -X GET https://$(semantika_cred)@semantikadocker.vdu.lt/v2/trans/$(srv)/tags/list | jq
