@@ -89,6 +89,8 @@ services:
     depends_on: 
       - mongo
       - rabbitmq
+    volumes:
+      - fileStorage:/data    
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
