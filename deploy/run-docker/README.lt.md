@@ -14,8 +14,8 @@ Transcribatroriaus IT sprendimas gali būti diegiamas, bet kurioje operacinėje 
 
 Aparatūrai:
 
-| Komponentas | Min reikalavimai | Rekomenduojama | Papildomai |
-| ---|-|-|-|
+| Komponen-tas | Min reikalavimai | Rekomenduo-jama | Papildomai |
+| -----------------|------------------|---------------------|-------------------------------------------|
 | Platform | x86_64 | | |
 | CPU | 64-bit, 2 branduoliai | 8 branduoliai | |
 | HDD | 40 Gb | | Priklausomai nuo sudiegtų atpažinimo modelių. Vienam modeliui papildomai reikia apie 10 Gb |
@@ -66,8 +66,8 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Sukonfigūruokite *Makefile.options*:
 
-    | Parametras | Privalomas | Paskirtis |Pvz |
-    | ---|-|-|-|
+    | Parametras | Priva-lomas | Paskirtis | Pvz |
+    |------------------|-----|-----------------------------------|------------------|
     | *deploy_dir* | + | Pilnas kelias iki instaliavimo direktorijos mašinoje. Šioje direktorijoje bus atsiųsti modeliai, sukurtas pakatalogis darbiniams transkribatoriaus failams | /home/user/list
     | *models* | + | Instaliuojami modeliai. Galimi pasirinkimai: *ben*(bendrinis modelis),  *ben-tel* (bendrinis modelis, telefoninė kokybė), *adm* (administracinis), *adm-tel*, *tei* (teisinis), *tei-tel*, *med* (medicininis), *med-tel* | ben adm-tel |
     | rabbitmq_pass | + | Eilės serviso slaptažodis. Nurodykite slaptažodį, kurį servisai naudos prisijungimui prie eilės serviso. Pvz.: sugeneruokite su `pwgen 20 1` ||
