@@ -63,7 +63,7 @@ while (scalar @ARGV > 0) {
    if ($ARGV[0] eq '--join-spk') {
       $join_spk = 1;
       shift @ARGV;
-      if ($ARGV[0] =~ m/^[0-9\.]+$/) {
+      if (defined $ARGV[0] && $ARGV[0] =~ m/^[0-9\.]+$/) {
          $max_sum_duration = $ARGV[0]; 
          shift @ARGV;
          }

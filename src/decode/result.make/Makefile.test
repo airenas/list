@@ -21,6 +21,9 @@ test:
 test-no-speech: 
 	${MAKE} ${test_dir}/results/$(id)/.done NO_SPEECH=true
 
+test-skip-num-join: 
+	${MAKE} ${test_dir}/results/$(id)/.done SKIP_NUM_JOIN=1	
+
 info: 
 	echo OUTPUT_ROOT: ${OUTPUT_ROOT}
 	echo MODELS_ROOT: ${MODELS_ROOT}
