@@ -84,9 +84,9 @@ $(RESULTS_ROOT)/%/webvtt.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 $(RESULTS_ROOT)/%/lat.restored.txt: $(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 	mkdir -p $(RESULTS_ROOT)/$*/
 ifeq ($(NO_SPEECH), true)
-	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[tyla]' $@
+	$(EMPTY_LATTICE_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[]' $@
 else
-	$(FIX_LATTICE_TIME_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[tyla]' $^ $@
+	$(FIX_LATTICE_TIME_APP) -l $$(cat $(OUTPUT_ROOT)/audio/$*/len) -s '[]' $^ $@
 endif
 ###############################################################################
 
@@ -144,12 +144,14 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L3.lat  || exit 1
 
 	numJoinParam='--join-num 0.03'; if [ "$(SKIP_NUM_JOIN)" == "1" ]; then numJoinParam=''; fi
+	spkJoinParam='--join-spk'; if [ "$(SKIP_SPEAKER_JOIN)" == "true" ] || [ "$(SKIP_SPEAKER_JOIN)" == "1" ]; then spkJoinParam=''; fi
 	echo "SKIP_NUM_JOIN=$(SKIP_NUM_JOIN); numJoinParam=$${numJoinParam}"
+	echo "SKIP_SPEAKER_JOIN=$(SKIP_SPEAKER_JOIN); spkJoinParam=$${spkJoinParam}"
 	# Perform processing 
 	cd restore && perl lat_restore.pl $(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
-		$(MODELS_ROOT)/phones.txt --join-spk $${numJoinParam} > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt || exit 1
+		$(MODELS_ROOT)/phones.txt $${spkJoinParam} $${numJoinParam} > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt || exit 1
 	touch $@ 
 
 ###############################################################################

@@ -24,6 +24,12 @@ test-no-speech:
 test-skip-num-join: 
 	${MAKE} ${test_dir}/results/$(id)/.done SKIP_NUM_JOIN=1	
 
+test-skip-spk-join: 
+	${MAKE} ${test_dir}/results/$(id)/.done SKIP_SPEAKER_JOIN=true	
+
+test-skip-spk-join1: 
+	${MAKE} ${test_dir}/results/$(id)/.done SKIP_SPEAKER_JOIN=1
+
 info: 
 	echo OUTPUT_ROOT: ${OUTPUT_ROOT}
 	echo MODELS_ROOT: ${MODELS_ROOT}
