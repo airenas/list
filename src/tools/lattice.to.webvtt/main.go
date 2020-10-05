@@ -48,11 +48,10 @@ func main() {
 }
 
 type tdata struct {
-	sb       strings.Builder
-	speaker  string
-	from, to *lattice.Word
-	sbLine   strings.Builder
-	sep      string
+	sb      strings.Builder
+	speaker string
+	words   []*lattice.Word
+	to      time.Duration
 }
 
 func getHeader() string {
@@ -69,7 +68,7 @@ func getWebVTT(data []*lattice.Part) string {
 		for _, w := range p.Words {
 			if w.Main == lattice.MainInd {
 				if w.Text != lattice.SilWord {
-					if td.to != nil && (lattice.Duration(w.From)-lattice.Duration(td.to.To)) > 500*time.Millisecond {
+					if len(td.words) > 0 && (lattice.Duration(w.From)-td.to) > 500*time.Millisecond {
 						write(td)
 					}
 					add(td, w)
@@ -82,28 +81,43 @@ func getWebVTT(data []*lattice.Part) string {
 }
 
 func write(td *tdata) {
-	if td.from != nil {
-		td.sb.WriteString("\n")
-		td.sb.WriteString(asString(lattice.Duration(td.from.From)))
-		td.sb.WriteString(" --> ")
-		td.sb.WriteString(asString(lattice.Duration(td.to.To)))
-		td.sb.WriteString("\n")
-		td.sb.WriteString(td.sbLine.String())
-		td.sb.WriteString("\n")
+	if len(td.words) > 0 {
+		ws := splitText(td.words)
+		for _, s := range ws {
+			writePhrase(&td.sb, td.words[s[0]:s[1]])
+		}
 	}
-	td.sbLine.Reset()
-	td.from = nil
-	td.to = nil
-	td.sep = ""
+	td.words = td.words[:0]
+}
+
+func writePhrase(sb *strings.Builder, words []*lattice.Word) {
+	l := len(words)
+	sb.WriteString("\n")
+	sb.WriteString(asString(lattice.Duration(words[0].From)))
+	sb.WriteString(" --> ")
+	sb.WriteString(asString(lattice.Duration(words[l-1].To)))
+	sb.WriteString("\n")
+	writeWords(sb, words)
+	sb.WriteString("\n")
+}
+
+func writeWords(sb *strings.Builder, words []*lattice.Word) {
+	sep := ""
+	for _, w := range words{
+		sep = writeWord(sb, strings.Join(w.Words, " "), sep)
+		sep = writePunct(sb, w.Punct)
+	}
+}
+
+func splitText(words []*lattice.Word) [][]int {
+	res := make([][]int, 0)
+	res = append(res, []int{0, len(words)})
+	return res
 }
 
 func add(td *tdata, w *lattice.Word) {
-	if td.from == nil {
-		td.from = w
-	}
-	td.to = w
-	td.sep = writeWord(&td.sbLine, strings.Join(w.Words, " "), td.sep)
-	td.sep = writePunct(&td.sbLine, w.Punct)
+	td.to = lattice.Duration(w.To)
+	td.words = append(td.words, w)
 }
 
 func writeWord(res *strings.Builder, word, sep string) string {
