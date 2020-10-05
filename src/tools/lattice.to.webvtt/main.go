@@ -14,6 +14,15 @@ import (
 	"github.com/pkg/errors"
 )
 
+type splitFuncType func(words []*lattice.Word) [][]int
+
+var splitFunc splitFuncType
+
+func init() {
+	splitFunc = splitText
+}
+
+
 func main() {
 	log.SetOutput(os.Stderr)
 	flag.Usage = func() {
@@ -82,7 +91,7 @@ func getWebVTT(data []*lattice.Part) string {
 
 func write(td *tdata) {
 	if len(td.words) > 0 {
-		ws := splitText(td.words)
+		ws := splitFunc(td.words)
 		for _, s := range ws {
 			writePhrase(&td.sb, td.words[s[0]:s[1]])
 		}
@@ -107,12 +116,6 @@ func writeWords(sb *strings.Builder, words []*lattice.Word) {
 		sep = writeWord(sb, strings.Join(w.Words, " "), sep)
 		sep = writePunct(sb, w.Punct)
 	}
-}
-
-func splitText(words []*lattice.Word) [][]int {
-	res := make([][]int, 0)
-	res = append(res, []int{0, len(words)})
-	return res
 }
 
 func add(td *tdata, w *lattice.Word) {
