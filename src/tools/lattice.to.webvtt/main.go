@@ -22,7 +22,6 @@ func init() {
 	splitFunc = splitText
 }
 
-
 func main() {
 	log.SetOutput(os.Stderr)
 	flag.Usage = func() {
@@ -112,8 +111,8 @@ func writePhrase(sb *strings.Builder, words []*lattice.Word) {
 
 func writeWords(sb *strings.Builder, words []*lattice.Word) {
 	sep := ""
-	for _, w := range words{
-		sep = writeWord(sb, strings.Join(w.Words, " "), sep)
+	for _, w := range words {
+		sep = writeWord(sb, asHTML(strings.Join(w.Words, " ")), sep)
 		sep = writePunct(sb, w.Punct)
 	}
 }
@@ -134,6 +133,11 @@ func writePunct(res *strings.Builder, punct string) string {
 	}
 	res.WriteString(punct)
 	return " "
+}
+
+func asHTML(s string) string {
+	//return html.EscapeString(s)
+	return strings.ReplaceAll(strings.ReplaceAll(s, "<", "&lt;"), ">", "&gt;")
 }
 
 func asString(d time.Duration) string {
