@@ -6,6 +6,26 @@ import (
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
 )
 
+type splitParamsType struct {
+	wantedCharCount int
+	exceededPenalty float64
+	dotPenalty      float64 //applies for ?!
+	commaPenalty    float64
+	pausePenalty    float64
+}
+
+var splitParams splitParamsType
+
+func init() {
+	splitParams = splitParamsType{
+		wantedCharCount: 30,
+		exceededPenalty: 4,
+		dotPenalty:      15,
+		commaPenalty:    7,
+		pausePenalty:    10,
+	}
+}
+
 func splitText(words []*lattice.Word) [][]int {
 	l := len(words)
 	splitInd := make([]bool, l)
@@ -46,15 +66,13 @@ func calc(words []*lattice.Word, splitInd []bool, ch int) float64 {
 }
 
 func calcSegment(words []*lattice.Word) float64 {
-	lc := 40 - lenText(words)
-	res := float64(0)
-	if lc > 0 {
-		res = float64(lc)
-	} else {
-		res = float64(-lc) * 1.2
+	lc := splitParams.wantedCharCount - lenText(words)
+	res := float64(lc)
+	if lc < 0 {
+		res = -res * splitParams.exceededPenalty
 	}
 
-	return float64(res) + float64(10*dotCount(words)) + float64(5*commaCount(words))
+	return res + splitParams.dotPenalty*float64(dotCount(words)) + splitParams.commaPenalty*float64(commaCount(words))
 }
 
 func lenText(words []*lattice.Word) int {
@@ -73,7 +91,7 @@ func lenText(words []*lattice.Word) int {
 
 func pauseCost(w1, w2 *lattice.Word) float64 {
 	d := lattice.Duration(w2.From) - lattice.Duration(w1.To)
-	return math.Abs(0.5-d.Seconds()) * 10
+	return math.Abs(0.5-d.Seconds()) * splitParams.pausePenalty
 }
 
 func dotCount(words []*lattice.Word) int {
