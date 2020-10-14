@@ -1,0 +1,39 @@
+version: '3.1'
+
+services:
+  proxy:
+    image: traefik:1.7.9 
+    command: --api --docker 
+    ports:
+      - "${LIST_TRAEFIK_HTTP_EXT_PORT}:80"     # main proxy port
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock 
+    restart: unless-stopped
+    labels:
+      - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
+      - "traefik.proxy.port=8080"
+      - "traefik.api.frontend.rule=PathPrefix:/api/"
+      - "traefik.api.port=8080"
+      - "traefik.health.frontend.rule=PathPrefix:/health"
+      - "traefik.health.port=8080"
+
+  web:
+    image: ${DOCKER_REPO}ear-app:${EAR_APP_VERSION}
+    restart: unless-stopped
+    environment:
+      BASE_HREF: /${URL}/
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
+     - "traefik.http.port=8000"
+
+  editor:
+    image: ${DOCKER_REPO}editor-app:0.1.4
+    restart: unless-stopped
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
+     - "traefik.http2.frontend.rule=PathPrefixStrip:/${URL}/editor/"
+     - "traefik.http.port=80"   
+     - "traefik.http2.port=80"      
+
