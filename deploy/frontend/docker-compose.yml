@@ -5,7 +5,7 @@ services:
     image: traefik:1.7.9 
     command: --api --docker 
     ports:
-      - "${LIST_TRAEFIK_HTTP_EXT_PORT}:80"     # main proxy port
+      - "80:80"     # main proxy port
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
     restart: unless-stopped
