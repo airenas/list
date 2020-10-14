@@ -6,8 +6,10 @@ services:
     command: --api --docker 
     ports:
       - "80:80"     # main proxy port
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
+      - ./traefik.toml:/traefik.toml
     restart: unless-stopped
     labels:
       - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
