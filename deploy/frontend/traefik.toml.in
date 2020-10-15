@@ -38,6 +38,8 @@
 # Enable API and dashboard
 [api]
   insecure = true
+  dashboard = false
+  
 # Enable ping
 [ping]
 ################################################################
