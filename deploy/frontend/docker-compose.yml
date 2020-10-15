@@ -2,40 +2,44 @@ version: '3.1'
 
 services:
   proxy:
-    image: traefik:1.7.9 
-    command: --api --docker 
-    ports:
-      - "80:80"     # main proxy port
-      - "443:443"
+    image: traefik:2.3.1 
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock 
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - ./traefik.toml:/traefik.toml
+      - ./rules.toml:/rules.toml
+    ports:
+      - "80:80" 
+      - "443:443"
+      - "8080:8080"
     restart: unless-stopped
-    labels:
-      - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
-      - "traefik.proxy.port=8080"
-      - "traefik.api.frontend.rule=PathPrefix:/api/"
-      - "traefik.api.port=8080"
-      - "traefik.health.frontend.rule=PathPrefix:/health"
-      - "traefik.health.port=8080"
 
   web:
     image: ${DOCKER_REPO}ear-app:${EAR_APP_VERSION}
-    restart: unless-stopped
+    restart: unless-stopped  
     environment:
       BASE_HREF: /${URL}/
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
-     - "traefik.http.port=8000"
+     - "traefik.http.routers.web.rule=PathPrefix(`/ausis/`)"
+     - "traefik.http.routers.web.middlewares=web"
+     - "traefik.http.middlewares.web.stripprefix.prefixes=/ausis"
+     - "traefik.http.routers.web.entrypoints=web"
+     - "traefik.http.routers.web.service=web"
+     - "traefik.http.services.web.loadbalancer.server.port=8000"
 
   editor:
     image: ${DOCKER_REPO}editor-app:0.1.4
     restart: unless-stopped
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
-     - "traefik.http2.frontend.rule=PathPrefixStrip:/${URL}/editor/"
-     - "traefik.http.port=80"   
-     - "traefik.http2.port=80"      
-
+     - "traefik.http.routers.editor.rule=PathPrefix(`/ausis/editor`)"
+     - "traefik.http.routers.editor.middlewares=editor"
+     - "traefik.http.middlewares.editor.stripprefix.prefixes=/ausis/editor"
+     - "traefik.http.routers.editor.entrypoints=web"
+     - "traefik.http.routers.editor.service=editor"
+     - "traefik.http.services.editor.loadbalancer.server.port=80"      
+ 

@@ -1,0 +1,36 @@
+[http]
+  [http.routers]
+    [http.routers.transcriber]
+      entryPoints = ["web"]
+      service = "transcriber"
+      rule = "PathPrefix(`/ausis/transcriber`)"
+      priority = 42
+    [http.routers.status]
+      entryPoints = ["web"]
+      service = "status"
+      rule = "PathPrefix(`/ausis/status.service`)"
+      priority = 42  
+    [http.routers.result]
+      entryPoints = ["web"]
+      service = "result"
+      rule = "PathPrefix(`/ausis/result.service`)" 
+  
+
+  [http.services]
+    [http.services.transcriber]
+      [http.services.transcriber.loadBalancer]
+        passHostHeader = true
+        [[http.services.transcriber.loadBalancer.servers]]
+          url = "${service_url}"
+
+    [http.services.status]
+      [http.services.status.loadBalancer]
+        passHostHeader = true
+        [[http.services.status.loadBalancer.servers]]
+          url = "${service_url}"
+
+    [http.services.result]
+      [http.services.result.loadBalancer]
+        passHostHeader = true
+        [[http.services.result.loadBalancer.servers]]
+          url = "${service_url}"
