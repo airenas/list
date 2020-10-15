@@ -1,2 +1,3 @@
 service_url=http://service
 letsencrypt_email=email
+debug_level=ERROR
