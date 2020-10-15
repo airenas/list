@@ -1,36 +1,59 @@
 [http]
   [http.routers]
     [http.routers.transcriber]
-      entryPoints = ["web"]
-      service = "transcriber"
+      entryPoints = ["websecure"]
+      service = "transcription"
+      tls = true
       rule = "PathPrefix(`/ausis/transcriber`)"
-      priority = 42
     [http.routers.status]
-      entryPoints = ["web"]
-      service = "status"
+      entryPoints = ["websecure"]
+      service = "transcription"
+      tls = true
       rule = "PathPrefix(`/ausis/status.service`)"
-      priority = 42  
     [http.routers.result]
-      entryPoints = ["web"]
-      service = "result"
+      entryPoints = ["websecure"]
+      service = "transcription"
+      tls = true
       rule = "PathPrefix(`/ausis/result.service`)" 
-  
+
+    [http.routers.https-redirect]
+      entryPoints = ["web"]
+      middlewares = ["https-redirect"]
+      rule = "HostRegexp(`{host:.+}`)"
+      service = "noop"
+    
+    [http.routers.default-redirect]
+      entryPoints = ["websecure"]
+      middlewares = ["default-redirect"]
+      rule = "Path(`/`)"
+      tls = true
+      service = "noop"
+
+    [http.routers.ausis-redirect]
+      entryPoints = ["websecure"]
+      middlewares = ["default-redirect"]
+      rule = "Path(`/{path:(?i)ausis}`)"
+      tls = true
+      service = "noop"  
+
 
   [http.services]
-    [http.services.transcriber]
-      [http.services.transcriber.loadBalancer]
+    # noop service, the URL will be never called
+    [http.services.noop.loadBalancer]
+      [[http.services.noop.loadBalancer.servers]]
+        url = "http://192.168.0.1"
+
+    [http.services.transcription]
+      [http.services.transcription.loadBalancer]
         passHostHeader = true
-        [[http.services.transcriber.loadBalancer.servers]]
+        [[http.services.transcription.loadBalancer.servers]]
           url = "${service_url}"
 
-    [http.services.status]
-      [http.services.status.loadBalancer]
-        passHostHeader = true
-        [[http.services.status.loadBalancer.servers]]
-          url = "${service_url}"
+  [http.middlewares]
+    [http.middlewares.https-redirect.redirectScheme]
+      scheme = "https"
 
-    [http.services.result]
-      [http.services.result.loadBalancer]
-        passHostHeader = true
-        [[http.services.result.loadBalancer.servers]]
-          url = "${service_url}"
+  [http.middlewares.default-redirect.redirectregex]
+      regex = ".*"
+      replacement="/ausis/" 
+   

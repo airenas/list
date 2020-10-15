@@ -131,7 +131,7 @@
 [providers.docker]
 [providers.file]
     directory = "/"
-    watch = true
+    watch = false
     filename = "rules.toml"
     debugLogGeneratedTemplate = true
     
