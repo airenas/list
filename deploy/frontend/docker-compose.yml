@@ -45,3 +45,16 @@ services:
      - "traefik.http.routers.editor.service=editor"
      - "traefik.http.services.editor.loadbalancer.server.port=80"      
  
+  share:
+    image: nginx:1.17.9
+    restart: unless-stopped
+    volumes:
+      - ./share-data:/usr/share/nginx/html
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.share.rule=PathPrefix(`/.well-known/`)"
+     - "traefik.http.routers.share.priority=5"
+     - "traefik.http.routers.share.entrypoints=web,websecure"
+     - "traefik.http.routers.share.tls=true"
+     - "traefik.http.routers.share.service=share"
+     - "traefik.http.services.share.loadbalancer.server.port=80"
