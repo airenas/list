@@ -8,10 +8,16 @@ describe('ErrorPipe', () => {
     expect(pipe).toBeTruthy();
   });
 
-  it('transforms to short audio errror', () => {
+  it('transforms too short audio error', () => {
     const pipe = new ErrorPipe(false);
     const transformed = pipe.transform({id: 'id', status: Status.Uploaded, errorCode: ErrorCode.TooShortAudio, error: 'olia'});
     expect(transformed).toEqual('Per trumpas įrašas');
+  });
+
+  it('transforms too long audio error', () => {
+    const pipe = new ErrorPipe(false);
+    const transformed = pipe.transform({id: 'id', status: Status.Uploaded, errorCode: ErrorCode.TooLongAudio, error: 'olia'});
+    expect(transformed).toEqual('Per ilgas įrašas');
   });
 
   it('transforms Wrong format error', () => {

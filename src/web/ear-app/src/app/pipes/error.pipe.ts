@@ -9,6 +9,9 @@ export class ErrorPipe implements PipeTransform {
     if (value.errorCode === ErrorCode.TooShortAudio) {
       return 'Per trumpas įrašas';
     }
+    if (value.errorCode === ErrorCode.TooLongAudio) {
+      return 'Per ilgas įrašas';
+    }
     if (value.errorCode === ErrorCode.WrongFormat) {
       return 'Blogas formatas';
     }
