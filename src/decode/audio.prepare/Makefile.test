@@ -1,8 +1,11 @@
 -include Makefile.options
 
+####################################################################################
 test_dir=fs
 id?=123
 DENOISE_APP=../../../sfgparse/sfg
+SEND_METRIC_APP=echo SEND_METRIC: 
+####################################################################################
 
 .EXPORT_ALL_VARIABLES:
 
@@ -17,3 +20,11 @@ test-denoise:
 
 clean:
 	rm -rf ${test_dir}/decoded/audio/${id}
+
+
+test-min-len: 
+	MIN_AUDIO_LEN=10.5 ${MAKE} ${test_dir}/decoded/audio/${id}/.done
+
+
+test-max-len: 
+	MAX_AUDIO_LEN=5.5 ${MAKE} ${test_dir}/decoded/audio/${id}/.done

@@ -15,14 +15,16 @@ INPUT_ROOT?=/audio.in
 DENOISE_APP?=${APP_DIR}/sfg
 SEND_METRIC_APP?=${APP_DIR}/send.metric
 ###############################################################################
-
-MIN_LEN?=0.5
-
+# in seconds
+MIN_AUDIO_LEN?=0.5
+MAX_AUDIO_LEN?=7200
+###############################################################################
 CHECK_FORMAT_CMD=r=$$?;\
 		if [ $$r -gt 0 ]; then printf "[[[%s:WRONG_FORMAT]]]\n" ErrorCode >&2; exit 2; fi
-CHECK_LEN_CMD=ok=$$(echo "$(MIN_LEN) > $$(sox --i -D $@)" | bc -l) ;\
-		if [ $$ok -gt 0 ] ; then printf "[[[%s:TOO_SHORT_AUDIO]]]\n" ErrorCode >&2; exit 3; fi
-
+CHECK_LEN_CMD=ok=$$(echo "$(MIN_AUDIO_LEN) > $$(sox --i -D $@)" | bc -l) ;\
+		if [ $$ok -gt 0 ] ; then printf "[[[%s:TOO_SHORT_AUDIO]]]\n" ErrorCode >&2; exit 3; fi;\
+		ok=$$(echo "$(MAX_AUDIO_LEN) < $$(sox --i -D $@)" | bc -l) ;\
+		if [ $$ok -gt 0 ] ; then printf "[[[%s:TOO_LONG_AUDIO]]]\n" ErrorCode >&2; exit 3; fi
 ###############################################################################
 ## for metrics
 SHELL=$(APP_DIR)/m_shell.sh
