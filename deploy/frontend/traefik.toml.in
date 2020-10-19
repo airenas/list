@@ -1,12 +1,4 @@
 ################################################################
-#
-# Configuration sample for Traefik v2.
-#
-# For Traefik v1: https://github.com/traefik/traefik/blob/v1.7/traefik.sample.toml
-#
-################################################################
-
-################################################################
 # Global configuration
 ################################################################
 [global]
@@ -38,100 +30,38 @@
 # Optional
 #
 [log]
-
-  # Log level
-  #
-  # Optional
-  # Default: "ERROR"
-  #
-  level = "DEBUG"
-
-  # Sets the filepath for the traefik log. If not specified, stdout will be used.
-  # Intermediate directories are created if necessary.
-  #
-  # Optional
-  # Default: os.Stdout
-  #
-  # filePath = "log/traefik.log"
-
-  # Format is either "json" or "common".
-  #
-  # Optional
-  # Default: "common"
-  #
-  # format = "json"
-
-################################################################
-# Access logs configuration
-################################################################
-
-# Enable access logs
-# By default it will write to stdout and produce logs in the textual
-# Common Log Format (CLF), extended with additional fields.
-#
-# Optional
-#
-# [accessLog]
-
-  # Sets the file path for the access log. If not specified, stdout will be used.
-  # Intermediate directories are created if necessary.
-  #
-  # Optional
-  # Default: os.Stdout
-  #
-  # filePath = "/path/to/log/log.txt"
-
-  # Format is either "json" or "common".
-  #
-  # Optional
-  # Default: "common"
-  #
-  # format = "json"
-
+  level = "${debug_level}"
 ################################################################
 # API and dashboard configuration
 ################################################################
 
 # Enable API and dashboard
 [api]
-
-  # Enable the API in insecure mode
-  #
-  # Optional
-  # Default: false
-  #
   insecure = true
-
-  # Enabled Dashboard
-  #
-  # Optional
-  # Default: true
-  #
-  # dashboard = false
-
-################################################################
-# Ping configuration
-################################################################
-
+  dashboard = false
+  
 # Enable ping
 [ping]
-
-  # Name of the related entry point
-  #
-  # Optional
-  # Default: "traefik"
-  #
-  # entryPoint = "traefik"
-
 ################################################################
 # Docker configuration backend
 ################################################################
 
 # Enable Docker configuration backend
 [providers.docker]
+# dynamic files config
 [providers.file]
     directory = "/"
     watch = false
     filename = "rules.toml"
     debugLogGeneratedTemplate = true
-    
+  
+
+################################################################
+# ACME
+################################################################
+[certificatesResolvers.le-resolver.acme]
+  email = "${letsencrypt_email}"
+  storage = "acme.json"
+  # caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  [certificatesResolvers.le-resolver.acme.httpChallenge]
+    entryPoint = "web"

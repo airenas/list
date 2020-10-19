@@ -29,6 +29,9 @@ services:
      - "traefik.http.middlewares.web.stripprefix.prefixes=/ausis"
      - "traefik.http.routers.web.entrypoints=web,websecure"
      - "traefik.http.routers.web.tls=true"
+     - "traefik.http.routers.web.tls.certResolver=le-resolver"
+     - "traefik.http.routers.web.tls.domains[0].main=snekos-atpazinimas.lt"
+     - "traefik.http.routers.web.tls.domains[0].sans=www.snekos-atpazinimas.lt"
      - "traefik.http.routers.web.service=web"
      - "traefik.http.services.web.loadbalancer.server.port=8000"
 
@@ -42,6 +45,9 @@ services:
      - "traefik.http.middlewares.editor.stripprefix.prefixes=/ausis/editor"
      - "traefik.http.routers.editor.entrypoints=web,websecure"
      - "traefik.http.routers.editor.tls=true"
+     - "traefik.http.routers.editor.tls.certResolver=le-resolver"
+     - "traefik.http.routers.editor.tls.domains[0].main=snekos-atpazinimas.lt"
+     - "traefik.http.routers.editor.tls.domains[0].sans=www.snekos-atpazinimas.lt"
      - "traefik.http.routers.editor.service=editor"
      - "traefik.http.services.editor.loadbalancer.server.port=80"      
  
