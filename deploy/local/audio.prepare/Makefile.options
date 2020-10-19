@@ -2,4 +2,6 @@ OUTPUT_ROOT=/data/decoded/audio
 INPUT_ROOT=/data/audio.in
 APP_DIR=/app
 
-MIN_LEN=0.5
+# in seconds
+MIN_AUDIO_LEN?=0.5
+MAX_AUDIO_LEN?=7200
