@@ -28,7 +28,7 @@ services:
      - "traefik.http.port=8000"
 
   editor:
-    image: ${DOCKER_REPO}editor-app:0.1.4
+    image: ${DOCKER_REPO}editor-app:${EDITOR_VERSION}
     restart: unless-stopped
     labels:
      - "traefik.enable=true"

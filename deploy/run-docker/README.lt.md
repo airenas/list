@@ -58,7 +58,10 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 1. Pasirinkite diegimo versiją:
 
-    `git checkout v1.1`
+    `git checkout v1.2`
+
+1. Prijunkite *docker* prie *semantikadocker.vdu.lt* repozitorijos:
+    `docker login -u <<SEMANTIKA_DOCKER_REPO_VARTOTOJAS>> -p <<SEMANTIKA_DOCKER_REPO_SLAPTAŽODIS>> semantikadocker.vdu.lt`
 
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 

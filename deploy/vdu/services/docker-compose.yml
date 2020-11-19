@@ -44,7 +44,7 @@ services:
      - "traefik.http.port=8000"
 
   editor:
-    image: airenas/list-editor-app:0.1.4
+    image: airenas/list-editor-app:0.2.0
     restart: unless-stopped
     labels:
      - "traefik.enable=true"
