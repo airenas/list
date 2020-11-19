@@ -1,4 +1,10 @@
-version: '3.1'
+version: '3.4'
+x-logging:
+  &default-logging
+  options:
+    max-size: '10m'
+    max-file: '3'
+  driver: json-file
 
 services:
   proxy:
@@ -12,6 +18,7 @@ services:
       - ./traefik/traefik.toml:/traefik.toml
       - ./traefik/acme.json:/acme.json
     restart: unless-stopped
+    logging: *default-logging
     environment:
       CLOUDFLARE_EMAIL: ${CF_API_EMAIL}
       CLOUDFLARE_API_KEY: ${CF_API_KEY}  
@@ -36,6 +43,7 @@ services:
   web:
     image: airenas/list-ear-app:${EAR_APP_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     environment:
       BASE_HREF: /${URL}/
     labels:
@@ -46,6 +54,7 @@ services:
   editor:
     image: airenas/list-editor-app:0.2.0
     restart: unless-stopped
+    logging: *default-logging
     labels:
      - "traefik.enable=true"
      - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
@@ -56,6 +65,7 @@ services:
   upload-service:
     image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
       - modelsStorage:/models
@@ -74,6 +84,7 @@ services:
   result-service:
     image: airenas/list-result-service:${RESULT_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
     depends_on: 
@@ -87,6 +98,7 @@ services:
   status-service:
     image: airenas/list-status-service:${STATUS_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - mongo
       - rabbitmq
@@ -102,6 +114,7 @@ services:
   manager-service:
     image: airenas/list-manager-service:${MANAGER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - mongo
       - rabbitmq
@@ -117,6 +130,7 @@ services:
   audio-prepare-service:
     image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -131,6 +145,7 @@ services:
   diarization-service:
     image: airenas/list-${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -146,6 +161,7 @@ services:
   transcription-dispatcher-service:
     image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -163,6 +179,7 @@ services:
   transcription-service:
     image: airenas/list-transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -178,6 +195,7 @@ services:
   rescore-dispatcher-service:
     image: airenas/list-dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -196,6 +214,7 @@ services:
   rescore-service:
     image: airenas/list-rescore-service:${TR_RESCORE_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -211,6 +230,7 @@ services:
   result-make-service:
     image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -227,6 +247,7 @@ services:
   inform-service:
     image: airenas/list-inform-service:${INFORM_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
       - mongo
@@ -247,10 +268,12 @@ services:
     volumes:
       - ${LIST_VOLUMES_DIR}/models/punctuation/models:/models
     restart: unless-stopped 
+    logging: *default-logging
   
   punctuation-service:
     image: airenas/list-punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
     environment:
@@ -262,6 +285,7 @@ services:
   clean-service:
     image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
     environment:
@@ -281,6 +305,7 @@ services:
     - rabbitmq-exporter
     - metrics-collector
     restart: unless-stopped
+    logging: *default-logging
     labels:  
     - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
     - "traefik.port=9090"   
@@ -288,6 +313,7 @@ services:
   metrics-collector:
     image: airenas/list-metrics-collector:${METRICS_COLLECTOR_VERSION}
     restart: unless-stopped
+    logging: *default-logging
 
   node-exporter:
     image: prom/node-exporter:v0.18.1
@@ -301,6 +327,7 @@ services:
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
     restart: unless-stopped 
+    logging: *default-logging
 
   rabbitmq-exporter:
     image: kbudde/rabbitmq-exporter:v1.0.0-RC6.1
@@ -308,7 +335,8 @@ services:
       RABBIT_URL: http://rabbitmq:15672
       RABBIT_USER: ${LIST_RABBITMQ_USER}
       RABBIT_PASSWORD: ${LIST_RABBITMQ_PASS}
-    restart: unless-stopped                
+    restart: unless-stopped  
+    logging: *default-logging              
 
 # ########### db & broker
   mongo:
@@ -320,7 +348,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
     volumes:
       - mongo:/data/db
-    restart: unless-stopped     
+    restart: unless-stopped  
+    logging: *default-logging   
     command: mongod --logpath=/dev/null # --quiet
     labels:
      - "traefik.frontend.rule=PathPrefixStrip:/mongo/"
@@ -337,6 +366,7 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
+    logging: *default-logging
     labels:
      - "NAME=rabbitmq"
      - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"

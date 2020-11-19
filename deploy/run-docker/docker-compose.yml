@@ -1,4 +1,10 @@
-version: '3.1'
+version: '3.4'
+x-logging:
+  &default-logging
+  options:
+    max-size: '10m'
+    max-file: '3'
+  driver: json-file
 
 services:
   proxy:
@@ -9,6 +15,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock 
     restart: unless-stopped
+    logging: *default-logging  
     labels:
       - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
       - "traefik.proxy.port=8080"
@@ -22,6 +29,7 @@ services:
     restart: unless-stopped
     environment:
       BASE_HREF: /${URL}/
+    logging: *default-logging  
     labels:
      - "traefik.enable=true"
      - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
@@ -30,6 +38,7 @@ services:
   editor:
     image: ${DOCKER_REPO}editor-app:${EDITOR_VERSION}
     restart: unless-stopped
+    logging: *default-logging  
     labels:
      - "traefik.enable=true"
      - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
@@ -40,6 +49,7 @@ services:
   upload-service:
     image: ${DOCKER_REPO}upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
       - modelsStorage:/models
@@ -58,6 +68,7 @@ services:
   result-service:
     image: ${DOCKER_REPO}result-service:${RESULT_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
     depends_on: 
@@ -71,6 +82,7 @@ services:
   status-service:
     image: ${DOCKER_REPO}status-service:${STATUS_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - mongo
       - rabbitmq
@@ -86,6 +98,7 @@ services:
   manager-service:
     image: ${DOCKER_REPO}manager-service:${MANAGER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - mongo
       - rabbitmq
@@ -101,6 +114,7 @@ services:
   audio-prepare-service:
     image: ${DOCKER_REPO}audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -115,6 +129,7 @@ services:
   diarization-service:
     image: ${DOCKER_REPO}${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -130,6 +145,7 @@ services:
   transcription-dispatcher-service:
     image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -147,6 +163,7 @@ services:
   transcription-service:
     image: ${DOCKER_REPO}transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -162,6 +179,7 @@ services:
   rescore-dispatcher-service:
     image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -180,6 +198,7 @@ services:
   rescore-service:
     image: ${DOCKER_REPO}rescore-service:${TR_RESCORE_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -195,6 +214,7 @@ services:
   result-make-service:
     image: ${DOCKER_REPO}result-make-service:${TR_RESULT_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
     environment:
@@ -211,6 +231,7 @@ services:
   inform-service:
     image: ${DOCKER_REPO}inform-service:${INFORM_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     depends_on: 
       - rabbitmq
       - mongo
@@ -231,10 +252,12 @@ services:
     volumes:
       - ${LIST_VOLUMES_DIR}/models/punctuation/models:/models
     restart: unless-stopped 
+    logging: *default-logging
   
   punctuation-service:
     image: ${DOCKER_REPO}punctuation-service:${PUNCTUATION_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
     environment:
@@ -243,6 +266,7 @@ services:
   clean-service:
     image: ${DOCKER_REPO}clean-service:${CLEAN_SERVICE_VERSION}
     restart: unless-stopped
+    logging: *default-logging
     volumes:
       - fileStorage:/data
     environment:
@@ -264,6 +288,7 @@ services:
     - node-exporter
     - metrics-collector
     restart: unless-stopped
+    logging: *default-logging
     labels:  
     - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
     - "traefik.port=9090"   
@@ -271,6 +296,7 @@ services:
   metrics-collector:
     image: ${DOCKER_REPO}metrics-collector:${METRICS_COLLECTOR_VERSION}
     restart: unless-stopped
+    logging: *default-logging
 
   node-exporter:
     image: prom/node-exporter:v0.18.1
@@ -283,7 +309,8 @@ services:
       - '--path.sysfs=/host/sys'
       - --collector.filesystem.ignored-mount-points
       - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
-    restart: unless-stopped 
+    restart: unless-stopped
+    logging: *default-logging 
 
 # ########### db & broker
   mongo:
@@ -295,7 +322,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
     volumes:
       - mongo:/data/db
-    restart: unless-stopped     
+    restart: unless-stopped
+    logging: *default-logging     
     command: mongod --logpath=/dev/null # --quiet
 
   rabbitmq:
@@ -311,6 +339,7 @@ services:
     volumes:
       - rabbitmq:/var/lib/rabbitmq
     restart: unless-stopped
+    logging: *default-logging
 
 # ########### volumes 
 volumes:
