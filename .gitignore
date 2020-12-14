@@ -83,3 +83,4 @@ src/decode/diarization/fs/**
 src/decode/diarization-alt/fs/**
 deploy/local/diarization-alt/deploy/**
 src/decode/result.make/fs/**
+deploy/frontend/Makefile.options

@@ -290,6 +290,9 @@ services:
       - fileStorage:/data
     environment:
       MONGO_URL: ${LIST_MONGO_URL} 
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/clean.service/"
+     - "traefik.port=8000"    
 
   prometheus:
     image: prom/prometheus:v2.17.2
