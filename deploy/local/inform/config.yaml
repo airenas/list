@@ -12,7 +12,7 @@ mail:
         
             Informuojame, kad {{DATE}} pradėta transkripcija.
 
-            Transkripcijai suteikatas ID: {{ID}}.
+            Transkripcijai suteiktas ID: {{ID}}.
 
             Transkripcijos statusą galite stebėti čia: {{URL}}
 
