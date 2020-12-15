@@ -242,6 +242,9 @@ services:
       MONGO_URL: ${LIST_MONGO_URL}
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USELOGIN: ${SMTP_USELOGIN}
       MAIL_URL: ${MAIL_URL} 
 
   tensorflow:
