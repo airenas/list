@@ -76,8 +76,9 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     | host_external_url | - | Kompiuterio URL, kuriuo servisai pasiekiami iš išorės. Naudojama nuorodai el. laiške | <https://airenas.eu:7054> |
     | smtp_host | - |SMTP serveris, laiškų siuntimui | 80 |
     | smtp_port | - |SMTP portas | 587 |
-    | smtp_username | - | SMTP serverio vartotojas | olia@gmail.com |
+    | smtp_username | - | SMTP serverio vartotojas. Jei tuščias - sistema nesiųs informacinių laiškų | olia@gmail.com |
     | smtp_password | - | SMTP slaptažodis |  |
+    | smtp_type     | - | SMTP serverio autentifikavimo tipas. Galimos reikšmės: NO_AUTH (kai SMTP serveris nereikalauja slaptažodžio), PLAIN_AUTH (veikia daugumai SMTP serverių, naudoja TLS, jei serveris palaiko), LOGIN (kai SMTP serveris reikalauja Login autentifikacijos) | PLAIN_AUTH |
 
 1. Instaliuokite
 

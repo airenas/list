@@ -54,7 +54,7 @@ $(install_dir)/.env.done: $(install_dir)/.init.done validate
 	echo "SMTP_PORT=$(smtp_port)" >> $(deploy_dir)/.env 
 	echo "SMTP_USERNAME=$(smtp_username)" >> $(deploy_dir)/.env 
 	echo "SMTP_PASSWORD=$(smtp_password)" >> $(deploy_dir)/.env 
-	echo "SMTP_USELOGIN=$(smtp_uselogin)" >> $(deploy_dir)/.env
+	echo "SMTP_TYPE=$(smtp_type)" >> $(deploy_dir)/.env
 	echo "MAIL_URL=$(host_external_url)/ausis/results/{{ID}}" >> $(deploy_dir)/.env 
 ifeq ($(strip $(smtp_username)),)
 	echo "SENDINFORMMESSAGES=false" >> $(deploy_dir)/.env 

@@ -244,7 +244,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
-      SMTP_USELOGIN: ${SMTP_USELOGIN}
+      SMTP_TYPE: ${SMTP_TYPE}
       MAIL_URL: ${MAIL_URL} 
 
   tensorflow:

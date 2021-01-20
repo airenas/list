@@ -25,3 +25,9 @@ smtp_host=smtp.gmail.com
 smtp_port=587
 smtp_username=
 smtp_password=
+
+## smtp authentication type. Possible values:
+## NO_AUTH    - no authentication required, but note 'smtp_username' must be set anyway - it will be a sending user
+## PLAIN_AUTH - plain authentication. Works for smtp.gmail.com
+## LOGIN      - for some other smtp services, if PLAIN_AUTH does not work
+smtp_type=PLAIN_AUTH
