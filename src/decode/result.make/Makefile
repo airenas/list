@@ -123,7 +123,12 @@ $(RESULTS_ROOT)/%/lat.nb10.txt: $(RESULTS_ROOT)/%/lat.gz | steps utils
 #restore lattice
 $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz | steps utils
 	tsk=restoreLat;id=$*;. $(APP_DIR)/m_start.sh $@
-
+	
+	echo Scripts dir=$(SCRIPTS_DIR)
+ifneq ("$(wildcard $(SCRIPTS_DIR)/restore.sh)","")
+	echo Running: $(SCRIPTS_DIR)/restore.sh
+	$(SCRIPTS_DIR)/restore.sh $(MODELS_ROOT) $^ $(OUTPUT_ROOT)/trans/$*/restore || exit 1
+else
 	unk_id=$$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
 	sil_id=$$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
 	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
@@ -152,6 +157,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 		$(OUTPUT_ROOT)/trans/$*/restore/L2.lat \
 		$(OUTPUT_ROOT)/trans/$*/restore/L3.lat $(MODELS_ROOT)/words.txt \
 		$(MODELS_ROOT)/phones.txt $${spkJoinParam} $${numJoinParam} > $(OUTPUT_ROOT)/trans/$*/restore/lat.restored.txt || exit 1
+endif
 	touch $@ 
 
 ###############################################################################

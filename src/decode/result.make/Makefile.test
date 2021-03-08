@@ -18,6 +18,9 @@ id?=0110db5a-c0a1-4787-84d2-6f09ed8f6c33
 test: 
 	${MAKE} ${test_dir}/results/$(id)/.done
 
+test-custom-restore: 
+	${MAKE} ${test_dir}/results/$(id)/.done SCRIPTS_DIR=./scripts-template 
+
 test-no-speech: 
 	${MAKE} ${test_dir}/results/$(id)/.done NO_SPEECH=true
 
@@ -29,6 +32,9 @@ test-skip-spk-join:
 
 test-skip-spk-join1: 
 	${MAKE} ${test_dir}/results/$(id)/.done SKIP_SPEAKER_JOIN=1
+
+test-custom-restore-params: 
+	${MAKE} ${test_dir}/results/$(id)/.done SCRIPTS_DIR=./scripts-template SKIP_SPEAKER_JOIN=1 SKIP_NUM_JOIN=1	
 
 info: 
 	echo OUTPUT_ROOT: ${OUTPUT_ROOT}
