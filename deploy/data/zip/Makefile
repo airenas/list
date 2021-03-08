@@ -51,7 +51,7 @@ target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 # $(FST_FILE): $(FST_FILE).gz
 # 	pv $< | gunzip > $@
 $(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
-	pv $< > $@
+	cp $< $@
 $(OUT_DIR)/phones.txt: $(PHONES_FILE) | $(OUT_DIR)
 	cp $< $@
 $(OUT_DIR)/words.txt: $(VOCAB_FILE) | $(OUT_DIR)
@@ -63,8 +63,10 @@ $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Zip date      : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
+# $(LM_FILE): $(LM_FILE).gz
+# 	pv $< | gunzip > $@
 $(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(LM_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
-	pv $< | gunzip > $@
+	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(VOCAB_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
