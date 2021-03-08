@@ -48,8 +48,10 @@ target_conf_files=$(patsubst %, $(WORK_DIR)/config/%, $(conf_files))
 lm_files=G.fst words.txt info
 target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 #################################################################################################
-$(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
+$(FST_FILE): $(FST_FILE).gz
 	pv $< | gunzip > $@
+$(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
+	pv $< > $@
 $(OUT_DIR)/phones.txt: $(PHONES_FILE) | $(OUT_DIR)
 	cp $< $@
 $(OUT_DIR)/words.txt: $(VOCAB_FILE) | $(OUT_DIR)
