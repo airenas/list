@@ -84,3 +84,4 @@ src/decode/diarization-alt/fs/**
 deploy/local/diarization-alt/deploy/**
 src/decode/result.make/fs/**
 deploy/frontend/Makefile.options
+testing/8kHz/2021*/**
