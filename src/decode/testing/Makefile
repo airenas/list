@@ -6,6 +6,8 @@ njobs=1
 nthreads=4
 cdir=$(shell pwd)
 
+INT_TO_WORD_APP?=/app/int.to.word
+
 PATH:=utils:$(APPS_ROOT)/bin:$(PATH)
 export train_cmd=run.pl
 export decode_cmd=run.pl
@@ -105,7 +107,13 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 	lattice-1best ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L11.lat \
 		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L21.lat || exit 1	
 
-build: $(TRANS_DIR)/$(ID)/restore/.done
+ $(OUTPUT_ROOT)/trans/%/restore/.txt.done: $(OUTPUT_ROOT)/trans/%/restore/.done
+	cat $(OUTPUT_ROOT)/trans/$*/restore/L2.lat | \
+		$(INT_TO_WORD_APP) -f 3 -v $(MODELS_ROOT)/words.txt > $(OUTPUT_ROOT)/trans/$*/restore/L2.txt
+	cat $(OUTPUT_ROOT)/trans/$*/restore/L21.lat | \
+		$(INT_TO_WORD_APP) -f 3 -v $(MODELS_ROOT)/words.txt > $(OUTPUT_ROOT)/trans/$*/restore/L21.txt	
+
+build: $(TRANS_DIR)/$(ID)/restore/.txt.done
 
 clean:
 	rm -rf $(TRANS_DIR)/$(ID)/mfcc
@@ -117,8 +125,8 @@ clean:
 	rm -rf $(TRANS_DIR)/$(ID)/restore
 
 start-docker:
-	docker run -it --rm --entrypoint '/bin/bash' -v $(cdir):/app \
+	docker run -it --rm --entrypoint '/bin/bash' -v $(cdir):/tests \
 		-v $(LOCAL_VOLUME_ROOT):$(VOLUME_ROOT) -v $(LOCAL_VOLUME_ROOT)/fileStorage/decoded/audio:/data/decoded/audio \
-		airenas/list-transcription-service:3.2.633 -c '/bin/bash'
+		airenas/list-result-make-service:3.6.998 -c '/bin/bash;cd /tests'
 .PHONY:
 	info
