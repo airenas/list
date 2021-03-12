@@ -94,7 +94,7 @@ $(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.
 		lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
 		$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L11.lat || exit 1
 
-	unk_id=$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	unk_id=$$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
 	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
 	lattice-push ark:- ark:- | \
         lattice-align-words-lexicon --partial-word-label=$${unk_id} \
