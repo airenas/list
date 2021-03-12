@@ -76,8 +76,36 @@ $(OUTPUT_ROOT)/trans/%/2-pass/.done: $(OUTPUT_ROOT)/trans/%/1-pass/.done
 	lattice-scale --lm-scale=12.0 "ark:gunzip -c $(TRANS_DIR)/$*/1-pass/decode/lat.1.gz|" "ark:| gzip -c > $(TRANS_DIR)/$*/2-pass/decode/lat.1.gz" || exit 1
 	touch $@
 
+$(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/2-pass/.done
 
-build: $(TRANS_DIR)/$(ID)/2-pass/.done
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
+	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
+	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
+	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
+		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/2-pass/decode/lat.1.gz|"  ark:- | \
+		lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- "ark:| gzip -c > $@"
+
+#restore lattice
+$(OUTPUT_ROOT)/trans/%/restore/.done: $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz
+	unk_id=$$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	sil_id=$$(grep '<eps>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
+		lattice-push ark:- ark:- | \
+		lattice-align-words --silence-label=$${sil_id} --partial-word-label=$${unk_id} $(MODELS_ROOT)/word_boundary.int \
+		$(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L11.lat || exit 1
+
+	unk_id=$(grep '<unk>' $(MODELS_ROOT)/words.txt | cut -d' ' -f2); \
+	lattice-prune --beam=7 "ark:gunzip -c $^|"  ark:- | \
+	lattice-push ark:- ark:- | \
+        lattice-align-words-lexicon --partial-word-label=$${unk_id} \
+		$(MODELS_ROOT)/align_lexicon.int $(MODELS_ROOT)/final.mdl ark:- ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat || exit 1
+
+	lattice-1best ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L1.lat \
+		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L2.lat || exit 1
+	lattice-1best ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L11.lat \
+		ark,t:$(OUTPUT_ROOT)/trans/$*/restore/L21.lat || exit 1	
+
+build: $(TRANS_DIR)/$(ID)/restore/.done
 
 clean:
 	rm -rf $(TRANS_DIR)/$(ID)/mfcc
@@ -86,6 +114,7 @@ clean:
 	rm -f utils
 	rm -rf $(TRANS_DIR)/$(ID)/2-pass
 	rm -rf $(TRANS_DIR)/$(ID)/1-pass
+	rm -rf $(TRANS_DIR)/$(ID)/restore
 
 start-docker:
 	docker run -it --rm --entrypoint '/bin/bash' -v $(cdir):/app \
