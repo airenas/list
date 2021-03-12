@@ -72,6 +72,7 @@ $(OUTPUT_ROOT)/trans/%/1-pass/.done: info $(OUTPUT_ROOT)/trans/%/1-pass/.ivector
 	touch $@
 
 $(OUTPUT_ROOT)/trans/%/2-pass/.done: $(OUTPUT_ROOT)/trans/%/1-pass/.done
+	mkdir -p $(OUTPUT_ROOT)/trans/$*/2-pass/decode
 	lattice-scale --lm-scale=12.0 "ark:gunzip -c $(TRANS_DIR)/$*/1-pass/decode/lat.1.gz|" "ark:| gzip -c > $(TRANS_DIR)/$*/2-pass/decode/lat.1.gz" || exit 1
 	touch $@
 
