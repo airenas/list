@@ -71,16 +71,19 @@ $(OUTPUT_ROOT)/trans/%/1-pass/.done: info $(OUTPUT_ROOT)/trans/%/1-pass/.ivector
 		"ark:|lattice-scale --acoustic-scale=10.0 ark:- ark:- | gzip -c >$(TRANS_DIR)/$*/1-pass/decoded/lat.1.gz" || exit 1;
 	touch $@
 
+$(OUTPUT_ROOT)/trans/%/2-pass/.done: $(OUTPUT_ROOT)/trans/%/1-pass/.done
+	lattice-scale --lm-scale=12.0 "ark:gunzip -c $(TRANS_DIR)/$*/1-pass/decoded/lat.1.gz|" "ark:| gzip -c > $(TRANS_DIR)/$*/2-pass/decoded/lat.1.gz" || exit 1
 
 
 
-build: $(TRANS_DIR)/$(ID)/1-pass/.done
+build: $(TRANS_DIR)/$(ID)/2-pass/.done
 
 clean:
 	rm -rf $(TRANS_DIR)/$(ID)/mfcc
 	rm -f $(TRANS_DIR)/$(ID)/cmvn.scp
 	rm -f steps
 	rm -f utils
+	rm -rf $(TRANS_DIR)/$(ID)/2-pass
 	rm -rf $(TRANS_DIR)/$(ID)/1-pass
 
 start-docker:
