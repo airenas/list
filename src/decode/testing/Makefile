@@ -68,8 +68,11 @@ $(OUTPUT_ROOT)/trans/%/1-pass/.done: info $(OUTPUT_ROOT)/trans/%/1-pass/.ivector
 		--lattice-beam=8 --acoustic-scale=1.0 --allow-partial=true \
 		$(MODELS_ROOT)/final.mdl $(MODELS_ROOT)/HCLG.fst \
 		"ark,s,cs:apply-cmvn --norm-means=false --norm-vars=false --utt2spk=ark:$(TRANS_DIR)/$*/utt2spk scp:$(TRANS_DIR)/$*/cmvn.scp scp:$(TRANS_DIR)/$*/feats.scp ark:- |" \
-		"'ark:|lattice-scale --acoustic-scale=10.0 ark:- ark:- | gzip -c >$(TRANS_DIR)/$*/1-pass/lat.1.gz'" || exit 1;
+		"ark:|lattice-scale --acoustic-scale=10.0 ark:- ark:- | gzip -c >$(TRANS_DIR)/$*/1-pass/decoded/lat.1.gz" || exit 1;
 	touch $@
+
+
+
 
 build: $(TRANS_DIR)/$(ID)/1-pass/.done
 
