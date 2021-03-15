@@ -44,7 +44,8 @@ $(OUTPUT_ROOT)/diarization/%/show.seg: $(INPUT_ROOT)/%/prepared.wav
 	($(DIARIZATION_APP) $$diarization_opts $^ `dirname $@`/show.uem.seg)
 
 $(OUTPUT_ROOT)/diarization/%/show.fixed.seg: $(OUTPUT_ROOT)/diarization/%/show.seg 
-	$(FIX_SEGMENTS_APP) $< $@
+	$(FIX_SEGMENTS_APP) --speakers "$(NUMBER_OF_SPEAKERS)" $< $@_
+	mv $@_ $@
 
 
 $(OUTPUT_ROOT)/trans/%/wav.scp: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg 

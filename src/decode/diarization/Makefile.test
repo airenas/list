@@ -1,11 +1,17 @@
 -include Makefile.options
-
+###################################################################################
 test_dir=fs
-id?=0110db5a-c0a1-4787-84d2-6f09ed8f6c33
+id?=8khz
 DENOISE_APP=../../../sfgparse/sfg
 DIARIZATION_APP=$(MAKE) -f Makefile.test fakeSeg; env; echo cmdparams 
-
+DIARIZATION_APP_REAL=apps/diarization.sh 
 FIX_SEGMENTS_APP=../../../deploy/local/diarization/deploy/fix.segments
+SEND_METRIC_APP=echo SEND_METRIC: 
+MODELS_ROOT=../../../volumes/models/diarization
+###################################################################################
+LOCALCLASSPATH?=LIUM_SpkDiarization-4.2.jar
+LOCALCLASSPATH?=../../../../lium-spkdiarization/jar/LIUM_SpkDiarization-8.4.jar
+ns?=1
 
 .EXPORT_ALL_VARIABLES:
 
@@ -21,5 +27,11 @@ fakeSeg:
 clean:
 	rm -rf $(test_dir)/decoded/trans/${id}
 	rm -rf $(test_dir)/decoded/diarization/${id}
+
+test-speakers: 
+	NUMBER_OF_SPEAKERS=$(ns) ${MAKE} ${test_dir}/decoded/trans/${id}/.diarization.done
+
+test-real: 
+	DIARIZATION_APP=$(DIARIZATION_APP_REAL) ${MAKE} ${test_dir}/decoded/trans/${id}/.diarization.done
 
 

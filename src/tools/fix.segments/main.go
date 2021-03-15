@@ -16,6 +16,7 @@ import (
 
 type params struct {
 	minMillis int
+	speakers  string
 }
 
 type line struct {
@@ -23,6 +24,7 @@ type line struct {
 	from    int
 	len     int
 	rFields []string
+	speaker string
 }
 
 func main() {
@@ -33,7 +35,7 @@ func main() {
 	fs.Parse(os.Args[1:])
 	err := validateParams(params)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		fs.Usage()
 		return
 	}
@@ -72,6 +74,7 @@ func main() {
 
 	log.Printf("Join segments shorter than %d ms", params.minMillis)
 	lnsF := joinLines(lns, params.minMillis)
+	lnsF = oneSpeaker(lnsF, params.speakers)
 
 	for _, l := range lnsF {
 		_, err := fmt.Fprintf(destination, "%s\n", toStr(l))
@@ -89,6 +92,7 @@ func takeParams(fs *flag.FlagSet, data *params) {
 		fs.PrintDefaults()
 	}
 	fs.IntVar(&data.minMillis, "m", 110, "Minimum ms to keep separate line")
+	fs.StringVar(&data.speakers, "speakers", "", "Expected speakers count, if = '1' then all segments will have one speaker")
 }
 
 func validateParams(data *params) error {
@@ -98,19 +102,10 @@ func validateParams(data *params) error {
 	return nil
 }
 
-func getTo(data []byte, start int) int {
-	for ; start < len(data); start++ {
-		if data[start] == '\n' {
-			return start + 1
-		}
-	}
-	return start
-}
-
 func parseLine(str string) (*line, error) {
 	res := &line{}
 	res.fields = strings.Split(str, " ")
-	if len(res.fields) < 4 {
+	if len(res.fields) < 8 {
 		return nil, errors.Errorf("Wrong line %s", str)
 	}
 	var err error
@@ -122,7 +117,8 @@ func parseLine(str string) (*line, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "Wrong number in %s", str)
 	}
-	res.rFields = res.fields[4:]
+	res.rFields = res.fields[4:7]
+	res.speaker = res.fields[7]
 	return res, nil
 }
 
@@ -134,6 +130,7 @@ func joinLines(lns []*line, minMillis int) []*line {
 			jl := l
 			if last.len < l.len {
 				last.rFields = l.rFields
+				last.speaker = l.speaker
 				jl = last
 			}
 			log.Printf("Join segment at %d-%d ms", jl.from*10, (jl.from+jl.len)*10)
@@ -144,6 +141,22 @@ func joinLines(lns []*line, minMillis int) []*line {
 		}
 	}
 	return res
+}
+
+func oneSpeaker(lns []*line, spCount string) []*line {
+	if spCount != "1" {
+		return lns
+	}
+	if len(lns) < 1 {
+		return lns
+	}
+	log.Printf("Fix to contain one speaker. Speakers = %s", spCount)
+
+	sp := lns[0].speaker
+	for _, l := range lns[1:] {
+		l.speaker = sp
+	}
+	return lns
 }
 
 func toStr(l *line) string {
@@ -159,5 +172,7 @@ func toStr(l *line) string {
 		res.WriteString(" ")
 		res.WriteString(s)
 	}
+	res.WriteString(" ")
+	res.WriteString(l.speaker)
 	return res.String()
 }
