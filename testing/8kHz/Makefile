@@ -45,6 +45,7 @@ $(test_dir)/.upload.done: $(test_dir)/.data.done
 	@echo "Sending data to server $(UPLOAD_SERVICE)"
 	export UPLOAD_SERVICE=$(UPLOAD_SERVICE); \
 	export SKIP_NUM_JOIN=1; \
+	export NUMBER_OF_SPEAKERS=$(NUMBER_OF_SPEAKERS); \
 		ls -1 $(test_dir)/wav/*.wav | xargs -n1 -P10 $(scripts_dir)/send.sh $(model) > $(test_dir)/file.list; \
 	touch $(test_dir)/.upload.done
 	
