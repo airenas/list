@@ -16,18 +16,17 @@ $(test_dir):
 	mkdir -p $@
 $(test_dir)/wav: 
 	mkdir -p $@	
-$(test_dir)/.wav.done: | $(test_dir)/wav
-	ls  $(corpus_dir)/WAV | xargs -I {} sh -c "ls  $(corpus_dir)/WAV/{}/ | head -n 3 | \
-		xargs -I [] cp  $(corpus_dir)/WAV/{}/[] $(test_dir)/wav/{}_[]"
+$(test_dir)/.wav.done: $(test_dir)/files.kaldi.txt | $(test_dir)/wav
+	cat $< | tr '_' ' ' | xargs -n 2 sh -c 'cp $(corpus_dir)/WAV/$$0/$$1.wav $(test_dir)/wav/$$0_$$1.wav'
 	touch $@
 $(test_dir)/kaldi_rec.all.txt: | $(test_dir)
 	cat $(corpus_dir)/results_1/kaldiout.txt > $@
 $(test_dir)/ref.all.txt: | $(test_dir)
 	cat $(corpus_dir)/kaldi_data_1/textw > $@
 $(test_dir)/kaldi_rec.txt: | $(test_dir)
-	cat $(corpus_dir)/results_1/kaldiout.txt | grep -E "_00 |_01 |_02" > $@
-$(test_dir)/ref.txt: | $(test_dir)
-	cat $(corpus_dir)/kaldi_data_1/textw | grep -E "_00 |_01 |_02" > $@
+	cat $(corpus_dir)/results_1/kaldiout.txt | grep -E "_00 |_01 |_02 |_03" > $@
+$(test_dir)/ref.txt: $(test_dir)/files.kaldi.txt | $(test_dir)
+	cat $(corpus_dir)/kaldi_data_1/textw | grep -E "_00 |_01 |_02 |_03" | grep -f $(test_dir)/files.kaldi.txt > $@
 $(test_dir)/%.f.txt: $(test_dir)/%.txt
 	cat $< | perl $(wordfix_dir)/filter.pl $(wordfix_dir) > $@
 $(test_dir)/.data.done: $(test_dir)/ref.f.txt $(test_dir)/kaldi_rec.f.txt $(test_dir)/.wav.done | $(test_dir)
@@ -39,7 +38,7 @@ kaldi-error: prepare
 		ark:$(test_dir)/ref.f.txt  ark:$(test_dir)/kaldi_rec.f.txt
 kaldi-error-all: $(test_dir)/ref.all.f.txt $(test_dir)/kaldi_rec.all.f.txt
 	$(scripts_dir)/compute-wer --mode=present \
-		ark:$(test_dir)/ref.all.f.txt  ark:$(test_dir)/kaldi_rec.all.f.txt		
+		ark:$(test_dir)/ref.all.f.txt  ark:$(test_dir)/kaldi_rec.all.f.txt
 #####################################################################################
 $(test_dir)/.upload.done: $(test_dir)/.data.done
 	@echo "Sending data to server $(UPLOAD_SERVICE)"
@@ -80,10 +79,15 @@ $(test_dir)/recognized.f.txt: $(test_dir)/recognized.txt
 
 calc-wer-1: $(test_dir)/recognized.f.txt $(test_dir)/ref.f1.txt
 	$(scripts_dir)//compute-wer --mode=present \
-		ark:$(test_dir)/ref.f1.txt  ark:$(test_dir)/recognized.f.txt
-$(test_dir)/wer.txt: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
+		ark:$(test_dir)/ref.f1.txt  ark:$(test_dir)/recognized.f.
+
+$(test_dir)/files.kaldi.txt: $(test_dir)/kaldi_rec.f.txt
+	cat $< | cut -d ' ' -f 1 > $@_
+	mv $@_ $@
+
+$(test_dir)/wer.txt: $(test_dir)/recognized.f.k.txt $(test_dir)/ref.f.txt
 	$(scripts_dir)/compute-wer --mode=present \
-		ark:$(test_dir)/ref.f.txt ark:$(test_dir)/recognized.f.txt > $(test_dir)/wer.txt 
+		ark:$(test_dir)/ref.f.txt ark:$(test_dir)/recognized.f.k.txt > $(test_dir)/wer.txt 
 calc-wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
 compare: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt

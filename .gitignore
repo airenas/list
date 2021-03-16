@@ -85,3 +85,6 @@ deploy/local/diarization-alt/deploy/**
 src/decode/result.make/fs/**
 deploy/frontend/Makefile.options
 testing/8kHz/2021*/**
+testing/8kHz/vdu.config
+testing/8kHz/old/**
+src/decode/testing/Makefile.options
