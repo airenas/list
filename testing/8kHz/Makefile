@@ -33,7 +33,7 @@ $(test_dir)/.data.done: $(test_dir)/ref.f.txt $(test_dir)/kaldi_rec.f.txt $(test
 	touch $@
 prepare: $(test_dir)/.data.done
 #####################################################################################
-kaldi-error: prepare
+calc-wer-kaldi: prepare
 	$(scripts_dir)/compute-wer --mode=present \
 		ark:$(test_dir)/ref.f.txt  ark:$(test_dir)/kaldi_rec.f.txt
 kaldi-error-all: $(test_dir)/ref.all.f.txt $(test_dir)/kaldi_rec.all.f.txt
@@ -85,9 +85,9 @@ $(test_dir)/files.kaldi.txt: $(test_dir)/kaldi_rec.f.txt
 	cat $< | cut -d ' ' -f 1 > $@_
 	mv $@_ $@
 
-$(test_dir)/wer.txt: $(test_dir)/recognized.f.k.txt $(test_dir)/ref.f.txt
+$(test_dir)/wer.txt: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
 	$(scripts_dir)/compute-wer --mode=present \
-		ark:$(test_dir)/ref.f.txt ark:$(test_dir)/recognized.f.k.txt > $(test_dir)/wer.txt 
+		ark:$(test_dir)/ref.f.txt ark:$(test_dir)/recognized.f.txt > $(test_dir)/wer.txt 
 calc-wer: $(test_dir)/wer.txt
 	cat $(test_dir)/wer.txt
 compare: $(test_dir)/recognized.f.txt $(test_dir)/ref.f.txt
@@ -108,8 +108,8 @@ calc-wer-kaldi-sentence: $(test_dir)/kaldi_rec.f.txt $(test_dir)/ref.f.txt
 	@echo "FILE = $(snt)"
 	$(scripts_dir)/compute-wer --mode=present --verbose=10 \
 		ark:$(test_dir)/ref.f.txt  "ark:cat $(test_dir)/kaldi_rec.f.txt | grep $(snt) |"
-calc-wer-kaldi-by-one: $(test_dir)/wer.txt
-	ls -1 $(test_dir)/result/*.txt | xargs -n 1 -I {} sh -c "f=\$$(basename {} | sed 's|.txt||'	);echo \$$f; $(MAKE) calc-wer-kaldi-sentence snt=\$$f" \
+calc-wer-kaldi-by-one: $(test_dir)/files.kaldi.txt
+	cat $< | xargs -n 1 -I {} sh -c "echo {}; $(MAKE) calc-wer-kaldi-sentence snt={}" \
 		| grep -E "WER|FILE" | paste - - -d-
 #####################################################################################
 info: 
