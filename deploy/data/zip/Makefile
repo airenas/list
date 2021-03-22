@@ -1,5 +1,4 @@
 -include Makefile.options
-MAIN_DIR=${CURDIR}/../..
 OUT_DIR=$(WORK_DIR)/am/$(NAME)-$(VERSION)
 OUT_NAME=$(NAME)-$(VERSION)
 OUT_FILE=am-$(NAME)-$(VERSION).tar.gz
@@ -8,7 +7,8 @@ OUT_CONFIG_FILE=config-$(NAME)-$(VERSION).tar.gz
 #################################################################################################
 info:
 	@echo "Input		: $(INITIAL_FILE)"
-	@echo "FST		: $(FST_FILE)"
+	@echo "Initial dir  : $(INITIAL_DIR)"
+	@echo "FST			: $(FST_FILE)"
 	@echo "Vocab		: $(VOCAB_FILE)"
 	@echo "LM 	        : $(LM_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
@@ -21,6 +21,8 @@ $(WORK_DIR):
 	mkdir -p $@
 $(WORK_DIR)/initial:
 	mkdir -p $@
+$(WORK_DIR)/initial.config:
+	mkdir -p $@	
 $(WORK_DIR)/lm/$(OUT_NAME):
 	mkdir -p $@
 $(WORK_DIR)/new:
@@ -30,15 +32,36 @@ $(OUT_DIR):
 $(WORK_DIR)/config:
 	mkdir -p $@
 ########################################################################################################
-$(WORK_DIR)/.extracted: $(INITIAL_FILE) | $(WORK_DIR)/initial
+$(WORK_DIR)/$(INITIAL_FILE): | $(WORK_DIR)
+	wget --no-check-certificate -O $@_ $(dwn_url)/$(INITIAL_FILE)
+	mv $@_ $@
+	
+$(WORK_DIR)/.extracted: $(WORK_DIR)/$(INITIAL_FILE) | $(WORK_DIR)/initial
 	tar xvzf $^ -C $(WORK_DIR)/initial
 	rm -f $(WORK_DIR)/initial/$(INITIAL_DIR)/HCLG.fst
 	touch $@
+########################################################################################################
+$(WORK_DIR)/$(INITIAL_CONFIG_FILE): | $(WORK_DIR)
+	wget --no-check-certificate -O $@_ $(dwn_url)/$(INITIAL_CONFIG_FILE)
+	mv $@_ $@
+	
+$(WORK_DIR)/.config.extracted: $(WORK_DIR)/$(INITIAL_CONFIG_FILE) | $(WORK_DIR)/initial.config
+	tar xvzf $^ -C $(WORK_DIR)/initial.config
+	rm -f $(WORK_DIR)/initial/$(INITIAL_DIR)/HCLG.fst
+	touch $@	
+########################################################################################################
+$(WORK_DIR)/$(NEW_FILE): | $(WORK_DIR)
+	$(NEW_FILE_DWN_CMD)
+	
+$(WORK_DIR)/.new.extracted: $(WORK_DIR)/$(NEW_FILE) | $(WORK_DIR)/new
+	tar xvzf $^ -C $(WORK_DIR)/new
+	touch $@	
 #################################################################################################
-files=lmwt wip cmvn_opts final.mdl HCLG.fst phones.txt word_boundary.int words.txt \
-	conf/ivector_extractor.conf conf/mfcc_hires.conf conf/vad.conf conf/online_cmvn.conf conf/decode.conf conf/splice.conf \
-	ivector_extractor/splice_opts ivector_extractor/num_jobs ivector_extractor/final.ie ivector_extractor/final.dubm ivector_extractor/online_cmvn.conf \
-	ivector_extractor/final.ie.id ivector_extractor/final.mat ivector_extractor/global_cmvn.stats \
+files=cmvn_opts conf/mfcc_hires.conf final.mdl frame_subsampling_factor HCLG.fst \
+	ivector_extractor/online_cmvn.conf ivector_extractor/final.ie \
+	ivector_extractor/final.ie.id ivector_extractor/final.dubm ivector_extractor/num_jobs \
+	ivector_extractor/final.mat ivector_extractor/splice_opts ivector_extractor/global_cmvn.stats \
+	lmwt phones.txt wip word_boundary.int words.txt \
 	info
 target_files=$(patsubst %, $(OUT_DIR)/%, $(files))
 
@@ -48,14 +71,9 @@ target_conf_files=$(patsubst %, $(WORK_DIR)/config/%, $(conf_files))
 lm_files=G.fst words.txt info
 target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 #################################################################################################
-# $(FST_FILE): $(FST_FILE).gz
-# 	pv $< | gunzip > $@
-$(OUT_DIR)/HCLG.fst: $(FST_FILE) | $(OUT_DIR)
-	cp $< $@
-$(OUT_DIR)/phones.txt: $(PHONES_FILE) | $(OUT_DIR)
-	cp $< $@
-$(OUT_DIR)/words.txt: $(VOCAB_FILE) | $(OUT_DIR)
-	cp $< $@
+$(OUT_DIR)/%: $(WORK_DIR)/new/$(NEW_DIR)/% $(WORK_DIR)/.new.extracted | $(OUT_DIR)
+	mkdir -p `dirname $@`
+	cp $< $@	
 $(OUT_DIR)/%: $(WORK_DIR)/initial/$(INITIAL_DIR)/% $(WORK_DIR)/.extracted | $(OUT_DIR)
 	mkdir -p `dirname $@`
 	cp $< $@
@@ -63,17 +81,15 @@ $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Zip date      : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
-# $(LM_FILE): $(LM_FILE).gz
-# 	pv $< | gunzip > $@
-$(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(LM_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
+$(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(WORK_DIR)/new/$(NEW_DIR)/G.fst | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
-$(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(VOCAB_FILE) | $(WORK_DIR)/lm/$(OUT_NAME)
+$(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(WORK_DIR)/new/$(NEW_DIR)/words.txt | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
 	echo "Zip date      : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(WORK_DIR)/lm/$(OUT_NAME)/words.txt | awk '{print $$1}')" >> $@
 #################################################################################################
-$(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial/config/words_v3/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
+$(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial.config/config/$(INITIAL)/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
 	mkdir -p `dirname $@`
 	cp $< $@
 $(WORK_DIR)/config/$(OUT_NAME).yml: | $(WORK_DIR)/config
@@ -101,9 +117,10 @@ $(WORK_DIR)/$(OUT_LM_FILE): $(target_lm_files)
 	cd $(WORK_DIR) && tar -czvf $(OUT_LM_FILE) lm
 #################################################################################################
 prepare: info $(WORK_DIR)/.extracted
-build: info $(WORK_DIR)/.extracted $(WORK_DIR)/$(OUT_FILE)
-build-config: info $(WORK_DIR)/.extracted  $(WORK_DIR)/$(OUT_CONFIG_FILE)
+build: info $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted $(WORK_DIR)/$(OUT_FILE)
+build-config: info $(WORK_DIR)/.config.extracted $(WORK_DIR)/$(OUT_CONFIG_FILE)
 build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
+test: $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted
 #################################################################################################
 clean:
 	rm -rf $(WORK_DIR)

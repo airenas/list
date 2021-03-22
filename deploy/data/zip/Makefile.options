@@ -1,10 +1,15 @@
 -include Makefile.options.local
 
-INITIAL_FILE?=am-10.tar.gz
-INITIAL_DIR?=am
+WORK_DIR?=am
+INITIAL?=ben-2.0
+INITIAL_DIR?=am/$(INITIAL)
 
-WORK_DIR?=data
+INITIAL_FILE?=am-$(INITIAL).tar.gz
 
-NAME?=ben
-VERSION?=2.0
+INITIAL_CONFIG_FILE?=config-$(INITIAL).tar.gz
+
+NAME?=ben-tel
+VERSION?=1.1
+
+dwn_url=https://semantikadocker.vdu.lt/models
 
