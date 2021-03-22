@@ -13,8 +13,8 @@ info:
 	@echo "LM 	        : $(LM_FILE)"
 	@echo "Phones		: $(PHONES_FILE)"
 	@echo "Output		: $(WORK_DIR)/$(OUT_FILE)"
-	@echo "                 : $(WORK_DIR)/$(OUT_CONFIG_FILE)"
-	@echo "                 : $(WORK_DIR)/$(OUT_LM_FILE)"
+	@echo "             : $(WORK_DIR)/$(OUT_CONFIG_FILE)"
+	@echo "             : $(WORK_DIR)/$(OUT_LM_FILE)"
 #	@echo "Target		: $(target_files)"
 #################################################################################################
 $(WORK_DIR):
@@ -121,6 +121,17 @@ build: info $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted $(WORK_DIR)/$(OUT_
 build-config: info $(WORK_DIR)/.config.extracted $(WORK_DIR)/$(OUT_CONFIG_FILE)
 build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
 test: $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted
+#################################################################################################
+SSH_CMD=ssh -t -p $(SSH_PORT) $(USER)@$(SERVER_URL)
+RSYNC_CMD=rsync -r -e 'ssh -p $(SSH_PORT)' -P
+fake-%.upload: $(WORK_DIR)/%.tar.gz
+	$(RSYNC_CMD) $< $(USER)@$(SERVER_URL):$(remote_dwn_dir)/
+install-%.data: fake-%.upload
+	$(SSH_CMD) "tar xvzf $(remote_dwn_dir)/$*.tar.gz -C $(remote_models_dir)/"
+
+install-am: install-am-$(OUT_NAME).data	
+install-config: install-config-$(OUT_NAME).data	
+install-lm: install-lm-$(OUT_NAME).data	
 #################################################################################################
 clean:
 	rm -rf $(WORK_DIR)
