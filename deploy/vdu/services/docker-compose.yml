@@ -378,6 +378,14 @@ services:
      - "traefik.frontend.rule=PathPrefixStrip:/rabbit/"
      - "traefik.port=15672"  
 
+  audio-extractor: 
+    image: airenas/browser-audio-extract:0.1.10
+    labels:
+     - "traefik.frontend.rule=PathPrefixStrip:/audio-extractor/"
+     - "traefik.port=8000"  
+   
+  
+
 # ########### volumes 
 volumes:
   fileStorage:
