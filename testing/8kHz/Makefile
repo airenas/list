@@ -5,8 +5,8 @@ scripts_dir=../scripts
 #####################################################################################
 file?=1.wav
 upload: 
-	curl -X POST -k $(UPLOAD_SERVICE)/upload -H 'Accept: application/json' -H 'content-type: multipart/form-data' \
-	-F recognizer=$(model) -F numberOfSpeakers=2 \
+	curl -X POST -k $(UPLOAD_SERVICE)/upload?key=DWYx2cJEkeAbi1SoVaYB -H 'Accept: application/json' -H 'content-type: multipart/form-data' \
+	-F recognizer=$(model) -F numberOfSpeakers=1 \
 	-F file=@$(file)
 
 record:
@@ -24,9 +24,9 @@ $(test_dir)/kaldi_rec.all.txt: | $(test_dir)
 $(test_dir)/ref.all.txt: | $(test_dir)
 	cat $(corpus_dir)/kaldi_data_1/textw > $@
 $(test_dir)/kaldi_rec.txt: | $(test_dir)
-	cat $(corpus_dir)/results_1/kaldiout.txt | grep -E "_00 |_01 |_02 |_03" > $@
+	cat $(corpus_dir)/results_1/kaldiout.txt > $@
 $(test_dir)/ref.txt: $(test_dir)/files.kaldi.txt | $(test_dir)
-	cat $(corpus_dir)/kaldi_data_1/textw | grep -E "_00 |_01 |_02 |_03" | grep -f $(test_dir)/files.kaldi.txt > $@
+	cat $(corpus_dir)/kaldi_data_1/textw | grep -f $(test_dir)/files.kaldi.txt > $@
 $(test_dir)/%.f.txt: $(test_dir)/%.txt
 	cat $< | perl $(wordfix_dir)/filter.pl $(wordfix_dir) > $@
 $(test_dir)/.data.done: $(test_dir)/ref.f.txt $(test_dir)/kaldi_rec.f.txt $(test_dir)/.wav.done | $(test_dir)
