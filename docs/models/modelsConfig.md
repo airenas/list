@@ -45,4 +45,14 @@ settings:
   # transcription preload commands - may be shared between models if key is the same
   rescore-preload_key: words_v3
   rescore-preload_cmd: /models/config/words_v3/scripts/rescore.preload.sh
+
+  # result preparation parameters
+  
+  # lm weight
+  # default goes from $(models_root)/lmwt file if not set here
+  result_lmwt: 12.0
+
+  # word insertion penalty
+  # default goes from $(models_root)/wip file if not set here
+  result_wip: -1.0
 ```
