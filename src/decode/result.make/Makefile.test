@@ -21,6 +21,9 @@ test:
 test-custom-restore: 
 	${MAKE} ${test_dir}/results/$(id)/.done SCRIPTS_DIR=./scripts-template 
 
+test-custom-lmwt: 
+	${MAKE} ${test_dir}/results/$(id)/.done RESULT_LMWT=15.75 RESULT_WIP=-10
+
 test-no-speech: 
 	${MAKE} ${test_dir}/results/$(id)/.done NO_SPEECH=true
 

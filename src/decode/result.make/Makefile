@@ -48,8 +48,20 @@ $(OUTPUT_ROOT)/trans/%/restore/lat.scaled.gz: $(OUTPUT_ROOT)/trans/%/$(FINAL_PAS
 	tsk=scale;id=$*;. $(APP_DIR)/m_start.sh $@
 
 	mkdir -p $(OUTPUT_ROOT)/trans/$*/restore
-	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt"); \
-	opt_wip=$$(cat "$(MODELS_ROOT)/wip"); \
+ifeq ($(RESULT_LMWT),)
+	opt_lmwt=$$(cat "$(MODELS_ROOT)/lmwt")
+else
+	opt_lmwt=$(RESULT_LMWT)
+	echo "Use opt_lmwt from env settings"
+endif
+ifeq ($(RESULT_WIP),)
+	opt_wip=$$(cat "$(MODELS_ROOT)/wip")
+else
+	opt_wip=$(RESULT_WIP)
+	echo "Use opt_wip from env settings"
+endif
+	echo "opt_lmwt=$${opt_lmwt}"
+	echo "opt_wip=$${opt_wip}"
 	lattice-scale --inv-acoustic-scale=$${opt_lmwt} \
 		"ark:gunzip -c $(OUTPUT_ROOT)/trans/$*/$(FINAL_PASS)/decode/lat.1.gz|"  ark:- | \
 		lattice-add-penalty --word-ins-penalty=$${opt_wip} ark:- "ark:| gzip -c > $@"
