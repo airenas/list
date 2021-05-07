@@ -1,0 +1,121 @@
+@startuml Zoom
+
+skinparam sequence {
+ParticipantBorderColor Black
+ActorBorderColor Black
+
+ParticipantBackgroundColor White
+ActorBackgroundColor White
+
+ArrowColor black
+LifeLineBorderColor black
+LifeLineBackgroundColor lightgray
+
+BoxBorderColor black
+}
+skinparam databaseBackgroundColor White
+skinparam dataBaseBorderColor Blue
+
+hide footbox
+title Zoom multiple files upload
+
+' skinparam handwritten true
+
+actor User
+participant "Upload Service" as upload
+participant "DB" as db
+participant "File System" as fs
+participant "Queue Service" as queue
+participant "MultiService" as ms
+
+User -> upload: upload
+activate upload
+
+upload -[#blue]> db: save request
+activate db #lightblue
+db -[#blue]-> upload:
+deactivate db
+
+upload -> fs: save files
+activate fs
+fs --> upload:
+deactivate fs
+
+upload -> queue: send decodeMultipleMsg
+activate queue
+queue --> upload:
+deactivate queue
+
+upload --> User: response
+deactivate upload
+
+ms -> queue: listen NewMsgs
+ms -> queue: listen StatusMsgs
+ms -> queue: listen FinishMsgs
+
+queue --> ms: new msg
+activate queue
+loop each file
+
+activate ms
+ms -> fs: get file
+activate fs
+fs --> ms:
+deactivate fs
+
+ms -> audioLen: get lengths
+activate audioLen
+audioLen --> ms
+deactivate audioLen
+
+end
+
+ms -> ms: validate
+
+ms -> queue: send JoinAudioMsgs
+queue --> ms
+
+loop each file
+
+ms -> queue: send Transcribe Msgs
+queue --> ms
+
+end
+
+ms -> queue: ack
+deactivate queue
+deactivate ms
+
+
+queue --> ms: statusMsg
+activate queue
+activate ms
+ms -> db: updateStatus
+activate db
+db --> ms
+deactivate db
+
+ms -> queue: ack
+deactivate queue
+deactivate ms
+
+queue --> ms: finishMsg
+activate queue
+activate ms
+ms -> db: check all done
+activate db
+db --> ms
+deactivate db
+
+ms -> queue: send JoinResultMsgs
+queue --> ms
+
+
+ms -> queue: ack
+deactivate queue
+deactivate ms
+
+
+
+
+@enduml
