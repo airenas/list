@@ -1,0 +1,11 @@
+# messageServer: 
+#     url: amqp://list:list@localhost:5672/
+
+# mongo:
+#     url: localhost:27018  
+    
+sendInformMessages: true   
+
+audio:
+    path: /data/audio.in/
+    durationUrl: http://audio-len:8000/duration
