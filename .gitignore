@@ -89,3 +89,4 @@ testing/8kHz/vdu.config
 testing/8kHz/old/**
 src/decode/testing/Makefile.options
 testing/8kHz/lat/0a2948bb-b3d9-4fc4-82ba-3a1c890728f4.gz
+deploy/local/zoom/deploy/**
