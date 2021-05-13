@@ -1,0 +1,3 @@
+OUTPUT_ROOT=fs/audio.in
+INPUT_ROOT=fs/audio.in
+APP_DIR=/home/airenas/projects/list/src/decode/scripts
