@@ -36,6 +36,6 @@ $(OUTPUT_ROOT)/$(id).mp3: $(INPUT_ROOT)/$(id)/merge/$(id).wav
 	tsk=to=mp3;id=$(id);. $(APP_DIR)/m_start.sh $@
 	ffmpeg -i $< $@
 ###############################################################################
-$(OUTPUT_ROOT)/$(id)/.done: $(OUTPUT_ROOT)/$(id).mp3
+$(OUTPUT_ROOT)/$(id)/.merge.done: $(OUTPUT_ROOT)/$(id).mp3
 	touch $@
 ###############################################################################

@@ -12,9 +12,9 @@ info:
 	${MAKE} info ID=$(id)
 
 test: 
-	${MAKE} ${test_dir}/audio.in/${id}/.done
+	${MAKE} ${test_dir}/audio.in/${id}/.merge.done
 
 clean:
 	rm -rf ${test_dir}/audio.in/${id}/merge
 	rm -f ${test_dir}/audio.in/${id}.mp3
-	rm -f ${test_dir}/audio.in/${id}/.done
+	rm -f ${test_dir}/audio.in/${id}/.merge.done
