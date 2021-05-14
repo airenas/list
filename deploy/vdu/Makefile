@@ -48,7 +48,7 @@ deploy: copy
 
 deploy-one: copy
 	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)
-	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose stop $(srv) && docker-compose rm -f $(srv) && docker-compose up -d $(srv)"
+	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose up --detach --build $(srv)"
 
 log-one:
 	@$(if $(strip $(srv)),echo "Service = $(srv)",echo No srv set && exit 1)

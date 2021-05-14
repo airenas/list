@@ -69,9 +69,6 @@ services:
     volumes:
       - fileStorage:/data
       - modelsStorage:/models
-    depends_on: 
-      - rabbitmq  
-      - mongo
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
@@ -115,9 +112,6 @@ services:
     image: airenas/list-manager-service:${MANAGER_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
-    depends_on: 
-      - mongo
-      - rabbitmq
     volumes:
       - fileStorage:/data  
     environment:
@@ -126,13 +120,25 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL} 
       SENDINFORMMESSAGES: "true" 
+  
+  zoom-service:
+    image: airenas/list-zoom-service:${ZOOM_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - fileStorage:/data  
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL} 
+      SENDINFORMMESSAGES: "true"      
+      
 
   audio-prepare-service:
     image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
-    depends_on: 
-      - rabbitmq
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
@@ -141,6 +147,19 @@ services:
     volumes:
       - fileStorage:/data
       - modelsStorage:/models 
+
+  audio-merger:
+    image: airenas/list-audio-merger:${AUDIO_MERGER_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      METRICS_URL: http://metrics-collector:8000/metrics  
+    volumes:
+      - fileStorage:/data
+      - modelsStorage:/models      
 
   diarization-service:
     image: airenas/list-${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
@@ -243,6 +262,18 @@ services:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models 
+  
+  join-results-service:
+    image: airenas/list-join-results-service:${TR_JOIN_RESULTS_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models       
 
   inform-service:
     image: airenas/list-inform-service:${INFORM_SERVICE_VERSION}
@@ -262,6 +293,13 @@ services:
       SMTP_USERNAME: ${SMTP_USERNAME}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       MAIL_URL: ${MAIL_URL} 
+
+  audio-len:
+    image: airenas/audio-len-service:0.9.20
+    restart: unless-stopped  
+    logging: *default-logging
+    environment:
+     - GODEBUG=madvdontneed=1
 
   tensorflow:
     image: tensorflow/serving:1.14.0

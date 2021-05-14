@@ -1,7 +1,7 @@
 worker:
     name: JoinResultWorker
     queue: JoinResults
-    command: make /data/results/{ID}/.done
+    command: make /data/results/{ID}/.done id={ID}
     workingDir: /cmd/
     resultFile: /data/results/{ID}/resultFinal.txt
     logFile: /data/logs/{ID}.log
