@@ -1,20 +1,23 @@
-FROM airenas/ubuntu.make:2.0
+FROM airenas/ubuntu.make:2.0 as worker
+
+RUN apt-get update && apt-get install -y sox ffmpeg bc
+
+WORKDIR /app
+COPY deploy/cmdWorkerService /app/
+COPY deploy/send.metric /app/
+COPY deploy/*.sh /app/
+
+
+FROM worker
 LABEL Description="This image is used to host the LiST audio prepare worker service" \ 
       Maintainer="airenass@gmail.com" Vendor="Airenas Vaiciunas" Version="2.0" 
 
 VOLUME ["/data"]
 VOLUME ["/models"]
-WORKDIR /app
 
-COPY deploy/cmdWorkerService /app/
-COPY deploy/send.metric /app/
 COPY deploy/sfg /app/
-COPY deploy/*.sh /app/
 COPY config.yaml /app/
-
 COPY deploy/cmd/Makefile /cmd/
 COPY Makefile.options /cmd/
-
-RUN apt-get update && apt-get install -y sox ffmpeg bc
 
 ENTRYPOINT ["./cmdWorkerService"]
