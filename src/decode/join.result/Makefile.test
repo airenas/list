@@ -1,0 +1,21 @@
+-include Makefile.options
+OUTPUT_ROOT:=$(abspath $(OUTPUT_ROOT))
+
+###############################################################################
+SEND_METRIC_APP=echo SEND_METRIC: 
+###############################################################################
+test_dir=fs
+id?=1
+ids?=2 3
+
+.EXPORT_ALL_VARIABLES:
+
+test: 
+	${MAKE} ${test_dir}/results/$(id)/.done
+
+info: 
+	echo OUTPUT_ROOT: ${OUTPUT_ROOT}
+	${MAKE} info
+
+clean:
+	rm -rf $(test_dir)/results/${id}

@@ -1,0 +1,3 @@
+OUTPUT_ROOT?=fs/decoded
+RESULTS_ROOT?=fs/results
+APP_DIR?=../scripts
