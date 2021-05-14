@@ -6,7 +6,7 @@ SEND_METRIC_APP=echo SEND_METRIC:
 ###############################################################################
 test_dir=fs
 id?=1
-ids?=2 3
+CH_IDS?=2 3
 
 .EXPORT_ALL_VARIABLES:
 

@@ -30,8 +30,8 @@ $(RESULTS_ROOT)/$(id):
 	mkdir -p $@
 ###############################################################################
 #$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
-input_lat_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(ids))
-input_webvtt_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(ids))
+input_lat_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(CH_IDS))
+input_webvtt_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(CH_IDS))
 ###############################################################################
 $(RESULTS_ROOT)/$(id)/resultFinal.txt: $(input_lat_files) | $(RESULTS_ROOT)/$(id)
 	tsk=joinLattice;id=$(id);. $(APP_DIR)/m_start.sh $@
@@ -42,7 +42,8 @@ $(RESULTS_ROOT)/$(id)/webvtt.txt: $(input_webvtt_files) | $(RESULTS_ROOT)/$(id)
 	cat $(input_webvtt_files) > $@
 ###############################################################################
 info: 
-	echo "ids = " $(ids)
+	echo "ids = " $(CH_IDS)
+	echo "ids_fn = " $(CH_IDS_FN)
 	echo "input_lat_files = " $(input_lat_files)
 ###############################################################################
 $(RESULTS_ROOT)/$(id)/.done: info $(RESULTS_ROOT)/$(id)/resultFinal.txt \
