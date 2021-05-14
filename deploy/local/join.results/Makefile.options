@@ -1,0 +1,3 @@
+OUTPUT_ROOT=/data/decoded
+APP_DIR=/app
+RESULTS_ROOT=/data/results

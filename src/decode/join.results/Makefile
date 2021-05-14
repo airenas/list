@@ -42,10 +42,11 @@ $(RESULTS_ROOT)/$(id)/webvtt.txt: $(input_webvtt_files) | $(RESULTS_ROOT)/$(id)
 	cat $(input_webvtt_files) > $@
 ###############################################################################
 info: 
-	echo $(ids)
-	echo $(input_lat_files)
-	echo $(input_webvtt_files)
+	echo "ids = " $(ids)
+	echo "input_lat_files = " $(input_lat_files)
 ###############################################################################
-$(RESULTS_ROOT)/$(id)/.done: $(RESULTS_ROOT)/$(id)/resultFinal.txt \
+$(RESULTS_ROOT)/$(id)/.done: info $(RESULTS_ROOT)/$(id)/resultFinal.txt \
 			$(RESULTS_ROOT)/$(id)/webvtt.txt
 	touch $@
+
+.PHONY: info	

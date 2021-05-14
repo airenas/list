@@ -92,4 +92,5 @@ testing/8kHz/lat/0a2948bb-b3d9-4fc4-82ba-3a1c890728f4.gz
 deploy/local/zoom/deploy/**
 src/decode/audio.merge/fs/**
 deploy/local/audio.merger/deploy/**
-src/decode/join.result/fs/**
+src/decode/join.results/fs/**
+deploy/local/join.results/deploy/**
