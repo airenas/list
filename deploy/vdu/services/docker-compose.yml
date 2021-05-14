@@ -391,6 +391,8 @@ services:
       MONGO_LOG_DIR: "/dev/null"
       MONGO_INITDB_ROOT_USERNAME: ${LIST_MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
+    ports:
+     - 27017:27017
     volumes:
       - mongo:/data/db
     restart: unless-stopped  

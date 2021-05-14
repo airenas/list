@@ -62,6 +62,9 @@ status:
 	$(SSH_CMD) "cd $(HOME_DIR)/$(remote_service_dir) && docker-compose ps"
 ssh:
 	$(SSH_CMD)
+
+tunel-mongo:
+	ssh -L 27018:localhost:27017 -t -p $(SSH_PORT) $(USER)@$(SERVER_URL)	
 ########### END SERVICES ############################################################
 ########### MODELS ##################################################################
 install-models: install-am-ben-2.0.data install-config-ben-2.0.data
