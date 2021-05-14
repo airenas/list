@@ -156,7 +156,7 @@ services:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
-      METRICS_URL: http://metrics-collector:8000/metrics  
+      METRICS_URL: http://metrics-collector:8000/metrics
     volumes:
       - fileStorage:/data
       - modelsStorage:/models      
@@ -270,7 +270,8 @@ services:
     environment:
       MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
-      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      METRICS_URL: http://metrics-collector:8000/metrics  
     volumes:
       - fileStorage:/data    
       - modelsStorage:/models       
