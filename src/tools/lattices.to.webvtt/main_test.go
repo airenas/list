@@ -123,3 +123,45 @@ func TestGetPuntcDash(t *testing.T) {
 	text := getWebVTT(lat)
 	assert.Equal(t, "\n00:00.010 --> 00:02.020\nw - w2.\n", text)
 }
+
+func TestSplit(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 0.01 1.00 w1
+1 1.00 2.00 w2
+1 2.00 3.00 w3
+`))
+	splitFunc = testSplitFunction
+	text := getWebVTT(lat)
+	assert.Equal(t, "\n00:00.010 --> 00:01.000\nw1\n\n00:01.000 --> 00:02.000\nw2\n\n00:02.000 --> 00:03.000\nw3\n", text)
+}
+
+func TestSplit2(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 0.01 1.00 w1
+1 1.00 2.00 w2
+1 2.00 3.00 w3
+`))
+	splitFunc = func(words []*lattice.Word) [][]int { return [][]int{{0, 1}, {1, 3}} }
+	text := getWebVTT(lat)
+	assert.Equal(t, "\n00:00.010 --> 00:01.000\nw1\n\n00:01.000 --> 00:03.000\nw2 w3\n", text)
+}
+
+func TestReplacesGreater(t *testing.T) {
+	lat, _ := lattice.Read(strings.NewReader(
+		`# 1 S1
+1 0.01 1.00 <w1>
+`))
+	splitFunc = splitText
+	text := getWebVTT(lat)
+	assert.Equal(t, "\n00:00.010 --> 00:01.000\n&lt;w1&gt;\n", text)
+}
+
+func testSplitFunction(words []*lattice.Word) [][]int {
+	res := make([][]int, 0)
+	for i := range words {
+		res = append(res, []int{i, i + 1})
+	}
+	return res
+}

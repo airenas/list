@@ -6,7 +6,7 @@ main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=join-results-service
 tag=$(docker_prefix)$(service):$(TR_JOIN_RESULTS_VERSION).$(commit_count)
 #####################################################################################
-tools=send.metric m_shell.sh m_start.sh m_end.sh
+tools=send.metric m_shell.sh m_start.sh m_end.sh lattices.to.webvtt
 tools_dir=$(SRC_DIR)/tools
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################

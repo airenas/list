@@ -3,10 +3,12 @@ OUTPUT_ROOT:=$(abspath $(OUTPUT_ROOT))
 
 ###############################################################################
 SEND_METRIC_APP=echo SEND_METRIC: 
+LATTICES_TO_WEBVTT_APP=../../../deploy/local/join.results/deploy/lattices.to.webvtt
 ###############################################################################
 test_dir=fs
 id?=1
 CH_IDS?=2 3
+CH_IDS_FN?=2=audio_only_16780290_Vardas_Pav1.m4a;3=audio_only_16780290_Vardas2_Pav2.m4a
 
 .EXPORT_ALL_VARIABLES:
 

@@ -6,7 +6,8 @@ RESULTS_ROOT?=/results
 APP_DIR?=/app
 
 ###############################################################################
-LATTICE_TO_TEXT_APP?=$(APP_DIR)/lattice.to.text
+LATTICES_TO_TEXT_APP?=$(APP_DIR)/lattices.to.text
+LATTICES_TO_WEBVTT_APP?=$(APP_DIR)/lattices.to.webvtt
 SEND_METRIC_APP?=${APP_DIR}/send.metric
 ###############################################################################
 
@@ -31,15 +32,14 @@ $(RESULTS_ROOT)/$(id):
 ###############################################################################
 #$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt
 input_lat_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(CH_IDS))
-input_webvtt_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,$(CH_IDS))
 ###############################################################################
 $(RESULTS_ROOT)/$(id)/resultFinal.txt: $(input_lat_files) | $(RESULTS_ROOT)/$(id)
 	tsk=joinLattice;id=$(id);. $(APP_DIR)/m_start.sh $@
 	cat $(input_lat_files) > $@
 
-$(RESULTS_ROOT)/$(id)/webvtt.txt: $(input_webvtt_files) | $(RESULTS_ROOT)/$(id)
+$(RESULTS_ROOT)/$(id)/webvtt.txt: $(input_lat_files) | $(RESULTS_ROOT)/$(id)
 	tsk=lattice2webvtt;id=$(id);. $(APP_DIR)/m_start.sh $@
-	cat $(input_webvtt_files) > $@
+	$(LATTICES_TO_WEBVTT_APP) --namesMap "$(CH_IDS_FN)" $(input_lat_files) > $@
 ###############################################################################
 info: 
 	echo "ids = " $(CH_IDS)
