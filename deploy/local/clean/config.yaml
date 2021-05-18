@@ -3,6 +3,7 @@ port: 8000
 fileStorage:
     path: /data
     patterns: |
+        audio.in/{ID}
         audio.in/{ID}.*
         audio.prepared/{ID}.*
         decoded/audio/{ID}
