@@ -19,7 +19,7 @@ func main() {
 	log.SetOutput(os.Stderr)
 
 	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: input-file0 [input-file1] ... [input-fileN] > file_out\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: lattice-input-file0 [lattice-input-file1] ... [lattice-input-fileN] > webvtt-file-out\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 	fnMap := ""
@@ -82,7 +82,6 @@ func getWebVTT(data []*fdata) string {
 			heap.Push(&pq, item)
 		}
 	}
-
 	return sb.String()
 }
 
