@@ -10,6 +10,7 @@ import (
 	"container/heap"
 
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
+	"bitbucket.org/airenas/list/src/tools/internal/pkg/util"
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/webvtt"
 	"github.com/pkg/errors"
 )
@@ -22,10 +23,11 @@ func main() {
 		flag.PrintDefaults()
 	}
 	fnMap := ""
-	flag.StringVar(&fnMap, "namesMap", "", "Map for ids to file namas")
+	flag.StringVar(&fnMap, "namesMap", "", "Map for ids to file names")
 	flag.Parse()
 
-	data, err := readFiles(flag.Args())
+	idsSpkMap := util.ParseSpeakers(fnMap)
+	data, err := readFiles(flag.Args(), idsSpkMap)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "can't read lattices"))
 	}
@@ -60,7 +62,9 @@ func getWebVTT(data []*fdata) string {
 	sb := &strings.Builder{}
 	for i, d := range data {
 		d.vttData = webvtt.Extract(d.data)
-		d.speaker = fmt.Sprintf("Kalbėtojas %d", i+1)
+		if d.speaker == "" {
+			d.speaker = fmt.Sprintf("Kalbėtojas %d", i+1)
+		}
 	}
 
 	pq := make(pqueue, 0)
@@ -82,7 +86,7 @@ func getWebVTT(data []*fdata) string {
 	return sb.String()
 }
 
-func readFiles(fns []string) ([]*fdata, error) {
+func readFiles(fns []string, idSp map[string]string) ([]*fdata, error) {
 	if len(fns) < 1 {
 		return nil, errors.New("no lattice files")
 	}
@@ -91,6 +95,7 @@ func readFiles(fns []string) ([]*fdata, error) {
 		fd := &fdata{}
 		var err error
 		fd.data, err = readLattice(f)
+		fd.speaker = util.GetSpeakerByPath(idSp, f)
 		if err != nil {
 			return nil, errors.Wrapf(err, "can't read file %s ", f)
 		}
