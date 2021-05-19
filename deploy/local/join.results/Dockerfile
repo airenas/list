@@ -8,6 +8,7 @@ WORKDIR /app
 COPY deploy/cmdWorkerService /app/
 COPY deploy/send.metric /app/
 COPY deploy/lattices.to.webvtt /app/
+COPY deploy/lattices.to.text /app/
 COPY config.yaml /app/
 COPY deploy/*.sh /app/
 

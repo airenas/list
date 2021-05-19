@@ -120,7 +120,7 @@ func (pq pqueue) Len() int { return len(pq) }
 func (pq pqueue) Less(i, j int) bool {
 	di := pq[i].d.vttData[pq[i].n]
 	dj := pq[j].d.vttData[pq[j].n]
-	return di.From < dj.From || di.Speaker < dj.Speaker
+	return di.From < dj.From || (di.From == dj.From && di.Speaker < dj.Speaker)
 }
 
 func (pq pqueue) Swap(i, j int) {

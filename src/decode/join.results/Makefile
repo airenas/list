@@ -35,11 +35,13 @@ input_lat_files=$(patsubst %,$(OUTPUT_ROOT)/trans/%/punctuated/lat.restored.txt,
 ###############################################################################
 $(RESULTS_ROOT)/$(id)/resultFinal.txt: $(input_lat_files) | $(RESULTS_ROOT)/$(id)
 	tsk=joinLattice;id=$(id);. $(APP_DIR)/m_start.sh $@
-	cat $(input_lat_files) > $@
+	$(LATTICES_TO_TEXT_APP) --namesMap "$(CH_IDS_FN)" $(input_lat_files) > $@_
+	mv $@_ $@
 
 $(RESULTS_ROOT)/$(id)/webvtt.txt: $(input_lat_files) | $(RESULTS_ROOT)/$(id)
 	tsk=lattice2webvtt;id=$(id);. $(APP_DIR)/m_start.sh $@
-	$(LATTICES_TO_WEBVTT_APP) --namesMap "$(CH_IDS_FN)" $(input_lat_files) > $@
+	$(LATTICES_TO_WEBVTT_APP) --namesMap "$(CH_IDS_FN)" $(input_lat_files) > $@_
+	mv $@_ $@
 ###############################################################################
 info: 
 	echo "ids = " $(CH_IDS)

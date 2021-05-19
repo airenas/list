@@ -4,6 +4,7 @@ OUTPUT_ROOT:=$(abspath $(OUTPUT_ROOT))
 ###############################################################################
 SEND_METRIC_APP=echo SEND_METRIC: 
 LATTICES_TO_WEBVTT_APP=../../../deploy/local/join.results/deploy/lattices.to.webvtt
+LATTICES_TO_TEXT_APP=../../../deploy/local/join.results/deploy/lattices.to.text
 ###############################################################################
 test_dir=fs
 id?=1
