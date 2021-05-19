@@ -53,9 +53,8 @@ type fdata struct {
 }
 
 type pdata struct {
-	n int
+	n int // next index of fdata.vttData
 	d *fdata
-	i int //index in priority queue
 }
 
 func getWebVTT(data []*fdata) string {
@@ -125,14 +124,10 @@ func (pq pqueue) Less(i, j int) bool {
 
 func (pq pqueue) Swap(i, j int) {
 	pq[i], pq[j] = pq[j], pq[i]
-	pq[i].i = i
-	pq[j].i = j
 }
 
 func (pq *pqueue) Push(x interface{}) {
-	n := len(*pq)
 	item := x.(*pdata)
-	item.i = n
 	*pq = append(*pq, item)
 }
 
@@ -141,7 +136,6 @@ func (pq *pqueue) Pop() interface{} {
 	n := len(old)
 	item := old[n-1]
 	old[n-1] = nil // avoid memory leak
-	item.i = -1    // for safety
 	*pq = old[0 : n-1]
 	return item
 }
