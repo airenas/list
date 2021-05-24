@@ -2,3 +2,6 @@ default: ben-2.0
 phones: phones_v0
 words_v3: words_v3
 ben: ben-2.0
+
+audioDefault: ben-2.0
+audioPhone: ben-2.0
