@@ -30,7 +30,10 @@ spec:
           claimName: mongo 
       - name: filestorage-vol
         persistentVolumeClaim:
-          claimName: filestorage      
+          claimName: filestorage 
+      - name: kafkaintegration-vol
+        persistentVolumeClaim:
+          claimName: kafkaintegrationstorage         
       containers:
       - name: vh
         image: ${DOCKER_REPO}volume-helper:${VOLUME_HELPER_VERSION}
@@ -45,5 +48,7 @@ spec:
           mountPath: /mongo
         - name: filestorage-vol
           mountPath: /filestorage
+        - name: kafkaintegration-vol
+          mountPath: /kafkaidsmap  
       imagePullSecrets:
         - name: semantikacred    
