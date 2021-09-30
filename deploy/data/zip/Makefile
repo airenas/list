@@ -78,16 +78,19 @@ $(OUT_DIR)/%: $(WORK_DIR)/initial/$(INITIAL_DIR)/% $(WORK_DIR)/.extracted | $(OU
 	mkdir -p `dirname $@`
 	cp $< $@
 $(OUT_DIR)/info: | $(OUT_DIR)
-	echo "Zip date      : $$(date -Isec)" > $@
+	echo "Build date    : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
+	echo "From base     : $(INITIAL_FILE)" >> $@
+	echo "From          : $(NEW_FILE)" >> $@
 #################################################################################################
 $(WORK_DIR)/lm/$(OUT_NAME)/G.fst: $(WORK_DIR)/new/$(NEW_DIR)/G.fst | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/words.txt: $(WORK_DIR)/new/$(NEW_DIR)/words.txt | $(WORK_DIR)/lm/$(OUT_NAME)
 	cp $< $@
 $(WORK_DIR)/lm/$(OUT_NAME)/info: $(WORK_DIR)/lm/$(OUT_NAME)/words.txt
-	echo "Zip date      : $$(date -Isec)" > $@
+	echo "Build date    : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(WORK_DIR)/lm/$(OUT_NAME)/words.txt | awk '{print $$1}')" >> $@
+	echo "From          : $(NEW_FILE)" >> $@
 #################################################################################################
 $(WORK_DIR)/config/$(OUT_NAME)/%: $(WORK_DIR)/initial.config/config/$(INITIAL)/% $(WORK_DIR)/.extracted | $(WORK_DIR)/config
 	mkdir -p `dirname $@`
@@ -116,7 +119,7 @@ $(WORK_DIR)/$(OUT_CONFIG_FILE): $(target_conf_files)
 $(WORK_DIR)/$(OUT_LM_FILE): $(target_lm_files)
 	cd $(WORK_DIR) && tar -czvf $(OUT_LM_FILE) lm
 #################################################################################################
-prepare: info $(WORK_DIR)/.extracted
+prepare: info $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted
 build: info $(WORK_DIR)/.extracted $(WORK_DIR)/.new.extracted $(WORK_DIR)/$(OUT_FILE)
 build-config: info $(WORK_DIR)/.config.extracted $(WORK_DIR)/$(OUT_CONFIG_FILE)
 build-lm: info $(WORK_DIR)/$(OUT_LM_FILE)
