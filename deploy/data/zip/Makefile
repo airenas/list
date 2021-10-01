@@ -135,6 +135,12 @@ install-%.data: fake-%.upload
 install-am: install-am-$(OUT_NAME).data	
 install-config: install-config-$(OUT_NAME).data	
 install-lm: install-lm-$(OUT_NAME).data	
+
+backup-%.upload: $(WORK_DIR)/%.tar.gz
+	$(RSYNC_CMD) $< $(BACKUP_URL)/
+backup-am: backup-am-$(OUT_NAME).upload	
+backup-config: backup-config-$(OUT_NAME).upload	
+backup-lm: backup-lm-$(OUT_NAME).upload	
 #################################################################################################
 clean:
 	rm -rf $(WORK_DIR)
