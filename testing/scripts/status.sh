@@ -20,11 +20,15 @@ NC='\033[0m' # No Color
 r=$(curl -X GET -k $statusURL/$id -H "accept: application/json" 2>/dev/null)
 err=$(echo "$r" | jq -r '.["error"]')
 status=$(echo $r | jq -r '.["status"]')
-if [ -n "$err" ] ; then
-   echo -e "${RED}FAILED $ID\n\t$err${NC}"
+if [ "${err}" == "null" ] ; then
+   err=""
 fi
 if [ "$status" == "COMPLETED" ] ; then
    echo -e "$file ${GREEN}${status}${NC}"
 else
-   echo "$file $status"
+   if [ -n "${err}" ] ; then
+      echo -e "$file $status ${RED}FAILED: \t${err:0:50}${NC}"
+   else   
+      echo -e "$file $status"
+   fi
 fi
