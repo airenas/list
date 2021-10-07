@@ -71,12 +71,17 @@ target_conf_files=$(patsubst %, $(WORK_DIR)/config/%, $(conf_files))
 lm_files=G.fst words.txt info
 target_lm_files=$(patsubst %, $(WORK_DIR)/lm/$(OUT_NAME)/%, $(lm_files))
 #################################################################################################
+$(OUT_DIR)/ivector_extractor/%: $(WORK_DIR)/new/$(NEW_DIR)/ivector-extractor/% $(WORK_DIR)/.new.extracted | $(OUT_DIR)
+	mkdir -p `dirname $@`
+	cp $< $@
 $(OUT_DIR)/%: $(WORK_DIR)/new/$(NEW_DIR)/% $(WORK_DIR)/.new.extracted | $(OUT_DIR)
 	mkdir -p `dirname $@`
 	cp $< $@	
 $(OUT_DIR)/%: $(WORK_DIR)/initial/$(INITIAL_DIR)/% $(WORK_DIR)/.extracted | $(OUT_DIR)
 	mkdir -p `dirname $@`
+	echo "WARN: copy from old location - $<" 
 	cp $< $@
+
 $(OUT_DIR)/info: | $(OUT_DIR)
 	echo "Build date    : $$(date -Isec)" > $@
 	echo "Words         : $$(wc -l $(OUT_DIR)/words.txt | awk '{print $$1}')" >> $@
@@ -143,7 +148,11 @@ backup-config: backup-config-$(OUT_NAME).upload
 backup-lm: backup-lm-$(OUT_NAME).upload	
 #################################################################################################
 clean:
+	@echo -n "Are you sure? [y/N] " && read ans && [ $${ans:-N} = y ]
 	rm -rf $(WORK_DIR)
+clean-am:
+	rm -f $(OUT_FILE)
+	rm -rf $(OUT_DIR)
 #################################################################################################
 .PHONY: info clean
 #################################################################################################
