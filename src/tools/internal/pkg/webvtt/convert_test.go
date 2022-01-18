@@ -9,7 +9,9 @@ import (
 )
 
 func TestHeader(t *testing.T) {
-	assert.True(t, strings.HasPrefix(Header(), "WEBVTT"))
+	assert.True(t, strings.HasPrefix(Header(""), "WEBVTT"))
+	assert.Equal(t, "WEBVTT - olia\n",  Header("olia"))
+	assert.Equal(t, "WEBVTT - loooooooong olia\n",  Header("loooooooong olia"))
 }
 
 func TestGetWebVTT(t *testing.T) {

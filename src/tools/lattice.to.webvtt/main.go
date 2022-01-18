@@ -15,11 +15,10 @@ import (
 
 func main() {
 	log.SetOutput(os.Stderr)
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: [input-file | stdin] [output-file | stdout]\n", os.Args[0])
-		flag.PrintDefaults()
-	}
-	flag.Parse()
+	fs := flag.CommandLine
+	strHeader := ""
+	takeParams(fs, &strHeader)
+	fs.Parse(os.Args[1:])
 
 	f, err := util.NewReadWrapper(flag.Arg(0))
 	if err != nil {
@@ -37,7 +36,7 @@ func main() {
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't read lattice"))
 	}
-	_, err = destination.WriteString(webvtt.Header())
+	_, err = destination.WriteString(webvtt.Header(strHeader))
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't write result lattice"))
 	}
@@ -47,6 +46,14 @@ func main() {
 		log.Fatal(errors.Wrap(err, "Can't write result lattice"))
 	}
 	log.Print("Done generation")
+}
+
+func takeParams(fs *flag.FlagSet, header *string) {
+	fs.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: [input-file | stdin] [output-file | stdout]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WEbVTT header string")
 }
 
 func getWebVTT(data []*lattice.Part) string {

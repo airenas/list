@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"os"
 	"strings"
 	"testing"
 
@@ -122,4 +124,34 @@ func TestGetPuntcDash(t *testing.T) {
 `))
 	text := getWebVTT(lat)
 	assert.Equal(t, "\n00:00.010 --> 00:02.020\nw - w2.\n", text)
+}
+
+func Test_takeParams(t *testing.T) {
+	type args struct {
+		params []string
+		env string
+	}
+	tests := []struct {
+		name string
+		args args
+		wantErr bool
+		wantHeader string
+	}{
+		{name:"No params", args: args{params: []string{}, env: ""}, wantErr: false, wantHeader: ""},
+		{name:"Params", args: args{params: []string{"--header", "olia olia"}, env: ""}, wantErr: false, wantHeader: "olia olia"},
+		{name:"Env", args: args{params: []string{}, env: "aaa"}, wantErr: false, wantHeader: "aaa"},
+		{name:"Params first", args: args{params: []string{"--header", "olia olia"}, env: "aaa"}, wantErr: false, wantHeader: "olia olia"},
+		{name:"Fail", args: args{params: []string{"--xxx"}}, wantErr: true, wantHeader: ""},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			os.Setenv("WEBVTT_HEADER", tt.args.env)
+			fs := flag.NewFlagSet("", flag.ContinueOnError)
+			header:= ""
+			takeParams(fs, &header)
+			err := fs.Parse(tt.args.params)
+			assert.Equal(t, tt.wantErr, err != nil)
+			assert.Equal(t, tt.wantHeader, header)
+		})
+	}
 }

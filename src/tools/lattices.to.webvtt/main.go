@@ -18,14 +18,12 @@ import (
 func main() {
 	log.SetOutput(os.Stderr)
 
-	flag.Usage = func() {
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: lattice-input-file0 [lattice-input-file1] ... [lattice-input-fileN] > webvtt-file-out\n", os.Args[0])
-		flag.PrintDefaults()
-	}
+	fs := flag.CommandLine
 	fnMap := ""
-	flag.StringVar(&fnMap, "namesMap", "", "Map for ids to file names")
-	flag.Parse()
-
+	strHeader := ""
+	takeParams(fs, &fnMap, &strHeader)
+	fs.Parse(os.Args[1:])
+	
 	idsSpkMap := util.ParseSpeakers(fnMap)
 	data, err := readFiles(flag.Args(), idsSpkMap)
 	if err != nil {
@@ -34,7 +32,7 @@ func main() {
 
 	destination := os.Stdout
 
-	_, err = destination.WriteString(webvtt.Header())
+	_, err = destination.WriteString(webvtt.Header(strHeader))
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "can't write result lattice"))
 	}
@@ -139,3 +137,13 @@ func (pq *pqueue) Pop() interface{} {
 	*pq = old[0 : n-1]
 	return item
 }
+
+func takeParams(fs *flag.FlagSet, fnMap, header *string) {
+	fs.Usage = func() {
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s: lattice-input-file0 [lattice-input-file1] ... [lattice-input-fileN] > webvtt-file-out\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+	fs.StringVar(fnMap, "namesMap", "", "Map for ids to file names")
+	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WEbVTT header string")
+}
+
