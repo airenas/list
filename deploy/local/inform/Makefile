@@ -20,7 +20,7 @@ copy: $(dist_dir)/$(executable_name)
 tag=$(docker_prefix)$(service):$(version).$(commit_count)
 
 dbuild: $(dist_dir)/$(executable_name)
-	docker build -t $(tag) ./
+	docker build -t $(tag) --build-arg BUILD_VERSION=$(version).$(commit_count) ./
 
 dpush: dbuild
 	docker push $(tag)

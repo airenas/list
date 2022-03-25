@@ -1,0 +1,63 @@
+{{define "mail.Started.subject"}}Pradėta Trankripcija{{end}}
+{{define "mail.Started.text"}}
+Sveiki, 
+
+Informuojame, kad {{.Date}} pradėta transkripcija.
+
+Transkripcijai suteiktas ID: {{.ID}}.
+
+Transkripcijos statusą galite stebėti čia: {{.URL}}
+{{end}}
+
+{{define "mail.Started.html"}}
+<html><body>
+<i>Sveiki,</i>
+<p>
+Informuojame, kad <b>{{.Date}}</b> pradėta transkripcija.
+</p><p>
+Transkripcijai suteiktas ID: <b><i>{{.ID}}</i></b>.
+</p><p>
+Transkripcijos statusą galite stebėti <b><a href="{{.URL}}">čia</a></b>.
+</p>
+</body></html>
+{{end}}
+
+{{define "mail.Finished.subject"}}Baigta Trankripcija{{end}}
+{{define "mail.Finished.text"}}
+Sveiki, 
+
+Informuojame, kad transkripcija {{.ID}} baigta.
+
+Transkripcijos rezultatą galite peržiūrėti čia: {{.URL}}
+{{end}}
+{{define "mail.Finished.html"}}
+<html><body>
+<i>Sveiki,</i>
+<p>
+Informuojame, kad transkripcija {{.ID}} <b>baigta</b>.
+</p>
+<p>
+Transkripcijos rezultatą galite peržiūrėti <b><a href="{{.URL}}">čia</a></b>.
+</p>
+</body></html>
+{{end}}
+
+{{define "mail.Failed.subject"}}Nepavyko Trankripcija{{end}}
+{{define "mail.Failed.text"}}
+Sveiki,
+        
+Informuojame, kad transkripcija {{.ID}} nepavyko.
+
+Daugiau informacijos čia: {{.URL}}
+{{end}}
+{{define "mail.Failed.html"}}
+<html><body>
+<i>Sveiki,</i>
+<p>
+Informuojame, kad transkripcija {{.ID}} <b>nepavyko</b>.
+</p>
+<p>
+Daugiau informacijos <b><a href="{{.URL}}">čia</a></b>.
+</p>
+</body></html>
+{{end}}
