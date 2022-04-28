@@ -95,3 +95,4 @@ deploy/local/audio.merger/deploy/**
 src/decode/join.results/fs/**
 deploy/local/join.results/deploy/**
 testing/2021*/**
+testing/2022*/**

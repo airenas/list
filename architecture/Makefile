@@ -1,5 +1,5 @@
-generate: zoom.multiple.png
+generate: zoom.multiple.png multiple.channels.png
 
-zoom.multiple.png: zoom.multiple.puml 
+%.png: %.puml 
 	cat $< | docker run --rm -i think/plantuml -tpng > $@_
 	mv $@_ $@
