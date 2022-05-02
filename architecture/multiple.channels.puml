@@ -27,6 +27,7 @@ participant "DB" as db
 participant "File System" as fs
 participant "Queue Service" as queue
 participant "SplitChannelsService" as ms
+participant "Manager Service" as manager
 
 User -> upload: upload
 activate upload
@@ -41,13 +42,26 @@ activate fs
 fs --> upload:
 deactivate fs
 
-upload -> queue: send SplitChannelsMsg
+upload -> queue: send DecodeMultipleChannelsMsg
 activate queue
 queue --> upload:
 deactivate queue
 
 upload --> User: response
 deactivate upload
+
+manager -> queue: listen DecodeMultipleChannelsMsg
+manager -> queue: listen SplitChannelsFinishedMsg
+
+queue --> manager: new DecodeMultipleChannelsMsg
+activate queue
+activate manager
+manager -> queue: send SplitChannelsMsgs
+queue --> manager:
+manager -> queue: ack
+deactivate manager
+deactivate queue
+
 
 ms -> queue: listen SplitChannelsMsgs
 
@@ -60,11 +74,20 @@ activate fs
 fs --> ms:
 deactivate fs
 
-ms -> queue: send DecodeMultipleMsg
+ms -> queue: send SplitChannelsFinishedMsg
 queue --> ms
 
 ms -> queue: ack
 deactivate queue
 deactivate ms
+
+queue --> manager: new SplitChannelsFinishedMsg
+activate queue
+activate manager
+manager -> queue: send DecodeMultiple (start Zoom decoding process) 
+queue --> manager:
+manager -> queue: ack
+deactivate manager
+deactivate queue
 
 @enduml
