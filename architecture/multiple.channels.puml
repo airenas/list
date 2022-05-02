@@ -1,17 +1,17 @@
 @startuml MultipleChannels
 
 skinparam sequence {
-ParticipantBorderColor Black
-ActorBorderColor Black
+    ParticipantBorderColor Black
+    ActorBorderColor Black
 
-ParticipantBackgroundColor White
-ActorBackgroundColor White
+    ParticipantBackgroundColor White
+    ActorBackgroundColor White
 
-ArrowColor black
-LifeLineBorderColor black
-LifeLineBackgroundColor lightgray
+    ArrowColor black
+    LifeLineBorderColor black
+    LifeLineBackgroundColor lightgray
 
-BoxBorderColor black
+    BoxBorderColor black
 }
 skinparam databaseBackgroundColor White
 skinparam dataBaseBorderColor Blue
@@ -42,7 +42,7 @@ activate fs
 fs --> upload:
 deactivate fs
 
-upload -> queue: send DecodeMultipleChannelsMsg
+upload -> queue: send Decode msg (sepSpeakersOnChannel=true)
 activate queue
 queue --> upload:
 deactivate queue
@@ -50,41 +50,45 @@ deactivate queue
 upload --> User: response
 deactivate upload
 
-manager -> queue: listen DecodeMultipleChannelsMsg
-manager -> queue: listen SplitChannelsFinishedMsg
+manager -> queue: listen Decode msgs
+manager -> queue: listen SplitChannels_Result msgs
 
-queue --> manager: new DecodeMultipleChannelsMsg
+queue --> manager: new Decode msg
 activate queue
 activate manager
-manager -> queue: send SplitChannelsMsgs
-queue --> manager:
+alt sepSpeakersOnChannel==true
+    manager -> queue: send SplitChannels msg
+    queue --> manager:
+else     
+    manager -> queue: send AudioConvert msg
+    queue --> manager:
+end
 manager -> queue: ack
 deactivate manager
 deactivate queue
 
 
-ms -> queue: listen SplitChannelsMsgs
+ms -> queue: listen SplitChannels msgs
 
-queue --> ms: new split msg
+queue --> ms: new SplitChannels msg
 activate queue
-
 activate ms
 ms -> fs: split file into L and R channels
 activate fs
 fs --> ms:
 deactivate fs
 
-ms -> queue: send SplitChannelsFinishedMsg
+ms -> queue: send SplitChannels_Result msg
 queue --> ms
 
 ms -> queue: ack
 deactivate queue
 deactivate ms
 
-queue --> manager: new SplitChannelsFinishedMsg
+queue --> manager: new SplitChannels_Result msg
 activate queue
 activate manager
-manager -> queue: send DecodeMultiple (start Zoom decoding process) 
+manager -> queue: send DecodeMultiple msg (start Zoom decoding process)
 queue --> manager:
 manager -> queue: ack
 deactivate manager
