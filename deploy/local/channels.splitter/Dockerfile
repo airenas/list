@@ -1,4 +1,4 @@
-FROM airenas/list-worker:1.0.393-8fce879 as runner
+FROM airenas/list-worker:1.0.394-5214027 as runner
 
 USER root
 
