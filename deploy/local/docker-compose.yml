@@ -74,7 +74,7 @@ services:
      - "traefik.port=8000" 
   
   manager-service:
-    build: manager
+    image: airenas/list-manager-service:${manager_version}
     restart: unless-stopped
     depends_on: 
       - mongo
