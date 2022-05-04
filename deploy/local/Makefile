@@ -31,3 +31,6 @@ versions:
 
 %-dpush:
 	$(MAKE) -C $* dpush
+
+redeploy/%:
+	docker-compose up -d --build $*

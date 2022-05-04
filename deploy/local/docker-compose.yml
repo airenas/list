@@ -28,7 +28,7 @@ services:
      - "traefik.http.port=8000"
 
   upload-service:
-    build: upload
+    image: airenas/list-upload-service:${upload_version}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
