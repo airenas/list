@@ -1,0 +1,3 @@
+OUTPUT_ROOT=/data/audio.in
+INPUT_ROOT=/data/audio.in
+APP_DIR=/app

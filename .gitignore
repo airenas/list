@@ -96,3 +96,5 @@ src/decode/join.results/fs/**
 deploy/local/join.results/deploy/**
 testing/2021*/**
 testing/2022*/**
+deploy/local/channels.splitter/deploy/**
+src/decode/channels.split/fs/**
