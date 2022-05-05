@@ -15,9 +15,10 @@ pipelines:
               - "linux"
               - "aireno"
             script:
-              - cd src/tools/ && make generate/mocks
-              - cd src/tools/ && make test/unit
-              - cd src/tools/ && make test/reports
+              - cd src/tools/ 
+              - make generate/mocks
+              - make test/unit
+              - make test/reports
 
         - step:
             name: Lint code
