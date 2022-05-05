@@ -18,8 +18,7 @@ pipelines:
               - cd src/tools/ 
               - make generate/mocks
               - make test/unit
-              - make test/reports
-
+              - make test/report
         - step:
             name: Lint code
             runs-on:
@@ -27,4 +26,5 @@ pipelines:
               - "linux"
               - "aireno"
             script:
-              - cd src/tools/ && make test/lint
+              - cd src/tools/
+              - make test/lint
