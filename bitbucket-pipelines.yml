@@ -8,33 +8,22 @@ image: golang:1.17
 pipelines:
   default:
     - parallel:
-      - step:
-          name: Test and Build
-          runs-on: 
-            - 'self.hosted'
-            - 'linux'
-            - 'aireno'
-          script:
-            - mkdir test-reports
-            - go get -u github.com/jstemmer/go-junit-report
-            - go test tests/* -v 2>&1 | go-junit-report > test-reports/report.xml
-            # Build compiles the packages
-            - go build src/*
-      - step:
-          name: Test and Lint own
-          runs-on: 
-            - 'self.hosted'
-            - 'linux'
-            - 'aireno'
-          script:
-            - cd src/tools/ && make test/unit
-            - cd src/tools/ && make test/lint     
-      - step:
-          name: Lint code
-          runs-on: 
-            - 'self.hosted'
-            - 'linux'
-            - 'aireno'
-          image: golangci/golangci-lint:v1.31.0
-          script:
-            - cd src/tools && golangci-lint run -v
+        - step:
+            name: Test and Lint own
+            runs-on:
+              - "self.hosted"
+              - "linux"
+              - "aireno"
+            script:
+              - cd src/tools/ && make generate/mocks
+              - cd src/tools/ && make test/unit
+              - cd src/tools/ && make test/reports
+
+        - step:
+            name: Lint code
+            runs-on:
+              - "self.hosted"
+              - "linux"
+              - "aireno"
+            script:
+              - cd src/tools/ && make test/lint

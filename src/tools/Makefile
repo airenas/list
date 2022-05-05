@@ -6,10 +6,24 @@ help:
 		awk '{info=$$0; getline; print "  " $$0 ": " info;}' | column -t -s ':' | sort 
 .PHONY: help
 #####################################################################################
+## generate mock objects for test
+generate/mocks: 
+	go install github.com/petergtz/pegomock/...@latest
+	go generate ./...
+.PHONY: generate/mocks
+#####################################################################################
 ## call units tests
 test/unit:
 	go test -race -count 1 ./...	
 .PHONY: test/unit
+#####################################################################################
+../../test-reports:
+	mkdir -p $@
+## generates test reports
+test/report: | ../../test-reports
+	go install github.com/jstemmer/go-junit-report@latest
+	go test ./... -v 2>&1 | go-junit-report > ../../test-reports/report.xml
+.PHONY: test/report
 #####################################################################################
 ## code vet and lint
 test/lint: 
