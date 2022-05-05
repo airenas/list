@@ -8,7 +8,7 @@ help:
 #####################################################################################
 ## generate mock objects for test
 generate/mocks: 
-	go install github.com/petergtz/pegomock/...@latest
+	go install github.com/petergtz/pegomock/...@v2.9.0
 	go generate ./...
 .PHONY: generate/mocks
 #####################################################################################

@@ -3,7 +3,7 @@ module bitbucket.org/airenas/list/src/tools
 go 1.17
 
 require (
-	github.com/petergtz/pegomock v2.7.0+incompatible
+	github.com/petergtz/pegomock v2.9.0+incompatible
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.5.1
 )
