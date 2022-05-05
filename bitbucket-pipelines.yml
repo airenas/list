@@ -13,7 +13,6 @@ pipelines:
             runs-on:
               - "self.hosted"
               - "linux"
-              - "aireno"
             script:
               - cd src/tools/ 
               - make generate/mocks
@@ -24,7 +23,6 @@ pipelines:
             runs-on:
               - "self.hosted"
               - "linux"
-              - "aireno"
             script:
               - cd src/tools/
               - make generate/mocks
