@@ -16,7 +16,6 @@ pipelines:
             script:
               - cd src/tools/ 
               - make generate/mocks
-              - make test/unit
               - make test/report
         - step:
             name: Lint code
