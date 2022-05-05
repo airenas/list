@@ -87,7 +87,7 @@ services:
       SENDINFORMMESSAGES: "true"
 
   zoom-service:
-    build: zoom
+    image: airenas/list-zoom-service:${zoom_version}
     restart: unless-stopped
     volumes:
       - fileStorage:/data
