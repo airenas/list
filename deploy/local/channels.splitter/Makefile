@@ -35,9 +35,11 @@ dbuild: $(dist_dir)/cmd/Makefile $(dist_tools_files) $(dist_scripts_files)
 dpush: dbuild
 	docker push $(tag)
 	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
+dscan: dbuild
+	docker scan --accept-license $(tag)			
 ########### END #####################################################################
 clean:
 	rm -rf $(dist_dir)
 
 .PHONY:
-	clean copy build dbuild dpush
+	clean copy build dbuild dpush dscan
