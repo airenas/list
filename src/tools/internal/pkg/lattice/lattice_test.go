@@ -53,7 +53,7 @@ func TestWriteUnderscore(t *testing.T) {
 	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word_x", Words: []string{"word", "x"}}
 	var b bytes.Buffer
 	Write(p, &b)
-	assert.Equal(t, "# 2 S1\n1 fr to word_x\n\n", string(b.Bytes()))
+	assert.Equal(t, "# 1 S1\n1 fr to word_x\n\n", string(b.Bytes()))
 }
 
 func TestRead(t *testing.T) {
