@@ -27,4 +27,5 @@ pipelines:
               - "aireno"
             script:
               - cd src/tools/
+              - make generate/mocks
               - make test/lint
