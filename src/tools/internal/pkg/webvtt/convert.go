@@ -17,6 +17,7 @@ func init() {
 	splitFunc = splitText
 }
 
+// Line for webvtt line
 type Line struct {
 	Speaker string
 	words   []*lattice.Word
@@ -24,6 +25,7 @@ type Line struct {
 	From    time.Duration
 }
 
+// Header constructs WebVTT header
 func Header(str string) string {
 	if str != "" {
 		return fmt.Sprintf("WEBVTT - %s\n", str)
@@ -38,6 +40,7 @@ type tdata struct {
 	to      time.Duration
 }
 
+// Extract get line slice from lattice
 func Extract(data []*lattice.Part) []*Line {
 	td := &tdata{res: make([]*Line, 0)}
 	for _, p := range data {
@@ -77,12 +80,14 @@ func add(td *tdata, w *lattice.Word) {
 	td.words = append(td.words, w)
 }
 
+// WriteTo writes lines to result builder
 func WriteTo(sb *strings.Builder, lines []*Line) {
 	for _, l := range lines {
 		WriteLineTo(sb, l, "")
 	}
 }
 
+// WriteLineTo writes line to result builder with speaker
 func WriteLineTo(sb *strings.Builder, line *Line, speaker string) {
 	writePhrase(sb, line.words, speaker)
 }

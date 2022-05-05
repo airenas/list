@@ -5,6 +5,7 @@ import (
 	"strings"
 )
 
+// ParseSpeakers parses speakers from string line
 func ParseSpeakers(s string) map[string]string {
 	res := make(map[string]string)
 	strs := strings.Split(s, ";")
@@ -21,6 +22,7 @@ func ParseSpeakers(s string) map[string]string {
 	return res
 }
 
+// GetSpeakerByPath searches speaker by path
 func GetSpeakerByPath(idSpMap map[string]string, path string) string {
 	for k, v := range idSpMap {
 		if strings.Contains(path, k) {
