@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -40,7 +41,7 @@ func main() {
 	fs.Parse(os.Args[1:])
 	err := validateParams(data)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		fs.Usage()
 		return
 	}
@@ -48,7 +49,7 @@ func main() {
 	log.Printf("Sending metric: %s, %s, %s, %s, %d", req.Type, req.Worker, req.Task, req.ID, req.Timestap/1000000)
 	err = post(req, data.url)
 	if err != nil {
-		log.Printf("Can't send metric: %s", err.Error())
+		log.Printf("can't send metric: %s", err.Error())
 	}
 }
 
@@ -72,16 +73,16 @@ func takeParams(fs *flag.FlagSet, data *params) {
 
 func validateParams(data *params) error {
 	if data.url == "" {
-		return errors.New("No URL")
+		return errors.New("no URL")
 	}
 	if data.worker == "" {
-		return errors.New("No Worker")
+		return errors.New("no Worker")
 	}
 	if data.task == "" {
-		return errors.New("No Task")
+		return errors.New("no Task")
 	}
 	if data.id == "" {
-		return errors.New("No ID")
+		return errors.New("no ID")
 	}
 	return nil
 }
@@ -103,12 +104,18 @@ func mapRequest(data *params, t time.Time) *request {
 func post(data *request, url string) error {
 	b := new(bytes.Buffer)
 	json.NewEncoder(b).Encode(data)
-	resp, err := http.Post(url, "application/json; charset=utf-8", b)
+	ctx, cf := context.WithTimeout(context.Background(), time.Second*10)
+	defer cf()
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, b)
 	if err != nil {
-		return errors.Wrapf(err, "Can't invoke post to %s", url)
+		return errors.Wrapf(err, "can't prepare request", url)
+	}
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return errors.Wrapf(err, "can't invoke post to %s", url)
 	}
 	if !(resp.StatusCode >= 200 && resp.StatusCode <= 299) {
-		return errors.Errorf("Wrong response code from server. Code: %d", resp.StatusCode)
+		return errors.Errorf("wrong response code from server, code: %d", resp.StatusCode)
 	}
 	return nil
 }
