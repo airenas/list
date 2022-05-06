@@ -114,8 +114,12 @@ func writeWords(sb *strings.Builder, words []*lattice.Word) {
 
 func writeSpeaker(res *strings.Builder, sp string) {
 	if sp != "" {
-		res.WriteString(fmt.Sprintf("<v %s>", asHTML(sp)))
+		res.WriteString(fmt.Sprintf("<v %s>", sanitize(sp)))
 	}
+}
+
+func sanitize(sp string) string {
+	return strings.ReplaceAll(asHTML(sp), " ", "_")
 }
 
 func writeWord(res *strings.Builder, word, sep string) string {

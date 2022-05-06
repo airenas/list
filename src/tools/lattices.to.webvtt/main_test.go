@@ -18,7 +18,7 @@ func TestGetWebVTT(t *testing.T) {
 `))
 	fd := &fdata{data: lat}
 	text := getWebVTT([]*fdata{fd})
-	assert.Equal(t, "\n00:00.010 --> 00:02.020\n<v Kalbėtojas 1>w w2\n", text)
+	assert.Equal(t, "\n00:00.010 --> 00:02.020\n<v Kalbėtojas_1>w w2\n", text)
 }
 
 func TestGetWebVTT_Speaker(t *testing.T) {

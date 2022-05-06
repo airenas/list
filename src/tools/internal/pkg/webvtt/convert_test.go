@@ -10,8 +10,8 @@ import (
 
 func TestHeader(t *testing.T) {
 	assert.True(t, strings.HasPrefix(Header(""), "WEBVTT"))
-	assert.Equal(t, "WEBVTT - olia\n",  Header("olia"))
-	assert.Equal(t, "WEBVTT - loooooooong olia\n",  Header("loooooooong olia"))
+	assert.Equal(t, "WEBVTT - olia\n", Header("olia"))
+	assert.Equal(t, "WEBVTT - loooooooong olia\n", Header("loooooooong olia"))
 }
 
 func TestGetWebVTT(t *testing.T) {
@@ -207,4 +207,41 @@ func testSplitFunction(words []*lattice.Word) [][]int {
 		res = append(res, []int{i, i + 1})
 	}
 	return res
+}
+
+func Test_asHTML(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		want string
+	}{
+		{name: "No changes", args: "olia", want: "olia"},
+		{name: "Changes <>", args: "olia<a>", want: "olia&lt;a&gt;"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := asHTML(tt.args); got != tt.want {
+				t.Errorf("asHTML() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_sanitize(t *testing.T) {
+	tests := []struct {
+		name string
+		args string
+		want string
+	}{
+		{name: "No changes", args: "olia", want: "olia"},
+		{name: "Changes <>", args: "olia<a>", want: "olia&lt;a&gt;"},
+		{name: "Changes spaces", args: "olia < > ", want: "olia_&lt;_&gt;_"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := sanitize(tt.args); got != tt.want {
+				t.Errorf("sanitize() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

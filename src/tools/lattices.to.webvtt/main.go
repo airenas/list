@@ -144,6 +144,6 @@ func takeParams(fs *flag.FlagSet, fnMap, header *string) {
 		flag.PrintDefaults()
 	}
 	fs.StringVar(fnMap, "namesMap", "", "Map for ids to file names")
-	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WEbVTT header string")
+	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WebVTT header string")
 }
 
