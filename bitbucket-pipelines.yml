@@ -9,7 +9,7 @@ pipelines:
   default:
     - parallel:
         - step:
-            name: Test and Lint own
+            name: Test code
             runs-on:
               - "self.hosted"
               - "linux"
@@ -17,6 +17,15 @@ pipelines:
               - cd src/tools/ 
               - make generate/mocks
               - make test/report
+        - step:
+            name: Test vulnerabilities
+            runs-on:
+              - "self.hosted"
+              - "linux"
+            script:
+              - cd src/tools/ 
+              - make generate/mocks
+              - make test/snyk SNYK_TOKEN=${SNYK_TOKEN}     
         - step:
             name: Lint code
             runs-on:

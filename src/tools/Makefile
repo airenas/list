@@ -1,3 +1,4 @@
+-include Makefile.options
 #####################################################################################
 ## print usage information
 help:
@@ -16,6 +17,11 @@ generate/mocks:
 test/unit:
 	go test -race -count 1 ./...	
 .PHONY: test/unit
+#####################################################################################
+## call snyk tests
+test/snyk:
+	@docker run --rm -it --env SNYK_TOKEN=$(SNYK_TOKEN) -v $$(pwd):/app snyk/snyk:golang
+.PHONY: test/snyk
 #####################################################################################
 ../../test-reports:
 	mkdir -p $@
