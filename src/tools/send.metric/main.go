@@ -108,7 +108,7 @@ func post(data *request, url string) error {
 	defer cf()
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, b)
 	if err != nil {
-		return errors.Wrapf(err, "can't prepare request", url)
+		return errors.Wrapf(err, "can't prepare request")
 	}
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
