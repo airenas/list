@@ -20,7 +20,7 @@ test/unit:
 #####################################################################################
 ## call snyk tests
 test/snyk:
-	@docker run --rm -it --env SNYK_TOKEN=$(SNYK_TOKEN) -v $$(pwd):/app snyk/snyk:golang
+	@docker run --rm -i$(tty) --env SNYK_TOKEN=$(SNYK_TOKEN) -v $$(pwd):/app snyk/snyk:golang
 .PHONY: test/snyk
 #####################################################################################
 ../../test-reports:
