@@ -14,6 +14,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var version string
+
 func main() {
 	log.SetOutput(os.Stderr)
 
@@ -24,6 +26,8 @@ func main() {
 	fnMap := ""
 	flag.StringVar(&fnMap, "namesMap", "", "Map for ids to file names")
 	flag.Parse()
+
+	log.Printf("lattices.to.text: %s\n", version)
 
 	idsSpkMap := util.ParseSpeakers(fnMap)
 	data, err := readFiles(flag.Args(), idsSpkMap)

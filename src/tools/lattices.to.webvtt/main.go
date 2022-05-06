@@ -15,17 +15,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+var version string
+
 func main() {
 	log.SetOutput(os.Stderr)
-
-	log.Printf("lattices.to_webtt: %s\n", version)
 
 	fs := flag.CommandLine
 	fnMap := ""
 	strHeader := ""
 	takeParams(fs, &fnMap, &strHeader)
 	fs.Parse(os.Args[1:])
-	
+
+	log.Printf("lattices.to.webtt: %s\n", version)
+
 	idsSpkMap := util.ParseSpeakers(fnMap)
 	data, err := readFiles(flag.Args(), idsSpkMap)
 	if err != nil {
@@ -66,7 +68,7 @@ func getWebVTT(data []*fdata) string {
 		}
 	}
 
-	if (len(data) > 1) {
+	if len(data) > 1 {
 		var names []string
 		for _, d := range data {
 			names = append(names, d.speaker)
@@ -157,6 +159,3 @@ func takeParams(fs *flag.FlagSet, fnMap, header *string) {
 	fs.StringVar(fnMap, "namesMap", "", "Map for ids to file names")
 	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WebVTT header string")
 }
-
-var version string
-
