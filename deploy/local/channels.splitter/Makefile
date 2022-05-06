@@ -8,16 +8,10 @@ version=$(channels_splitter_version)
 $(dist_dir):
 	mkdir -p $@
 #####################################################################################
-tools_dir=$(SRC_DIR)/tools
-tools=send.metric m_shell.sh m_start.sh m_end.sh
+tools=m_shell.sh m_start.sh m_end.sh
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
 scripts_dir=$(SRC_DIR)/decode/scripts
-#####################################################################################
-$(dist_dir)/%: $(tools_dir)/% | $(dist_dir)
-	cd $< && $(go_build_cmd) -o $@
-	@echo -n "$(GREEN)Build:$(C_NC) $*\n"
-build: $(dist_tools_files)
 #####################################################################################
 $(dist_dir)/cmd:
 	mkdir -p $(dist_dir)/cmd
@@ -30,7 +24,8 @@ copy: $(dist_dir)/cmd/Makefile $(dist_tools_files) $(dist_scripts_files)
 tag=$(docker_prefix)$(service):$(version)
 
 dbuild: $(dist_dir)/cmd/Makefile $(dist_tools_files) $(dist_scripts_files)
-	docker build -t $(tag) --build-arg BUILD_VERSION=$(version) ./
+	cd ../../../ && docker build -t $(tag) --build-arg BUILD_VERSION=$(version) --build-arg TOOLS_VERSION=$(tools_version) \
+		-f deploy/local/channels.splitter/Dockerfile ./
 
 dpush: dbuild
 	docker push $(tag)
