@@ -25,7 +25,9 @@ pipelines:
             script:
               - cd src/tools/ 
               - make generate/mocks
-              - make test/snyk SNYK_TOKEN=${SNYK_TOKEN}     
+              - make test/snyk SNYK_TOKEN=${SNYK_TOKEN} 
+            services:
+              - docker      
         - step:
             name: Lint code
             runs-on:
