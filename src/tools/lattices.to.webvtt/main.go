@@ -60,8 +60,17 @@ func getWebVTT(data []*fdata) string {
 	for i, d := range data {
 		d.vttData = webvtt.Extract(d.data)
 		if d.speaker == "" {
-			d.speaker = fmt.Sprintf("Kalbėtojas %d", i+1)
+			d.speaker = fmt.Sprintf("Kalbėtojas_%d", i+1)
 		}
+	}
+
+	if (len(data) > 1) {
+		var names []string
+		for _, d := range data {
+			names = append(names, d.speaker)
+		}
+		sb.WriteString("\n")
+		sb.WriteString(webvtt.GetStyles(names))
 	}
 
 	pq := make(pqueue, 0)

@@ -245,3 +245,51 @@ func Test_sanitize(t *testing.T) {
 		})
 	}
 }
+
+func TestGetStyles(t *testing.T) {
+	tests := []struct {
+		name string
+		args []string
+		want string
+	}{
+		{name: "One sp", args: []string{"sp1"}, want: "STYLE\n::cue(v[voice=" + `"` + "sp1" + `"` + "]) { color: purple }\n"},
+		{name: "Two sp", args: []string{"sp1", "sp2 2"}, want: "STYLE\n::cue(v[voice=" + `"` + "sp1" + `"` + "]) { color: purple }\n" +
+			"::cue(v[voice=" + `"` + "sp2_2" + `"` + "]) { color: lightblue }\n"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := GetStyles(tt.args); got != tt.want {
+				t.Errorf("GetStyles() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getStyles(t *testing.T) {
+	type args struct {
+		speakers []string
+		colors   []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{name: "One sp", args: args{speakers: []string{"sp1"}, colors: []string{"blue"}},
+			want: "::cue(v[voice=" + `"` + "sp1" + `"` + "]) { color: blue }\n"},
+		{name: "Two sp", args: args{speakers: []string{"sp1", "sp2"}, colors: []string{"blue"}},
+			want: "::cue(v[voice=" + `"` + "sp1" + `"` + "]) { color: blue }\n" +
+				"::cue(v[voice=" + `"` + "sp2" + `"` + "]) { color: blue }\n"},
+		{name: "Resets collors", args: args{speakers: []string{"sp1", "sp2", "sp3"}, colors: []string{"blue", "red"}},
+			want: "::cue(v[voice=" + `"` + "sp1" + `"` + "]) { color: blue }\n" +
+				"::cue(v[voice=" + `"` + "sp2" + `"` + "]) { color: red }\n" +
+				"::cue(v[voice=" + `"` + "sp3" + `"` + "]) { color: blue }\n"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getStyles(tt.args.speakers, tt.args.colors); got != tt.want {
+				t.Errorf("getStyles() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

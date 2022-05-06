@@ -92,6 +92,21 @@ func WriteLineTo(sb *strings.Builder, line *Line, speaker string) {
 	writePhrase(sb, line.words, speaker)
 }
 
+// GetStyles returns styles section for speakers
+func GetStyles(speakers []string) string {
+	colors := []string{"purple", "lightblue", "darkgrey", "greenyellow", "indigo", "tomato", "limegreen", "olive", "orchid", "salmon"}
+	return "STYLE\n" + getStyles(speakers, colors)
+}
+
+func getStyles(speakers []string, colors []string) string {
+	res := strings.Builder{}
+	for i, sp := range speakers {
+		res.WriteString(
+			fmt.Sprintf(`::cue(v[voice="%s"]) { color: %s }%s`, sanitize(sp), colors[i%len(colors)], "\n"))
+	}
+	return res.String()
+}
+
 func writePhrase(sb *strings.Builder, words []*lattice.Word, speaker string) {
 	l := len(words)
 	sb.WriteString("\n")
