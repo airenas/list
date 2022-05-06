@@ -28,7 +28,7 @@ test/snyk:
 ## generates test reports
 test/report: | ../../test-reports
 	go install github.com/jstemmer/go-junit-report@latest
-	go test ./... -v 2>&1 | go-junit-report > ../../test-reports/report.xml
+	go test ./... -v -race 2>&1 | go-junit-report > ../../test-reports/report.xml
 .PHONY: test/report
 #####################################################################################
 ## code vet and lint
