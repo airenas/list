@@ -18,6 +18,8 @@ import (
 func main() {
 	log.SetOutput(os.Stderr)
 
+	log.Printf("lattices.to_webtt: %s\n", version)
+
 	fs := flag.CommandLine
 	fnMap := ""
 	strHeader := ""
@@ -155,4 +157,6 @@ func takeParams(fs *flag.FlagSet, fnMap, header *string) {
 	fs.StringVar(fnMap, "namesMap", "", "Map for ids to file names")
 	fs.StringVar(header, "header", os.Getenv("WEBVTT_HEADER"), "WebVTT header string")
 }
+
+var version string
 
