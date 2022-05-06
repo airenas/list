@@ -30,7 +30,7 @@ copy: $(dist_dir)/cmd/Makefile $(dist_tools_files) $(dist_scripts_files)
 tag=$(docker_prefix)$(service):$(version)
 
 dbuild: $(dist_dir)/cmd/Makefile $(dist_tools_files) $(dist_scripts_files)
-	docker build -t $(tag) ./
+	docker build -t $(tag) --build-arg BUILD_VERSION=$(version) ./
 
 dpush: dbuild
 	docker push $(tag)

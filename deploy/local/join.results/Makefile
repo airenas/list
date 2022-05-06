@@ -1,13 +1,11 @@
 -include ../Makefile.options
+-include ../../../version
 #####################################################################################
 dist_dir=$(CURDIR)/deploy
-executable_name=cmdWorkerService
-main_dir=$(GO_SRC_DIR)/cmd/$(executable_name)
 service=join-results-service
-tag=$(docker_prefix)$(service):$(TR_JOIN_RESULTS_VERSION).$(commit_count)
+tag=$(docker_prefix)$(service):$(join_results_version)
 #####################################################################################
-tools=send.metric m_shell.sh m_start.sh m_end.sh lattices.to.webvtt lattices.to.text
-tools_dir=$(SRC_DIR)/tools
+tools=m_shell.sh m_start.sh m_end.sh 
 dist_tools_files=$(patsubst %, $(dist_dir)/%, $(tools))
 #####################################################################################
 script_files=Makefile
@@ -15,17 +13,8 @@ dist_script_files=$(patsubst %, $(dist_dir)/cmd/%, $(script_files))
 #####################################################################################
 $(dist_dir):
 	mkdir -p $@
-$(dist_dir)/$(executable_name): $(GO_SRC_DIR) | $(dist_dir)
-	cd $(main_dir) && $(go_build_cmd) -o $(dist_dir)/$(executable_name)
-	@echo -n "$(GREEN)Build:$(C_NC) $(executable_name)\n"
-$(dist_dir)/%: $(tools_dir)/% | $(dist_dir)
-	cd $< && $(go_build_cmd) -o $@
-	@echo -n "$(GREEN)Build:$(C_NC) $*\n"
-build: $(dist_dir)/$(executable_name) $(dist_tools_files)
 #####################################################################################
 $(dist_dir)/cmd: 
-	mkdir -p $@
-$(dist_dir)/cmd/restore: 
 	mkdir -p $@
 $(dist_dir)/cmd/Makefile: $(SRC_DIR)/decode/join.results/Makefile | $(dist_dir)/cmd
 	cp $< $@
@@ -33,19 +22,16 @@ $(dist_dir)/%.sh: $(SRC_DIR)/decode/scripts/%.sh | $(dist_dir)
 	cp $< $@
 copy: $(dist_script_files)
 ########### DOCKER ##################################################################
-dbuild: build $(dist_script_files)
-	docker build -t $(tag) ./
-
+dbuild: $(dist_script_files) $(dist_tools_files)
+	cd ../../../ && docker build -t $(tag) --build-arg BUILD_VERSION=$(version) --build-arg TOOLS_VERSION=$(tools_version) \
+		-f deploy/local/join.results/Dockerfile ./
 dpush: dbuild
 	docker push $(tag)
 	@echo -n "\n$(GREEN)CONTAINER:$(C_NC) $(tag)\n\n"
-########### END #####################################################################
-#####################################################################################
-redeploy: build copy
-	$(call dc-deploy,..,$(service))
+dscan: dbuild
+	docker scan --accept-license $(tag)		
 #####################################################################################
 clean:
 	rm -rf $(dist_dir)
-
 .PHONY:
-	clean copy build dbuild dpush
+	clean copy dbuild dpush dscan
