@@ -1,7 +1,0 @@
-@import '~@angular/material/theming';
-@include mat-core();
-
-$app-typography: mat-typography-config(
-  $font-family: 'Roboto, monospace',
-);
-$primary: mat-palette($mat-indigo);
