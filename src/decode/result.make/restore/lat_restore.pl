@@ -2,7 +2,7 @@
 
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 #X                                                                  X
-#X lat_restore.pl, Copyright(C) Gailius Raðkinis, 2020              X
+#X lat_restore.pl, Copyright(C) Gailius Raðkinis, 2020-2022         X
 #X                                                                  X
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
@@ -71,7 +71,7 @@ while (scalar @ARGV > 0) {
    elsif ($ARGV[0] eq '--join-num') {
       $join_num = 1;
       shift @ARGV;
-      if ($ARGV[0] =~ m/^[0-9\.]+$/) {
+      if (defined $ARGV[0] && $ARGV[0] =~ m/^[0-9\.]+$/) {
          $max_intra_sil = $ARGV[0]; 
          shift @ARGV;
          }
@@ -169,7 +169,7 @@ sub label_best {
    my ( $lats_ref, $lats_best_ref ) = @_;
 
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
-      $$lats_ref[$i]->label_best($$lats_best_ref[$i]);
+      $$lats_ref[$i]->label_best_v3($$lats_best_ref[$i]);
       }
    }
 #-----------------------------
@@ -308,7 +308,7 @@ label_best(\@L1, \@L2);
 label_phones(\@L1, \@L3);
 my @s_L1 = sort { $a->{_startTime} <=> $b->{_startTime} } @L1;
 # Connect digits
-print_lats(\@s_L1, 'SNTIWP') if ($debug == 1);
+print_lats(\@s_L1, 'FSNTIWP') if ($debug == 1);
 
 connect_nums(\@s_L1) if ($join_num == 1);
 # Print text hypotheses
