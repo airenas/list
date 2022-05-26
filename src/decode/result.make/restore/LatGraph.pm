@@ -590,12 +590,26 @@ sub reduce_out {
    }
 #-----------------------------
 
-sub label_best {
+sub label_best_v3 {
    my ( $self, $best ) = @_;
 
    my $n = $self->find_entry_node();
    my $n_b = $best->find_entry_node();
    my $ex_b = $best->find_exit_node();
+
+   my $rc = label_best_loop_recursive($self ,$best, $n, $n_b, $ex_b, 0);
+
+   if ($rc == 0) { # no path of L2 was found in L1
+      print STDERR "Error: Mismatching full (L1) and best-path (L2) lattices\n";
+      exit -1;
+      }
+   }
+#-----------------------------
+
+sub label_best_loop_recursive {
+   my ( $self, $best, $n, $n_b, $ex_b, $depth ) = @_;
+
+   my @sel_edges = ();
 
    # Travel through the best path
    while ($n_b != $ex_b) {
@@ -614,27 +628,72 @@ sub label_best {
             $match_cnt++;
             }
          } 
-      if ($match_i == -1) { # no match found
+
+      if ($match_cnt == 1) { # ordinary case, single path available, avoid recursion but loop
+         push @sel_edges, $$edges_ref[$match_i];
+         #$self->{_e}->[$$edges_ref[$match_i]]->{stt} = 1; # set status
+         $n = $self->{_e}->[$$edges_ref[$match_i]]->{n2};
+         $n_b = $edge_b->{n2};
+         }
+      # no match found
+      elsif ($match_cnt == 0) { # no match found
+         # if we are in recursion, we need to backtrack
+         return 0 if ($depth > 0);
+         # if we are not, we need to terminate on error
          my $fail_edge = '['.$edge_b->{n1}.' '.$edge_b->{n2}.'] ['.$best->node2time($edge_b->{n1}).' '.$best->node2time($edge_b->{n2}).'] '.$edge_b->{word_id}.' '.$edge_b->{digest};
          print STDERR "Error: Mismatch comparing lattices '$self->{_name}'. Entry '".$fail_edge."' was not found in L1\n";
          exit -1;
          }
-      elsif ($match_cnt > 1) { # multiple matches found
+      # multiple matches found
+      elsif ($match_cnt > 1) {
+         # Print anomaly to LOG file
          my $fail_edge = '['.$edge_b->{n1}.' '.$edge_b->{n2}.'] ['.$best->node2time($edge_b->{n1}).' '.$best->node2time($edge_b->{n2}).'] '.$edge_b->{word_id}.' '.$edge_b->{digest};
-         print STDERR "Error: Mismatch comparing lattices '$self->{_name}'. Entry '".$fail_edge."' has multiple matches in L1\n";
+         print STDERR "Warning: Mismatch comparing lattices '$self->{_name}'. Entry '".$fail_edge."' has multiple matches in L1\n";
          for(my $i=0; $i<scalar @$edges_ref; $i++) {
             my $edge = $self->{_e}->[$$edges_ref[$i]];
             if ($edge->{word_id} == $edge_b->{word_id}  && $edge->{digest} eq $edge_b->{digest}) {
                my $fail_edge = '['.$edge->{n1}.' '.$edge->{n2}.'] ['.$self->node2time($edge->{n1}).' '.$self->node2time($edge->{n2}).'] '.$edge->{word_id}.' '.$edge->{digest};
                print STDERR $fail_edge."\n";
                }
+            }
+         # recursively iterate through every path
+         $match_cnt = 0;
+         for(my $i=0; $i<scalar @$edges_ref; $i++) {
+            my $edge = $self->{_e}->[$$edges_ref[$i]];
+            if ($edge->{word_id} == $edge_b->{word_id}  && $edge->{digest} eq $edge_b->{digest}) {
+
+               push @sel_edges, $$edges_ref[$i];
+               # $self->{_e}->[$$edges_ref[$i]]->{stt} = 1; # set status (on the best path)
+               $match_cnt++;
+               my $rc = label_best_loop_recursive($self, $best, $edge->{n2}, $edge_b->{n2}, $ex_b, $depth+1);
+               if ($rc == 0) {
+                  pop @sel_edges;
+                  #$self->{_e}->[$$edges_ref[$i]]->{stt} = 0; # restore status (not on the best path)
+                  $match_cnt--;
+                  }
+               }
             } 
-         exit -1;
+         if ($match_cnt == 0) { # no match found, dead end for the recursion
+            return 0 if ($depth > 0);
+            print STDERR "Error: Disambiguation among alternative paths has failed.\n";
+            exit -1;
+            }
+         elsif ($match_cnt == 1) { # disambiguation succeeded
+            return 1 if ($depth > 0);
+            last;
+            }
+         elsif ($match_cnt > 1) { # multiple matches found
+            print STDERR "Error: Disambiguation among alternative paths has failed.\n";
+            exit -1;
+            }
          }
-      $self->{_e}->[$$edges_ref[$match_i]]->{stt} = 1; # set status
-      $n = $self->{_e}->[$$edges_ref[$match_i]]->{n2};
-      $n_b = $edge_b->{n2};
       }
+
+   foreach ( @sel_edges ) {
+      $self->{_e}->[$_]->{stt} = 1; # set status
+      }
+
+   return 1;
    }
 #-----------------------------
 
@@ -652,8 +711,12 @@ sub print_sorted {
    # keys_ref is list of $self->{_e} indexes in some order
    my ( $self, $keys_ref, $options ) = @_;
 
-   if ($options =~ m/^[FSNTIWPO]+$/ ) {
-      print "$self->{_name}\n" if ($options =~ m/F/); 
+   if ($options =~ m/^[FSNTIWPODE]+$/ ) {
+      if ($options =~ m/F/) {
+         print "$self->{_name}";
+         print " " if ($options =~ m/E/); # 2020.11.18 jei norime, kad butu, kaip originale
+         print "\n";
+         }
 
       my @P = split('', $options);
       for (my $i=0; $i<scalar @{$keys_ref}; $i++) {
@@ -661,7 +724,14 @@ sub print_sorted {
          # next if ($edge->{stt} == -1); # skip deleted edge
          my $line = '';
          for(my $j=0; $j<scalar @P; $j++) {
-            $line .= ' ' if ($j > 0);
+            if ($j > 0 && $P[$j] !~ m/^[FE]$/) {
+               if ($options =~ m/E/) {
+                  $line .= "\t" # originalus lattice skirtukas
+                  }
+               else {
+                  $line .= ' '; 
+                  }
+               }
             $line .= $edge->{stt} if ($P[$j] eq 'S'); # Status
             $line .= $edge->{n1}.' '.$edge->{n2} if ($P[$j] eq 'N'); # Nodes
             $line .= $self->node2time($edge->{n1}).' '.$self->node2time($edge->{n2}) if ($P[$j] eq 'T'); # Timing
@@ -693,10 +763,16 @@ sub print_sorted {
                   $line .= '<'.main::phones2letters($edge->{ph}).'>';
                   }
                }
+            if ($P[$j] eq 'D') { # digest / used for phone bondary shift
+               $line .= $edge->{digest};
+               }
             }
          printf("%s\n", $line);
          }
-#      print "\n"; # newline between files
+      if ($options =~ m/E/) { # end lattice so that it is exactly the same as original
+         my $edge = $self->{_e}->[$$keys_ref[-1]];
+         printf("%d\n\n", $edge->{n2});
+         }
       }
    else {
       print "$self->{_name}\n"; 
