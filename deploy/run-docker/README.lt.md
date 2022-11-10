@@ -2,12 +2,12 @@
 
 ## Apie
 
-Transkribatroriaus IT sprendimas yra realizuotas *Docker* komponentais. Visa sistema sukonfigūruota ir paruošta paleisti su *docker-compose* konfigūraciniu failu. Sistemos darbui taip pat reikalingi kai kurie papildomi (nedokerizuoti) binariniai vykdomieji failai ir lietuvių kalbos atpažinimo modelių failai. Diegiant Jums reikės:
+Transkribatroriaus IT sprendimas yra realizuotas *Docker* komponentais. Visa sistema sukonfigūruota ir paruošta paleisti su *docker compose* konfigūraciniu failu. Sistemos darbui taip pat reikalingi kai kurie papildomi (nedokerizuoti) binariniai vykdomieji failai ir lietuvių kalbos atpažinimo modelių failai. Diegiant Jums reikės:
 
 - atlikti pakeitimus konfiguraciniame faile,
 
 - nauojantis paruoštų skriptų pagalba, parsiųsti reikalingus binarinius ir modelių failus,
-- su *docker-compose* startuoti sistemą.
+- su *docker ompose* startuoti sistemą.
 Transcribatroriaus IT sprendimas gali būti diegiamas, bet kurioje operacinėje sistemoje, kuri palaiko Docker technologiją, bet buvo testuotas ir šis aprašymas apima tik *Linux* sistemas. *Win* ir *Mac* operacinėse sistemose tikėtina bus reikalingas papildomas *docker-compose.yml* failo pritaikymas.
 
 ## Reikalavimai
@@ -25,8 +25,7 @@ Operacinė sistema: Linux OS 64-bit (papildomai žiūrėkite [reikalavimus Docke
 
 | Komponentas | Min versija | URL |
 | ---|-|-|
-| Docker | 18.09.7 | [Link](https://docs.docker.com/engine/install/)
-| Docker-compose | 1.23.0 | [Link](https://docs.docker.com/compose/install/) |
+| Docker | 20.10.21 | [Link](https://docs.docker.com/engine/install/)
 
 Papildomi įrankiai naudojami instaliuojant: [make](https://www.gnu.org/software/make/manual/make.html), [git](https://git-scm.com/download/linux), [wget](https://www.gnu.org/software/wget/manual/wget.html), [tar](https://www.gnu.org/software/tar/manual/).
 
@@ -37,8 +36,6 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 ```bash
     ## Docker
     docker run hello-world
-    ## Docker-compose
-    docker-compose --version
     ## Kiti komponentai
     make --version
     tar --version
@@ -89,7 +86,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 ## Patikrinimas
 
-1. Patikrinkite ar visi servisai veikia su *docker-compose*: `make status`. Visi servisai turi būti *Up* būsenoje.
+1. Patikrinkite ar visi servisai veikia su *docker compose*: `make status`. Visi servisai turi būti *Up* būsenoje.
 
 1. Patikrinkite ar servisas gali priimti užklausas: `make status-service`. Turi grąžinti užklausos kodą 200.
 
@@ -97,14 +94,14 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
 ## Servisų sustabdymas/valdymas
 
-Servisai valdomi su *docker-compose* komanda:
+Servisai valdomi su *docker compose* komanda:
 
 ```bash
     cd <deploy_dir>
     ##Sustabdymas
-    docker-compose stop
+    docker compose stop
     ##Paleidimas
-    docker-compose up -d
+    docker compose up -d
 ```
 
 ## Duomenų atnaujinimas
