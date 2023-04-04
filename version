@@ -5,4 +5,4 @@ channels_splitter_version?=0.1.$(commit_count)-$(rev_id)
 join_results_version?=0.2.$(commit_count)-$(rev_id)
 tools_version?=0.1.$(commit_count)-$(rev_id)
 result_make_version?=3.8.$(commit_count)-$(rev_id)
-
+audio_prepare_version=3.0.$(commit_count)-$(rev_id)
