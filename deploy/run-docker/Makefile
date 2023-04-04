@@ -138,12 +138,12 @@ $(install_dir)/.prom.done: $(install_dir)/.env.done
 	touch $@
 ########################################################################################################
 run: init
-	cd $(deploy_dir) && docker-compose up -d
+	cd $(deploy_dir) && docker compose up -d
 
 install: run	
 ########################################################################################################
 status: 
-	cd $(deploy_dir) && docker-compose ps
+	cd $(deploy_dir) && docker compose ps
 status-service: 
 	wget -SO- http://localhost:$(http_port)/ausis/transcriber/live?full=1 2>&1	
 ########################################################################################################
@@ -153,6 +153,6 @@ clean-dir:
 	rm -rf $(deploy_dir)	
 
 clean-docker:
-	cd $(deploy_dir) && docker-compose stop && docker-compose rm -f
+	cd $(deploy_dir) && docker compose down --rmi all
 ########################################################################################################
 .PHONY: validate clean run init install
