@@ -19,12 +19,21 @@ test-denoise:
 	${MAKE} DENOISE=true ${test_dir}/decoded/audio/${id}/.done
 
 clean:
-	rm -rf ${test_dir}/decoded/audio/${id}
+	rm -rf ${test_dir}/decoded/audio/
 
 
-test-min-len: 
+test/min-len: 
 	MIN_AUDIO_LEN=10.5 ${MAKE} ${test_dir}/decoded/audio/${id}/.done
+test/min-len/ogg: 
+	MIN_AUDIO_LEN=10.5 ${MAKE} ${test_dir}/decoded/audio/ogg/.done
 
+
+all: 	
+	${MAKE} ${test_dir}/decoded/audio/123/.done
+	${MAKE} ${test_dir}/decoded/audio/m4a/.done
+	${MAKE} ${test_dir}/decoded/audio/ogg/.done
+	${MAKE} ${test_dir}/decoded/audio/wma/.done
+	${MAKE} ${test_dir}/decoded/audio/webm/.done
 
 test-max-len: 
 	MAX_AUDIO_LEN=5.5 ${MAKE} ${test_dir}/decoded/audio/${id}/.done

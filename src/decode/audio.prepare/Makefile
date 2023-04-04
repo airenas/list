@@ -45,21 +45,20 @@ $(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.wav | $(OUTPUT_ROOT)
 	$(CHECK_LEN_CMD)
 
 $(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.mp3 | $(OUTPUT_ROOT)
-	tsk=mp3;id=$*;. $(APP_DIR)/m_start.sh $@
-	mkdir -p `dirname $@`
-	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k
-	$(CHECK_FORMAT_CMD)
-	$(CHECK_LEN_CMD)
-
+	$(MAKE) $@ a_ext=mp3
 $(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.mp4 | $(OUTPUT_ROOT)
-	tsk=mp4;id=$*;. $(APP_DIR)/m_start.sh $@
-	mkdir -p `dirname $@`
-	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
-	$(CHECK_FORMAT_CMD)
-	$(CHECK_LEN_CMD)
-
+	$(MAKE) $@ a_ext=mp4
 $(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.m4a | $(OUTPUT_ROOT)
-	tsk=m4a;id=$*;. $(APP_DIR)/m_start.sh $@
+	$(MAKE) $@ a_ext=m4a
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.ogg | $(OUTPUT_ROOT)
+	$(MAKE) $@ a_ext=ogg	
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.wma | $(OUTPUT_ROOT)
+	$(MAKE) $@ a_ext=wma	
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.webm | $(OUTPUT_ROOT)
+	$(MAKE) $@ a_ext=webm		
+
+$(OUTPUT_ROOT)/%/converted.wav: $(INPUT_ROOT)/%.$(a_ext) | $(OUTPUT_ROOT)
+	tsk=$(a_ext);id=$*;. $(APP_DIR)/m_start.sh $@
 	mkdir -p `dirname $@`
 	ffmpeg -i $< -f sox - | sox -t sox - -c 1 -b 16 $@ rate -v 16k 
 	$(CHECK_FORMAT_CMD)
