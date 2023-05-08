@@ -27,7 +27,7 @@ func main() {
 	fs.Parse(os.Args[1:])
 	err := validateParams(params)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		fs.Usage()
 		return
 	}

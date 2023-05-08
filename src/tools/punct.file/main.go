@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -23,7 +22,7 @@ func main() {
 		panic(errors.New("Usage: ./punct.file -f <fileIn> -u <punctuation URL> -o <output file>"))
 	}
 
-	b, err := ioutil.ReadFile(*filePtr)
+	b, err := os.ReadFile(*filePtr)
 	if err != nil {
 		panic(errors.Wrapf(err, "Can't read file %s ", *filePtr))
 	}
@@ -38,7 +37,9 @@ func main() {
 	if err != nil {
 		panic(errors.Wrap(err, "Can't punctuate"))
 	}
-	destination.WriteString(result)
+	if _, err := destination.WriteString(result); err != nil {
+		panic(errors.Wrap(err, "can't write"))
+	}
 }
 
 func punctuate(str string, url string) (string, error) {
@@ -47,7 +48,7 @@ func punctuate(str string, url string) (string, error) {
 	}
 	inp := punctuation.Request{Text: str}
 	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(inp)
+	_ = json.NewEncoder(b).Encode(inp)
 	resp, err := http.Post(url, "application/json; charset=utf-8", b)
 	if err != nil {
 		return "", errors.Wrapf(err, "Can't invoke post to %s", url)

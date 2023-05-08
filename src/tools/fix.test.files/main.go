@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path"
 )
@@ -14,7 +13,7 @@ func main() {
 	outPtr := flag.String("o", "", "dir out")
 	flag.Parse()
 
-	files, err := ioutil.ReadDir(*inPtr)
+	files, err := os.ReadDir(*inPtr)
 	if err != nil {
 		panic(err)
 	}

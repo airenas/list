@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strconv"
@@ -32,7 +31,7 @@ func main() {
 	params.field-- // make zero based
 	err := validateParams(params)
 	if err != nil {
-		log.Printf(err.Error())
+		log.Print(err.Error())
 		fs.Usage()
 		return
 	}
@@ -177,7 +176,7 @@ func readVocab(src io.Reader) ([]string, error) {
 }
 
 func readVocabInt(src io.Reader, pJobs int) ([]string, error) {
-	data, err := ioutil.ReadAll(src)
+	data, err := io.ReadAll(src)
 	if err != nil {
 		return nil, err
 	}
@@ -189,7 +188,7 @@ func readVocabInt(src io.Reader, pJobs int) ([]string, error) {
 	res := &results{res: make([]string, n+1), lock: &sync.Mutex{}}
 	wg := sync.WaitGroup{}
 	cd := c / pJobs
-	toC := cd
+	var toC int
 	for i := 0; i < c; i = toC {
 		toC = i + cd
 		if toC > c {

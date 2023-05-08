@@ -25,7 +25,7 @@ func TestParse(t *testing.T) {
 	assert.Equal(t, "olia", w)
 	assert.Equal(t, 101010, n)
 
-	w, n, err = parseLine("olia101010")
+	_, _, err = parseLine("olia101010")
 	assert.NotNil(t, err)
 }
 
