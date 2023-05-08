@@ -7,7 +7,7 @@ import (
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/lattice"
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/punctuation"
 	"bitbucket.org/airenas/list/src/tools/internal/pkg/test/mocks"
-	"github.com/petergtz/pegomock"
+	"github.com/petergtz/pegomock/v3"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -3,7 +3,7 @@ package mocks
 import (
 	"testing"
 
-	"github.com/petergtz/pegomock"
+	"github.com/petergtz/pegomock/v3"
 )
 
 //go:generate pegomock generate --package=mocks --output=punctuator.go -m bitbucket.org/airenas/list/src/tools/internal/pkg/punctuation Punctuator

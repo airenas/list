@@ -9,7 +9,7 @@ help:
 #####################################################################################
 ## generate mock objects for test
 generate/mocks: 
-	go install github.com/petergtz/pegomock/...@v2.9.0
+	go install github.com/petergtz/pegomock/v3/...@v3.0.1
 	go generate ./...
 .PHONY: generate/mocks
 #####################################################################################
@@ -33,9 +33,9 @@ test/report: | ../../test-reports
 #####################################################################################
 ## code vet and lint
 test/lint: 
-	go vet `go list ./... | grep -v mocks`
-	go install golang.org/x/lint/golint@latest
-	golint -set_exit_status ./...
+	go vet ./...
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	golangci-lint run -v ./...
 .PHONY: test/lint
 #####################################################################################
 ## cleans prepared data for dockeriimage generation
