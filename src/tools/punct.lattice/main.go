@@ -49,6 +49,7 @@ func main() {
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't punctuate"))
 	}
+	lattice.FixPuncts(data)
 	err = lattice.Write(data, destination)
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "Can't write lattice"))

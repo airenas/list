@@ -110,6 +110,18 @@ func Write(data []*Part, writer io.Writer) error {
 	return nil
 }
 
+//FixPuncts drop `.` if the last word contains dot
+func FixPuncts(data []*Part) {
+	for _, p := range data {
+		for _, w := range p.Words {
+			words := w.Words
+			if len(words) > 0 && strings.HasSuffix(words[len(words) - 1], ".") && w.Punct == "." {
+				w.Punct = ""
+			}
+		}
+	}
+}
+
 //WordDuration return duration from word line
 func WordDuration(w *Word) time.Duration {
 	return Duration(w.To) - Duration(w.From)

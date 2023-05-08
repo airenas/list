@@ -56,6 +56,22 @@ func TestWriteUnderscore(t *testing.T) {
 	assert.Equal(t, "# 1 S1\n1 fr to word_x\n\n", b.String())
 }
 
+func TestFixPuncts(t *testing.T) {
+	p := make([]*Part, 1)
+	p[0] = &Part{Num: 1, Speaker: "S1"}
+	p[0].Words = append(p[0].Words, &Word{Text: "word._x", Words: []string{"word.", "x"}, Punct: "."})
+	p[0].Words = append(p[0].Words, &Word{Text: "word_xx", Words: []string{"word", "x."}, Punct: "."})
+	p[0].Words = append(p[0].Words, &Word{Text: "word_xx", Words: []string{"word", "x."}, Punct: ","})
+	p[0].Words = append(p[0].Words, &Word{Text: "word", Words: []string{"word"}, Punct: "."})
+	p[0].Words = append(p[0].Words, &Word{Text: "word", Words: []string{"word"}, Punct: ""})
+	FixPuncts(p)
+	assert.Equal(t, ".", p[0].Words[0].Punct)
+	assert.Equal(t, "", p[0].Words[1].Punct)
+	assert.Equal(t, ",", p[0].Words[2].Punct)
+	assert.Equal(t, ".", p[0].Words[3].Punct)
+	assert.Equal(t, "", p[0].Words[4].Punct)
+}
+
 func TestRead(t *testing.T) {
 	p, _ := Read(strings.NewReader("# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n# 2 S2\n1 fr to word\n1 fr1 to2 word2\n\n"))
 
