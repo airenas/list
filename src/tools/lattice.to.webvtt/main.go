@@ -18,8 +18,10 @@ func main() {
 	fs := flag.CommandLine
 	strHeader := ""
 	takeParams(fs, &strHeader)
-	fs.Parse(os.Args[1:])
-
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+	
 	f, err := util.NewReadWrapper(flag.Arg(0))
 	if err != nil {
 		log.Fatal(err)

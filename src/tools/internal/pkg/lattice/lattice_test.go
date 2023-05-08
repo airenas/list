@@ -16,7 +16,7 @@ func TestWrite(t *testing.T) {
 	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word", Words: []string{"word"}}
 	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2", Words: []string{"word2"}}
 	var b bytes.Buffer
-	Write(p, &b)
+	_ = Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n", b.String())
 }
 
@@ -31,7 +31,7 @@ func TestWriteSeveral(t *testing.T) {
 	p[1].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word", Words: []string{"word"}}
 	p[1].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2", Words: []string{"word2"}}
 	var b bytes.Buffer
-	Write(p, &b)
+	_ = Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word\n1 fr1 to2 word2\n\n# 2 S2\n1 fr to word\n1 fr1 to2 word2\n\n", b.String())
 }
 
@@ -42,7 +42,7 @@ func TestWritePunc(t *testing.T) {
 	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word", Punct: ",", Words: []string{"word"}}
 	p[0].Words[1] = &Word{Main: "1", From: "fr1", To: "to2", Text: "word2", Punct: ".", Words: []string{"word2"}}
 	var b bytes.Buffer
-	Write(p, &b)
+	_ = Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word ,\n1 fr1 to2 word2 .\n\n", b.String())
 }
 
@@ -52,7 +52,7 @@ func TestWriteUnderscore(t *testing.T) {
 	p[0].Words = make([]*Word, 1)
 	p[0].Words[0] = &Word{Main: "1", From: "fr", To: "to", Text: "word_x", Words: []string{"word", "x"}}
 	var b bytes.Buffer
-	Write(p, &b)
+	_ = Write(p, &b)
 	assert.Equal(t, "# 1 S1\n1 fr to word_x\n\n", b.String())
 }
 

@@ -147,7 +147,7 @@ func TestGetWords_DropBrakets(t *testing.T) {
 func TestAddPunctuation(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
-	addPunctuatioData(d, 3, 4, makeTestPResp("w5 w6", "W5, w6."))
+	_ = addPunctuatioData(d, 3, 4, makeTestPResp("w5 w6", "W5, w6."))
 	assert.Equal(t, "W5", d[3].Words[1].Words[0])
 	assert.Equal(t, ",", d[3].Words[1].Punct)
 	assert.Equal(t, "w6", d[3].Words[3].Words[0])
@@ -157,7 +157,7 @@ func TestAddPunctuation(t *testing.T) {
 func TestAddPunctuation_RestoreBracket(t *testing.T) {
 	initTest(t)
 	d := makeTestLattice()
-	addPunctuatioData(d, 4, 5, makeTestPResp("w7 w8", "W7, w8."))
+	_ = addPunctuatioData(d, 4, 5, makeTestPResp("w7 w8", "W7, w8."))
 	assert.Equal(t, "<W7>", d[4].Words[0].Words[0])
 	assert.Equal(t, ",", d[4].Words[0].Punct)
 }
@@ -199,12 +199,12 @@ func TestAddPunctuation_Underscore(t *testing.T) {
 1 fr1 to2 w2_x_y
 
 `))
-	addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w x w2 x y,"))
+	_ = addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w x w2 x y,"))
 	assert.Equal(t, []string{"w", "x"}, d[0].Words[0].Words)
 	assert.Equal(t, "", d[0].Words[0].Punct)
 	assert.Equal(t, []string{"w2", "x", "y"}, d[0].Words[1].Words)
 	assert.Equal(t, ",", d[0].Words[1].Punct)
-	addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w X W2. X, y,"))
+	_ = addPunctuatioData(d, 0, 1, makeTestPResp("w x w2 x y", "w X W2. X, y,"))
 	assert.Equal(t, []string{"w", "x"}, d[0].Words[0].Words)
 	assert.Equal(t, "", d[0].Words[0].Punct)
 	assert.Equal(t, []string{"W2", "x", "y"}, d[0].Words[1].Words)

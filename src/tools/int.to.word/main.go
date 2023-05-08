@@ -27,7 +27,9 @@ func main() {
 	params := &params{}
 	fs := flag.CommandLine
 	takeParams(fs, params)
-	fs.Parse(os.Args[1:])
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
 	params.field-- // make zero based
 	err := validateParams(params)
 	if err != nil {

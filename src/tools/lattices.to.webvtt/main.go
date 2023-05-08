@@ -24,7 +24,9 @@ func main() {
 	fnMap := ""
 	strHeader := ""
 	takeParams(fs, &fnMap, &strHeader)
-	fs.Parse(os.Args[1:])
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
 
 	log.Printf("lattices.to.webtt: %s\n", version)
 

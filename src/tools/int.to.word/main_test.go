@@ -156,7 +156,7 @@ func TestMap_FailNoWord(t *testing.T) {
 
 func benchmarkParse(b *testing.B, l string) {
 	for n := 0; n < b.N; n++ {
-		parseLine(l)
+		_, _, _ = parseLine(l)
 	}
 }
 
@@ -171,7 +171,7 @@ func benchmarkToString(b *testing.B, str []string) {
 
 func BenchmarkParseSplit(b *testing.B) {
 	for n := 0; n < b.N; n++ {
-		parseLine1("oliaaaaaaaaaaaa 15\n")
+		_, _, _ = parseLine1("oliaaaaaaaaaaaa 15\n")
 	}
 }
 
@@ -197,7 +197,7 @@ func benchmarkReadVocab(b *testing.B, n int, pJobs int) {
 	str := generateStr(n)
 	b.ResetTimer()
 	for n := 0; n < b.N; n++ {
-		readVocabInt(strings.NewReader(str), pJobs)
+		_, _ = readVocabInt(strings.NewReader(str), pJobs)
 	}
 }
 

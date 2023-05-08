@@ -38,7 +38,10 @@ func main() {
 	takeEnvValues(data)
 	fs := flag.CommandLine
 	takeParams(fs, data)
-	fs.Parse(os.Args[1:])
+	if err := fs.Parse(os.Args[1:]); err != nil {
+		log.Fatal(err)
+	}
+	
 	err := validateParams(data)
 	if err != nil {
 		log.Print(err.Error())
@@ -103,7 +106,7 @@ func mapRequest(data *params, t time.Time) *request {
 
 func post(data *request, url string) error {
 	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(data)
+	_ = json.NewEncoder(b).Encode(data)
 	ctx, cf := context.WithTimeout(context.Background(), time.Second*10)
 	defer cf()
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, url, b)

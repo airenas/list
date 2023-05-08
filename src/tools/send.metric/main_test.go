@@ -22,7 +22,7 @@ func TestParseParams(t *testing.T) {
 	data := &params{}
 	fs := flag.NewFlagSet("test", flag.ContinueOnError)
 	takeParams(fs, data)
-	fs.Parse([]string{"-u", "url", "-m", "model", "-i", "id", "-t", "task", "-w", "worker", "-s"})
+	_ = fs.Parse([]string{"-u", "url", "-m", "model", "-i", "id", "-t", "task", "-w", "worker", "-s"})
 	assert.Equal(t, "url", data.url)
 	assert.Equal(t, "model", data.model)
 	assert.Equal(t, "id", data.id)
@@ -37,7 +37,7 @@ func TestTakesDefault(t *testing.T) {
 	data.url = "url"
 	data.model = "model"
 	takeParams(fs, data)
-	fs.Parse([]string{"-i", "id", "-t", "task", "-w", "worker", "-s"})
+	_ = fs.Parse([]string{"-i", "id", "-t", "task", "-w", "worker", "-s"})
 	assert.Equal(t, "url", data.url)
 	assert.Equal(t, "model", data.model)
 }
@@ -46,11 +46,11 @@ func TestParseStart(t *testing.T) {
 	data := &params{}
 	fs := flag.NewFlagSet("test", flag.ContinueOnError)
 	takeParams(fs, data)
-	fs.Parse([]string{"-s"})
+	_ = fs.Parse([]string{"-s"})
 	assert.True(t, data.start)
 	fs = flag.NewFlagSet("test", flag.ContinueOnError)
 	takeParams(fs, data)
-	fs.Parse([]string{})
+	_ = fs.Parse([]string{})
 	assert.False(t, data.start)
 }
 

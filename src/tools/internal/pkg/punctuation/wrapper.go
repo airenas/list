@@ -22,7 +22,7 @@ func NewWrapper(url string) *Wrapper {
 func (p *Wrapper) Punctuate(words []string) (*Response, error) {
 	inp := RequestArray{Words: words}
 	b := new(bytes.Buffer)
-	json.NewEncoder(b).Encode(inp)
+	_ = json.NewEncoder(b).Encode(inp)
 	resp, err := http.Post(p.url, "application/json; charset=utf-8", b)
 	if err != nil {
 		return nil, errors.Wrapf(err, "Can't invoke post to %s", p.url)
