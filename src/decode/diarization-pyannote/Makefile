@@ -76,7 +76,7 @@ $(OUTPUT_ROOT)/trans/%/segments: $(OUTPUT_ROOT)/diarization/%/show.fixed.seg
 
 $(OUTPUT_ROOT)/trans/%/spk2utt: $(OUTPUT_ROOT)/trans/%/utt2spk
 	$(logb) $@
-	$(APP_DIR)/utils/utt2spk_to_spk2utt.pl $^ > $@ || exit 1
+	$(APP_DIR)/utt2spk_to_spk2utt.pl $^ > $@ || exit 1
 	$(loge) $@
 
 $(OUTPUT_ROOT)/trans/%/.diarization.done: $(OUTPUT_ROOT)/trans/%/spk2utt $(OUTPUT_ROOT)/trans/%/segments \

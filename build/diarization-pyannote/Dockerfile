@@ -44,7 +44,7 @@ COPY src/decode/diarization-pyannote/python/requirements.txt /cmd/python/
 RUN pip install -r /cmd/python/requirements.txt
 
 COPY --from=cmdRunner /app/cmdWorkerService /app/
-COPY --from=kaldi //opt/kaldi/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl /app/
+COPY --from=kaldi /opt/kaldi/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl /app/
 COPY --from=builder /go/bin/send.metric /app/
 COPY --from=builder /go/bin/fix.segments /app/
 COPY build/diarization-pyannote/config.yaml /app/
