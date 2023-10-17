@@ -14,7 +14,6 @@ RUN go build -o /go/bin/send.metric -ldflags "-X main.version=$TOOLS_VERSION" se
 RUN go build -o /go/bin/fix.segments -ldflags "-X main.version=$TOOLS_VERSION" fix.segments/main.go
 #########################################################################################
 FROM airenas/list-worker:1.0.400-44fd44b as cmdRunner
-FROM kaldiasr/kaldi:cpu-debian10 as kaldi
 #########################################################################################
 FROM python:3.10-bookworm as runner
 
@@ -43,8 +42,8 @@ WORKDIR /app
 COPY src/decode/diarization-pyannote/python/requirements.txt /cmd/python/
 RUN pip install -r /cmd/python/requirements.txt
 
+RUN wget https://raw.githubusercontent.com/kaldi-asr/kaldi/master/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl -O /app/utt2spk_to_spk2utt.pl
 COPY --from=cmdRunner /app/cmdWorkerService /app/
-COPY --from=kaldi /opt/kaldi/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl /app/
 COPY --from=builder /go/bin/send.metric /app/
 COPY --from=builder /go/bin/fix.segments /app/
 COPY build/diarization-pyannote/config.yaml /app/
