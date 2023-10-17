@@ -18,7 +18,7 @@ For transcription service code look at [bitbucket.org/airenas/listgo](https://bi
 
 Airenas Vaičiūnas
 
-- [bitbucket.org/airenas](https://bitbucket.org/airenas)
+- [github.com/airenas](https://github.com/airenas)
 
 - [linkedin.com/in/airenas](https://www.linkedin.com/in/airenas/)
 
@@ -26,7 +26,7 @@ Airenas Vaičiūnas
 
 ## License
 
-Copyright © 2020, [Airenas Vaičiūnas](https://bitbucket.org/airenas).
+Copyright © 2023, [Airenas Vaičiūnas](https://github.com/airenas).
 Released under the [The 3-Clause BSD License](LICENSE).
 
 The project uses other licensed software. See [Licenses](Licenses/).
