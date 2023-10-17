@@ -1,0 +1,3 @@
+OUTPUT_ROOT=fs/decoded
+INPUT_ROOT=fs/decoded/audio
+APP_DIR=../scripts

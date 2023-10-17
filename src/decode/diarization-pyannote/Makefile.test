@@ -1,0 +1,31 @@
+-include Makefile.options
+
+test_dir=fs
+id?=0110db5a-c0a1-4787-84d2-6f09ed8f6c33
+DENOISE_APP=../../../sfgparse/sfg
+DIARIZATION_APP=$(MAKE) -f Makefile.test fakeSeg; echo cmdparams 
+
+FIX_SEGMENTS_APP=../../../deploy/local/diarization/deploy/fix.segments
+
+.EXPORT_ALL_VARIABLES:
+
+test: 
+	${MAKE} ${test_dir}/decoded/trans/${id}/.diarization.done
+
+test/docker: 
+	docker run -it --rm -v $(shell pwd)/test:/data --entrypoint "bash" \
+	-e HF_API_TOKEN=$(HF_API_TOKEN) \
+	diarization-pyannote-service:dev \
+	# make /data/decoded/trans/1/.diarization.done
+
+fakeSeg:
+	echo "prepared 1 198 900 M S U S2" > $(test_dir)/decoded/diarization/${id}/show.seg
+	echo "prepared 1 1386 1080 M S U S1" >> $(test_dir)/decoded/diarization/${id}/show.seg
+	echo "prepared 1 2634 1074 M S U S1" >> $(test_dir)/decoded/diarization/${id}/show.seg
+	echo "prepared 1 3990 1002 M S U S0" >> $(test_dir)/decoded/diarization/${id}/show.seg
+
+clean:
+	rm -rf $(test_dir)/decoded/trans/${id}
+	rm -rf $(test_dir)/decoded/diarization/${id}
+
+

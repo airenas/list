@@ -98,3 +98,5 @@ testing/2022*/**
 deploy/local/channels.splitter/deploy/**
 src/decode/channels.split/fs/**
 src/tools/Makefile.options
+**/.idea/**
+src/decode/diarization-pyannote/test/**
