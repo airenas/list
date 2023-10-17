@@ -5,6 +5,21 @@ import sys
 from scripts.logger import logger
 
 
+class Namer:
+    def __init__(self):
+        self.num = 0
+        self.dict = {}
+
+    def label(self, sp):
+        res = self.dict.get(sp, None)
+        if res:
+            return res
+        res = f"S{self.num:03d}"
+        self.dict[sp] = res
+        self.num += 1
+        return res
+
+
 class Seg:
     def __init__(self, start, dur, sp):
         self.sp = sp
@@ -36,10 +51,11 @@ def main(argv):
     segs = sorted(segs, key=lambda d: (d.sp, d.start))
 
     rttm_lines = []
+    namer = Namer()
     for s in segs:
         start_time = int(s.start * 100)
         duration = int(s.dur * 100)
-        label = s.sp
+        label = namer.label(s.sp)
 
         rttm_line = f"prepared 1 {start_time} {duration} NA NA NA {label}"
         rttm_lines.append(rttm_line)
