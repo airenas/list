@@ -25,6 +25,7 @@ class Seg:
         self.sp = sp
         self.dur = float(dur)
         self.start = float(start)
+        self.end = self.start + self.dur
 
 
 def main(argv):

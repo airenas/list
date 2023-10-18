@@ -18,6 +18,7 @@ loge=$(log): END
 ###############################################################################
 DIARIZATION_APP?=cd /app; python3 /app/scripts/diarization.py
 RTTM2SEG_APP?=cd /app; python3 /app/scripts/rttm_to_seg.py
+FIX_SIL_APP?=cd /app; python3 /app/scripts/fix_short_silences.py
 FIX_SEGMENTS_APP?=$(APP_DIR)/fix.segments
 SEND_METRIC_APP?=${APP_DIR}/send.metric
 ###############################################################################
@@ -41,8 +42,12 @@ $(OUTPUT_ROOT)/diarization/%/res.rttm: $(INPUT_ROOT)/%/prepared.wav
 	echo "diarization_opts=$$diarization_opts"; \
 	($(DIARIZATION_APP) --input=$^ --output=$@ $$diarization_opts)
 
-# Speaker diarization
-$(OUTPUT_ROOT)/diarization/%/show.seg: $(OUTPUT_ROOT)/diarization/%/res.rttm
+# Fix silences
+$(OUTPUT_ROOT)/diarization/%/res.fix.rttm: $(OUTPUT_ROOT)/diarization/%/res.rttm
+	tsk=rttm-fix;id=$*;. $(APP_DIR)/m_start.sh $@
+	($(FIX_SIL_APP) --input=$^ --output=$@ --len="$(shell cat $(INPUT_ROOT)/$*/len)")
+# To kaldi format
+$(OUTPUT_ROOT)/diarization/%/show.seg: $(OUTPUT_ROOT)/diarization/%/res.fix.rttm
 	tsk=rttm2seg;id=$*;. $(APP_DIR)/m_start.sh $@
 	($(RTTM2SEG_APP) --input=$^ --output=$@)
 
