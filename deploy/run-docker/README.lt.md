@@ -76,6 +76,15 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     | smtp_username | - | SMTP serverio vartotojas. Jei tuščias - sistema nesiųs informacinių laiškų | olia@gmail.com |
     | smtp_password | - | SMTP slaptažodis |  |
     | smtp_type     | - | SMTP serverio autentifikavimo tipas. Galimos reikšmės: NO_AUTH (kai SMTP serveris nereikalauja slaptažodžio), PLAIN_AUTH (veikia daugumai SMTP serverių, naudoja TLS, jei serveris palaiko), LOGIN (kai SMTP serveris reikalauja Login autentifikacijos) | PLAIN_AUTH |
+    | hf_api_token | | jei naudojamas pyannote diarizatorius - https://huggingface.co/pyannote/speaker-diarization |
+
+1. *optional* Jei norite naudoti pyannote diarizatorių:
+
+    **Nerekomenduojama jei sistemoje nėra GPU.**
+
+    - Sukonfigūruokite `hf_api_token` - žr. https://huggingface.co/pyannote/speaker-diarization, modelis 2.1.
+    - Užkomentuokite `diarization-service`, faile `docker-compose.yml`
+    - Atkomentuokite `diarization-pyannote-service`, faile `docker-compose.yml`
 
 1. Instaliuokite
 

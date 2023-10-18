@@ -142,6 +142,29 @@ services:
       - appsStorage:/apps
       - modelsStorage:/models 
 
+  # diarization-pyannote-service:
+  #   image: airenas/list-diarization-pyannote-service:${DIARIZATION_PYANNOTE_SERVICE_VERSION}
+  #   restart: unless-stopped
+  #   logging: *default-logging
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #     METRICS_URL: http://metrics-collector:8000/metrics  
+  #     HF_API_TOKEN: ${HF_API_TOKEN}
+  #   volumes:
+  #     - fileStorage:/data    
+  #     - modelsStorage:/models
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]      
+
   transcription-dispatcher-service:
     image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
     restart: unless-stopped
