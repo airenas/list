@@ -31,7 +31,8 @@ LABEL org.opencontainers.image.version=$BUILD_VERSION \
 
 RUN apt-get update && apt-get install -y \
       build-essential \
-      libsndfile1
+      libsndfile1 \
+      && rm -rf /var/cache/apt/archives /var/lib/apt/lists
 
 
 
@@ -40,7 +41,8 @@ VOLUME ["/models"]
 WORKDIR /app
 
 COPY src/decode/diarization-pyannote/python/requirements.txt /cmd/python/
-RUN pip install -r /cmd/python/requirements.txt
+RUN pip install --no-cache-dir -r /cmd/python/requirements.txt \
+      && rm -rf /root/.cache
 
 RUN wget https://raw.githubusercontent.com/kaldi-asr/kaldi/master/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl -O /app/utt2spk_to_spk2utt.pl
 COPY --from=cmdRunner /app/cmdWorkerService /app/
