@@ -61,6 +61,7 @@ ifeq ($(strip $(smtp_username)),)
 else
 	echo "SENDINFORMMESSAGES=true" >> $(deploy_dir)/.env 
 endif
+	echo "HF_API_TOKEN=$(hf_api_token)" >> $(deploy_dir)/.env
 	touch $@
 
 $(install_dir)/.dir.done: $(install_dir)/.init.done

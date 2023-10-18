@@ -14,7 +14,7 @@ def main(argv):
     parser = argparse.ArgumentParser(description="Pyannote diarization")
     parser.add_argument("--input", nargs='?', required=True, help="wav file")
     parser.add_argument("--output", nargs='?', required=True, help="rttm file")
-    parser.add_argument("--num-speakers", nargs='?', required=False, help="speakers count")
+    parser.add_argument("--num-speakers", nargs='?', type=int, required=False, help="speakers count")
     args = parser.parse_args(args=argv)
 
     logger.info("Init models")
@@ -23,7 +23,7 @@ def main(argv):
     if cuda and cuda != "cpu":
         pipeline = pipeline.to(torch.device(cuda))
     logger.info(f"Starting diarization on '{cuda}'")
-
+    logger.info(f"Num speakers {args.num_speakers}")
     start_time = time.time()
     diarization = pipeline(args.input, num_speakers=args.num_speakers)
     end_time = time.time()

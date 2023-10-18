@@ -44,7 +44,8 @@ COPY src/decode/diarization-pyannote/python/requirements.txt /cmd/python/
 RUN pip install --no-cache-dir -r /cmd/python/requirements.txt \
       && rm -rf /root/.cache
 
-RUN wget https://raw.githubusercontent.com/kaldi-asr/kaldi/master/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl -O /app/utt2spk_to_spk2utt.pl
+RUN wget https://raw.githubusercontent.com/kaldi-asr/kaldi/master/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl -O /app/utt2spk_to_spk2utt.pl \
+      && chmod +x /app/utt2spk_to_spk2utt.pl
 COPY --from=cmdRunner /app/cmdWorkerService /app/
 COPY --from=builder /go/bin/send.metric /app/
 COPY --from=builder /go/bin/fix.segments /app/

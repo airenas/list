@@ -37,7 +37,7 @@ $(OUTPUT_ROOT)/diarization/%/res.rttm: $(INPUT_ROOT)/%/prepared.wav
 	mkdir -p `dirname $@`
 	if [ -z "$(NUMBER_OF_SPEAKERS)" ]; \
 		then diarization_opts=""; \
-		else diarization_opts="--num_speakers=$(NUMBER_OF_SPEAKERS)"; fi; \
+		else diarization_opts="--num-speakers=$(NUMBER_OF_SPEAKERS)"; fi; \
 	echo "diarization_opts=$$diarization_opts"; \
 	($(DIARIZATION_APP) --input=$^ --output=$@ $$diarization_opts)
 

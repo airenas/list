@@ -19,6 +19,10 @@ http_port=80
 ## host_external_url=https://list.airenas.eu:7080
 host_external_url=http//server
 
+## if used pyannote diarization it needs to be provided to access pyannote/speaker-diarization@2.1 model
+## more info https://huggingface.co/pyannote/speaker-diarization
+hf_api_token=
+
 ## SMTP settings
 ## for email sending
 smtp_host=smtp.gmail.com
