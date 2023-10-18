@@ -72,11 +72,11 @@ def main(argv):
                 splits = line.split(" ")
                 segs.append(Seg(start=splits[3], dur=splits[4], sp=splits[7]))
 
-    segs = drop_silence(segs)
+    segs = drop_silence(segs, args.len)
     segs = join_speaker(segs)
 
     for s in segs:
-        s.dur = s.start - s.end
+        s.dur = s.end - s.start
 
     rttm_lines = []
     for s in segs:
