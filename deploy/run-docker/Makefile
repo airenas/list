@@ -129,7 +129,7 @@ $(install_dir)/.med-tel.done: $(install_dir)/.lm-med-1.0.data.extracted $(instal
 $(install_dir)/.med.done: $(install_dir)/.lm-med-1.0.data.extracted $(install_dir)/.am-med-1.0.data.extracted $(install_dir)/.config-med-1.0.data.extracted 
 	touch $@		
 ########################################################################################################
-init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.apps-1.0.apps.extracted \
+init: $(install_dir)/.dir.done $(install_dir)/.env.done $(install_dir)/.prom.done $(install_dir)/.traefik.done $(install_dir)/.apps-1.0.apps.extracted \
 	$(install_dir)/.punctuation-2.0.data.extracted $(install_dir)/.diarization-1.0.data.extracted $(models_done) $(models_conf) \
 	$(install_dir)/.rnnlm-2.0.data.extracted
 
@@ -137,6 +137,10 @@ $(install_dir)/.prom.done: $(install_dir)/.env.done
 	mkdir -p $(deploy_dir)/volumes/prometheus
 	cp prometheus/* $(deploy_dir)/volumes/prometheus
 	touch $@
+$(install_dir)/.traefik.done: $(install_dir)/.env.done
+	mkdir -p $(deploy_dir)/traefik
+	cp -r traefik/* $(deploy_dir)/traefik
+	touch $@	
 ########################################################################################################
 run: init
 	cd $(deploy_dir) && docker compose up -d

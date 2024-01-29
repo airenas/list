@@ -8,21 +8,25 @@ x-logging:
 
 services:
   proxy:
-    image: traefik:1.7.9 
-    command: --api --docker 
+    image: traefik:2.10.7 
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./traefik/traefik.toml:/traefik.toml:ro
+      - ./traefik/rules:/etc/traefik/rules:ro
     ports:
       - "${LIST_TRAEFIK_HTTP_EXT_PORT}:80"     # main proxy port
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock 
     restart: unless-stopped
     logging: *default-logging  
     labels:
-      - "traefik.proxy.frontend.rule=PathPrefixStrip:/proxy/"
-      - "traefik.proxy.port=8080"
-      - "traefik.api.frontend.rule=PathPrefix:/api/"
-      - "traefik.api.port=8080"
-      - "traefik.health.frontend.rule=PathPrefix:/health"
-      - "traefik.health.port=8080"
+     - "traefik.enable=true"
+     - "traefik.http.routers.traefik.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+     - "traefik.http.routers.traefik.entrypoints=web,websecure"
+     - "traefik.http.routers.traefik.service=api@internal"
+    #  - "traefik.http.routers.traefik.middlewares=home-ipw"
+    #  - "traefik.http.middlewares.home-ipw.ipwhitelist.sourcerange=${HOME_IP}/32"  
 
   web:
     image: ${DOCKER_REPO}ear-app:${EAR_APP_VERSION}
@@ -32,19 +36,23 @@ services:
     logging: *default-logging  
     labels:
      - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/${URL}/"
-     - "traefik.http.port=8000"
+     - "traefik.http.routers.web.rule=PathPrefix(`/${URL}/`)"
+     - "traefik.http.routers.web.middlewares=web"
+     - "traefik.http.routers.web.entrypoints=web,websecure"
+     - "traefik.http.middlewares.web.stripprefix.prefixes=/${URL}/"
+     - "traefik.http.services.web.loadbalancer.server.port=8000"
 
   editor:
     image: ${DOCKER_REPO}editor-app:${EDITOR_VERSION}
     restart: unless-stopped
     logging: *default-logging  
     labels:
-     - "traefik.enable=true"
-     - "traefik.http.frontend.rule=PathPrefixStrip:/editor/"
-     - "traefik.http2.frontend.rule=PathPrefixStrip:/${URL}/editor/"
-     - "traefik.http.port=80"   
-     - "traefik.http2.port=80"      
+     - "traefik.enable=true" 
+     - "traefik.http.routers.editor2.rule=PathPrefix(`/${URL}/editor/`)"
+     - "traefik.http.routers.editor2.middlewares=editor2"
+     - "traefik.http.routers.editor2.entrypoints=web,websecure"
+     - "traefik.http.middlewares.editor2.stripprefix.prefixes=/${URL}/editor/"
+     - "traefik.http.services.editor2.loadbalancer.server.port=80"     
 
   upload-service:
     image: ${DOCKER_REPO}upload-service:${UPLOAD_SERVICE_VERSION}
@@ -62,8 +70,12 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/transcriber/"
-     - "traefik.port=8000"  
+     - "traefik.enable=true"
+     - "traefik.http.routers.upload.rule=PathPrefix(`/${URL}/transcriber/`)"
+     - "traefik.http.routers.upload.middlewares=upload"
+     - "traefik.http.routers.upload.entrypoints=web,websecure"
+     - "traefik.http.middlewares.upload.stripprefix.prefixes=/${URL}/transcriber/"
+     - "traefik.http.services.upload.loadbalancer.server.port=8000"  
   
   result-service:
     image: ${DOCKER_REPO}result-service:${RESULT_SERVICE_VERSION}
@@ -76,8 +88,12 @@ services:
     environment:
       MONGO_URL: ${LIST_MONGO_URL}
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/result.service/"
-     - "traefik.port=8000"     
+     - "traefik.enable=true"
+     - "traefik.http.routers.result.rule=PathPrefix(`/${URL}/result.service/`)"
+     - "traefik.http.routers.result.middlewares=result"
+     - "traefik.http.routers.result.entrypoints=web,websecure"
+     - "traefik.http.middlewares.result.stripprefix.prefixes=/${URL}/result.service/"
+     - "traefik.http.services.result.loadbalancer.server.port=8000"    
 
   status-service:
     image: ${DOCKER_REPO}status-service:${STATUS_SERVICE_VERSION}
@@ -92,8 +108,12 @@ services:
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
       MONGO_URL: ${LIST_MONGO_URL}    
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/status.service/"
-     - "traefik.port=8000" 
+     - "traefik.enable=true"
+     - "traefik.http.routers.status.rule=PathPrefix(`/${URL}/status.service/`)"
+     - "traefik.http.routers.status.middlewares=status"
+     - "traefik.http.routers.status.entrypoints=web,websecure"
+     - "traefik.http.middlewares.status.stripprefix.prefixes=/${URL}/status.service/"
+     - "traefik.http.services.status.loadbalancer.server.port=8000"  
   
   manager-service:
     image: ${DOCKER_REPO}manager-service:${MANAGER_SERVICE_VERSION}
@@ -298,8 +318,12 @@ services:
     environment:
       MONGO_URL: ${LIST_MONGO_URL} 
     labels:
-     - "traefik.frontend.rule=PathPrefixStrip:/${URL}/clean.service/"
-     - "traefik.port=8000"  
+     - "traefik.enable=true"
+     - "traefik.http.routers.clean.rule=PathPrefix(`/${URL}/clean.service/`)"
+     - "traefik.http.routers.clean.middlewares=clean"
+     - "traefik.http.routers.clean.entrypoints=web,websecure"
+     - "traefik.http.middlewares.clean.stripprefix.prefixes=/${URL}/clean.service/"
+     - "traefik.http.services.clean.loadbalancer.server.port=8000"  
 
   prometheus:
     image: prom/prometheus:v2.17.2
@@ -316,8 +340,12 @@ services:
     restart: unless-stopped
     logging: *default-logging
     labels:  
-    - "traefik.frontend.rule=PathPrefixStrip:/prometheus/"
-    - "traefik.port=9090"   
+     - "traefik.enable=true"
+     - "traefik.http.routers.prometheus.rule=PathPrefix(`/prometheus/`)"
+     - "traefik.http.routers.prometheus.middlewares=prometheus"
+     - "traefik.http.routers.prometheus.entrypoints=web,websecure"
+     - "traefik.http.middlewares.prometheus.stripprefix.prefixes=/prometheus/"
+     - "traefik.http.services.prometheus.loadbalancer.server.port=9090"  
 
   metrics-collector:
     image: ${DOCKER_REPO}metrics-collector:${METRICS_COLLECTOR_VERSION}
