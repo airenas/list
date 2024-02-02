@@ -47,7 +47,7 @@ $(OUTPUT_ROOT)/diarization/%/res.rttm: $(INPUT_ROOT)/%/prepared.wav
 # Fix silences
 $(OUTPUT_ROOT)/diarization/%/res.fix.rttm: $(OUTPUT_ROOT)/diarization/%/res.rttm
 	tsk=rttm-fix;id=$*;. $(APP_DIR)/m_start.sh $@
-	($(FIX_SIL_APP) --input=$^ --output=$@ --len="$(shell cat $(INPUT_ROOT)/$*/len)" --join_sil $(JOIN_SIL) --join_gap $(JOIN_GAP))
+	($(FIX_SIL_APP) --input=$^ --output=$@ --len="$(shell cat $(INPUT_ROOT)/$*/len)" --join-sil $(JOIN_SIL) --join-gap $(JOIN_GAP))
 # To kaldi format
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(OUTPUT_ROOT)/diarization/%/res.fix.rttm
 	tsk=rttm2seg;id=$*;. $(APP_DIR)/m_start.sh $@
