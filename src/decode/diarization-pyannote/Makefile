@@ -21,6 +21,8 @@ RTTM2SEG_APP?=cd /app; python3 /app/scripts/rttm_to_seg.py
 FIX_SIL_APP?=cd /app; python3 /app/scripts/fix_short_silences.py
 FIX_SEGMENTS_APP?=$(APP_DIR)/fix.segments
 SEND_METRIC_APP?=${APP_DIR}/send.metric
+JOIN_SIL?=0.5
+JOIN_GAP?=3
 ###############################################################################
 ## for metrics
 SHELL=$(APP_DIR)/m_shell.sh
@@ -45,7 +47,7 @@ $(OUTPUT_ROOT)/diarization/%/res.rttm: $(INPUT_ROOT)/%/prepared.wav
 # Fix silences
 $(OUTPUT_ROOT)/diarization/%/res.fix.rttm: $(OUTPUT_ROOT)/diarization/%/res.rttm
 	tsk=rttm-fix;id=$*;. $(APP_DIR)/m_start.sh $@
-	($(FIX_SIL_APP) --input=$^ --output=$@ --len="$(shell cat $(INPUT_ROOT)/$*/len)")
+	($(FIX_SIL_APP) --input=$^ --output=$@ --len="$(shell cat $(INPUT_ROOT)/$*/len)" --join_sil $(JOIN_SIL) --join_gap $(JOIN_GAP))
 # To kaldi format
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(OUTPUT_ROOT)/diarization/%/res.fix.rttm
 	tsk=rttm2seg;id=$*;. $(APP_DIR)/m_start.sh $@

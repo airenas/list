@@ -1,6 +1,6 @@
 import math
 
-from scripts.fix_short_silences import join_speaker, drop_silence
+from scripts.fix_short_silences import join_speaker, drop_silence, Params
 from scripts.rttm_to_seg import Seg
 
 
@@ -53,7 +53,7 @@ def test_drop_silence_end():
 
 
 def do_test_join_speaker(in_data, expected):
-    got = join_speaker(in_data)
+    got = join_speaker(in_data, Params())
     for expected, actual in zip(expected, got):
         assert expected.sp == actual.sp
         assert expected.start == actual.start
@@ -61,7 +61,7 @@ def do_test_join_speaker(in_data, expected):
 
 
 def do_drop_silence(in_data, expected):
-    got = drop_silence(in_data, 60)
+    got = drop_silence(in_data, 60, Params())
     for expected, actual in zip(expected, got):
         assert expected.sp == actual.sp
         assert math.isclose(expected.start, actual.start, rel_tol=1e-9, abs_tol=0.0)
