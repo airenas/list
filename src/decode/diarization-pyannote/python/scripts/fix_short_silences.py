@@ -51,6 +51,21 @@ def drop_silence(segs, file_len, params):
     return segs
 
 
+def flatten(segs, params):
+    segs = sorted(segs, key=lambda d: (d.start, -d.end, d.sp))
+    res = []
+    end = 0
+    for s in segs:
+        if s.end <= end:
+            continue
+        if s.start < end:
+            s.start = end
+        res.append(s)
+        end = s.end
+    res = sorted(res, key=lambda d: (d.start, d.sp))
+    return res
+
+
 def main(argv):
     logger.info("Starting")
     parser = argparse.ArgumentParser(description="Drops silences, joins short speeches")
@@ -81,6 +96,7 @@ def main(argv):
                 splits = line.split(" ")
                 segs.append(Seg(start=splits[3], dur=splits[4], sp=splits[7]))
 
+    segs = flatten(segs, params)
     segs = drop_silence(segs, args.len, params)
     segs = join_speaker(segs, params)
 
