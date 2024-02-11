@@ -88,13 +88,7 @@ def main(argv):
 
     logger.info(f"join sil: {params.join_sil}, gap: {params.gap_same_speaker_join}")
 
-    segs = []
-    with open(file, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                splits = line.split(" ")
-                segs.append(Seg(start=splits[3], dur=splits[4], sp=splits[7]))
+    segs = read_rttm(file)
 
     segs = flatten(segs, params)
     segs = drop_silence(segs, args.len, params)
@@ -103,13 +97,28 @@ def main(argv):
     for s in segs:
         s.dur = s.end - s.start
 
+    write_rttm(out_file, segs)
+    logger.info("done")
+
+
+def write_rttm(out_file, segs):
     rttm_lines = []
     for s in segs:
         rttm_line = f"SPEAKER file 1 {s.start:.3f} {s.dur:.3f} <NA> <NA> {s.sp} <NA> <NA>"
         rttm_lines.append(rttm_line)
     with open(out_file, "w") as file:
         [file.write(line + '\n') for line in rttm_lines]
-    logger.info("done")
+
+
+def read_rttm(file):
+    segs = []
+    with open(file, "r") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                splits = line.split(" ")
+                segs.append(Seg(start=splits[3], dur=splits[4], sp=splits[7]))
+    return segs
 
 
 if __name__ == "__main__":
