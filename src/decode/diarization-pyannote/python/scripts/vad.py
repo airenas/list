@@ -15,6 +15,7 @@ def main(argv):
     parser.add_argument("--rate", nargs='?', type=int, default=16000, help="audio rate")
     args = parser.parse_args(args=argv)
 
+    torch.set_num_threads(1)
     logger.info("Init models")
     model, utils = torch.hub.load(repo_or_dir='snakers4/silero-vad', model='silero_vad', force_reload=False)
     (get_speech_timestamps, _, read_audio, *_) = utils
