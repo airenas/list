@@ -1,16 +1,19 @@
 -include Makefile.options
-
+###########################################################
 test_dir=fs
 id?=0110db5a-c0a1-4787-84d2-6f09ed8f6c33
 DENOISE_APP=../../../sfgparse/sfg
-DIARIZATION_APP=$(MAKE) -f Makefile.test fakeSeg; echo cmdparams 
-
+PYTHONPATH=./python
+PYTHON_SCRIPTS_DIR=./python/scripts
+SEND_METRIC_APP=echo SEND_METRIC: 
 FIX_SEGMENTS_APP=../../../deploy/local/diarization/deploy/fix.segments
+###########################################################
+
 
 .EXPORT_ALL_VARIABLES:
 
-test: 
-	${MAKE} ${test_dir}/decoded/trans/${id}/.diarization.done
+test/diarization: 
+	${MAKE} info ${test_dir}/decoded/trans/${id}/.diarization.done 
 
 test/docker: 
 	docker run -it --rm -v $(shell pwd)/test:/data --entrypoint "bash" \
@@ -27,5 +30,6 @@ fakeSeg:
 clean:
 	rm -rf $(test_dir)/decoded/trans/${id}
 	rm -rf $(test_dir)/decoded/diarization/${id}
+	rm -f ${test_dir}/decoded/trans/${id}/.diarization.done
 
 

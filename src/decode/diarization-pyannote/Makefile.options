@@ -1,3 +1,4 @@
-OUTPUT_ROOT=fs/decoded
-INPUT_ROOT=fs/decoded/audio
+OUTPUT_ROOT=test/decoded
+INPUT_ROOT=test/decoded/audio
 APP_DIR=../scripts
+
