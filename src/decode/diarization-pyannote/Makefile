@@ -21,11 +21,12 @@ DIARIZATION_APP?=python3 $(PYTHON_SCRIPTS_DIR)/diarization.py
 FIX_SIL_APP?=python3 $(PYTHON_SCRIPTS_DIR)/fix_short_silences.py
 RTTM2SEG_APP?=python3 $(PYTHON_SCRIPTS_DIR)/rttm_to_seg.py
 FIX_VAD_SIL_APP?=python3 $(PYTHON_SCRIPTS_DIR)/fix_vad_silences.py
-VAD_APP?=python3 $(PYTHON_SCRIPTS_DIR)/vad.py
+ENERGY_APP?=python3 $(PYTHON_SCRIPTS_DIR)/energy.py
 FIX_SEGMENTS_APP?=$(APP_DIR)/fix.segments
 SEND_METRIC_APP?=${APP_DIR}/send.metric
 JOIN_SIL?=0.5
 JOIN_GAP?=3
+FLATTEN_TYPE?=FIRST
 ###############################################################################
 ## for metrics
 SHELL=$(APP_DIR)/m_shell.sh
@@ -47,20 +48,16 @@ $(OUTPUT_ROOT)/diarization/%/res.rttm: $(INPUT_ROOT)/%/prepared.wav
 	echo "diarization_opts=$$diarization_opts"; \
 	$(DIARIZATION_APP) --input=$^ --output=$@ $$diarization_opts
 
-# additional VAD
-$(OUTPUT_ROOT)/diarization/%/vad.rttm: $(INPUT_ROOT)/%/prepared.wav
-	tsk=vad;id=$*;. $(APP_DIR)/m_start.sh $@
-	$(VAD_APP) --input=$^ --output=$@ --rate=16000
+# calc energy
+$(OUTPUT_ROOT)/diarization/%/energy.txt: $(INPUT_ROOT)/%/prepared.wav
+	tsk=energy;id=$*;. $(APP_DIR)/m_start.sh $@
+	$(ENERGY_APP) --input=$^ --output=$@ 
 
 # Fix silences
-$(OUTPUT_ROOT)/diarization/%/res.sil.rttm: $(OUTPUT_ROOT)/diarization/%/res.rttm 
+$(OUTPUT_ROOT)/diarization/%/res.fix.rttm: $(OUTPUT_ROOT)/diarization/%/res.rttm $(OUTPUT_ROOT)/diarization/%/energy.txt
 	tsk=rttm-fix;id=$*;. $(APP_DIR)/m_start.sh $@
-	$(FIX_SIL_APP) --input=$^ --output=$@ --len="$$(cat $(INPUT_ROOT)/$*/len)" --join-sil $(JOIN_SIL) --join-gap $(JOIN_GAP)
-# add speech from vad
-$(OUTPUT_ROOT)/diarization/%/res.fix.rttm: $(OUTPUT_ROOT)/diarization/%/res.sil.rttm $(OUTPUT_ROOT)/diarization/%/vad.rttm
-	tsk=rttm-vad-fix;id=$*;. $(APP_DIR)/m_start.sh $@
-	$(FIX_VAD_SIL_APP) --input=$(OUTPUT_ROOT)/diarization/$*/res.sil.rttm --vad=$(OUTPUT_ROOT)/diarization/$*/vad.rttm --output=$@ \
-			--len="$$(cat $(INPUT_ROOT)/$*/len)" --join-sil $(JOIN_SIL) --join-gap $(JOIN_GAP)
+	$(FIX_SIL_APP) --input=$(OUTPUT_ROOT)/diarization/$*/res.rttm --output=$@ --len="$$(cat $(INPUT_ROOT)/$*/len)" --join-sil $(JOIN_SIL) --join-gap $(JOIN_GAP) \
+		--flatten-type=$(FLATTEN_TYPE) --energy=$(OUTPUT_ROOT)/diarization/$*/energy.txt
 
 # To kaldi format
 $(OUTPUT_ROOT)/diarization/%/show.seg: $(OUTPUT_ROOT)/diarization/%/res.fix.rttm
