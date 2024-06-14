@@ -48,11 +48,11 @@ COPY --from=builder /go/bin/fix.lattice.time /app/
 COPY --from=builder /go/bin/lattice.to.webvtt /app/
 COPY --from=builder /go/bin/int.to.word /app/
 
-COPY build/result-make-service/config.yaml /app/
+COPY build/result-make/config.yaml /app/
 COPY src/decode/scripts/*sh /app/
 
 COPY src/decode/result.make/Makefile /cmd/
-COPY build/result-make-service/Makefile.options /cmd/
+COPY build/result-make/Makefile.options /cmd/
 COPY src/decode/result.make/restore /cmd/restore
 
 ENTRYPOINT ["./cmdWorkerService"]

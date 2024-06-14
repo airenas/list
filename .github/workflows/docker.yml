@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        container: [diarization-pyannote, result-make-service]
+        container: [diarization-pyannote, result-make]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
