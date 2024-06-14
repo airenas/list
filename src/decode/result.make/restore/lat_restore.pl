@@ -28,7 +28,8 @@ use LatGraph;
 my $dirname = dirname(__FILE__);
 require "$dirname/lat_map.pl";
 require "$dirname/utils_num.pl";
- 
+require "$dirname/ph2word.pl"; 
+
 binmode(STDIN, ":utf8");
 binmode(STDOUT, ":utf8");
 
@@ -58,6 +59,12 @@ our $max_sum_duration = 100000.0; # default join all sections belonging to the s
 # if they are not separated by silence longer than $max_intra_sil sec
 our $join_num = 0;
 our $max_intra_sil = 0.03;
+# Semantikos-2 redaktorius rodo hipoteziu alternatyvas
+# Intelektikos-2 redaktorius alternatyviu hipoteziu nerodo
+# Taupant skaiciavimo laika (FST <unk> apdorojimas suletino ðá komponeta) ir
+# siekiant minimizuoti <unk> zodziu kieki, keiciama elgsena pagal nutylëjimà
+# Nuo siol alternatyvios hipotazes eliminuojmos, nebent nurodoma '--keep-alt'
+our $keep_alt = 0;
 
 while (scalar @ARGV > 0) {
    if ($ARGV[0] eq '--join-spk') {
@@ -75,6 +82,10 @@ while (scalar @ARGV > 0) {
          $max_intra_sil = $ARGV[0]; 
          shift @ARGV;
          }
+      }
+   elsif ($ARGV[0] eq '--keep-alt') {
+      $keep_alt = 1;
+      shift @ARGV;
       }
    else { # not accepted
       shift @ARGV;
@@ -169,7 +180,9 @@ sub label_best {
    my ( $lats_ref, $lats_best_ref ) = @_;
 
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
       $$lats_ref[$i]->label_best_v3($$lats_best_ref[$i]);
+      $$lats_ref[$i]->unlink_alternatives() if ($keep_alt == 0);
       }
    }
 #-----------------------------
@@ -178,6 +191,7 @@ sub label_phones {
    my ( $lats_ref, $lats_phones_ref ) = @_;
 
    for (my $i=0; $i<scalar @$lats_ref; $i++) { 
+      next if (defined $deb_lat && $i != $deb_lat); # debug
       if ((scalar @{$$lats_ref[$i]->{_e}}) != (scalar @{$$lats_phones_ref[$i]->{_e}})) {
          print STDERR "$0: Different number of lattice L1/L3 edges in '$$lats_ref[$i]->{_name}'\n";
          exit -1;

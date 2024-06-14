@@ -23,21 +23,6 @@ my $qcu = decode("utf-8", qq/\xe2\x80\x9c/); # “
 # 97 S150
 # 337 mln. -> 337000000
 
-sub phones2letters {
-   my ( $phstr ) = @_;
-
-   $phstr =~ s/x/ch/g;
-   $phstr =~ s/S/$::sh/g;
-   $phstr =~ s/Z/$::zh/g;
-   $phstr =~ s/E/$::eh/g;
-   $phstr =~ s/N/n/g;
-   $phstr =~ s/G/h/g;
-   $phstr =~ s/ji(?=[ou])/j/g;
-   $phstr =~ s/[\.:\'\"^]//g; 
-   return($phstr);
-   }
-#-----------------------------
-
 sub del_int {
    my ( $array_ref, $n ) = @_;
 
@@ -154,6 +139,7 @@ sub add_phones {
    my @C = split("_", $phone_ids);
    my $transc='';
    for (my $p = 0; $p <= $#C; $p++) {
+      $transc .= ' ' if ($p > 0);                   # space-separated phoneme string 
       $transc = $transc.main::int2phone($C[$p], 1); # remove_pd_info
       }
 #   $transc = '<'.$transc.'>';
@@ -195,6 +181,17 @@ sub unlink_edges {
       $self->unlink_edge($$edges_ref[$i]);
       }
 }
+#-----------------------------
+
+sub unlink_alternatives {
+   my ( $self ) = @_;
+
+   for(my $i=0; $i<scalar @{$self->{_e}}; $i++) {
+      if ($self->{_e}->[$i]->{stt} == 0) {
+         $self->unlink_edge($i); # stt becomes -1
+         }
+      }
+   }
 #-----------------------------
 
 sub get_worst_stt {
@@ -525,7 +522,7 @@ sub reduce_out {
          }
       else { 
          $ti = main::int2word($self->{_e}->[$keys[$i]]->{word_id});
-         $ti = main::phones2letters($self->{_e}->[$keys[$i]]->{ph}) if ($ti eq '<unk>');   
+         $ti = $self->{_e}->[$keys[$i]]->{p2g} if (main::is_unk($ti));   
          }  
       my $ti_mod = $ti =~ s/[$qou$qcu]//gr;    
       $ti_mod = $1 if ($ti_mod =~ m/^(\d+)(-[[:alpha:]]+)?$/); # strip -osios if present
@@ -548,7 +545,7 @@ sub reduce_out {
                }
             else {  
                $tj = main::int2word($self->{_e}->[$keys[$j]]->{word_id});
-               $tj = main::phones2letters($self->{_e}->[$keys[$j]]->{ph}) if ($tj eq '<unk>');  
+               $tj = $self->{_e}->[$keys[$j]]->{p2g} if (main::is_unk($tj));  
                }   
             $tj_mod = $tj =~ s/[$qou$qcu]//gr;
             $tj_mod = $1 if ($tj_mod =~ m/^(\d+)(-[[:alpha:]]+)?$/); # strip -osios if present
@@ -702,7 +699,38 @@ sub label_phones {
 
    # assuming the same number of edges
    for (my $i=0; $i<scalar @{$self->{_e}}; $i++) {
+      # space-separated phone list (non-BESI)
       $self->{_e}->[$i]->{ph} = $phones->{_e}->[$i]->{ph}; 
+      # convert phone sequence to word (graphemes)
+      # word-by-word conversion is not efficient
+      # $self->{_e}->[$i]->{p2g} = phones2letters($phones->{_e}->[$i]->{ph}) if (is_unk(main::int2word($self->{_e}->[$i]->{word_id})))
+      }
+
+   # collect all unknown words into a list so that they can be sent in a single batch to the phone2word service
+   my %unk_hash = ();
+   my @unk_list = ();
+   for (my $i=0; $i<scalar @{$self->{_e}}; $i++) {
+      next if ($self->{_e}->[$i]->{stt} == -1); # skip words marked for deletion
+      if (main::is_unk(main::int2word($self->{_e}->[$i]->{word_id}))) {
+         if (!defined($unk_hash{$self->{_e}->[$i]->{ph}})) {
+            push @unk_list, {'phones' => $self->{_e}->[$i]->{ph}};
+            $unk_hash{$self->{_e}->[$i]->{ph}} = 1;
+            }
+         }
+      }
+   return if (scalar @unk_list == 0);
+
+   main::phones2letters_list(\@unk_list);
+   foreach (@unk_list) {
+      $unk_hash{$_->{phones}} = $_->{word};
+      # print "$_->{phones} -> $_->{word}\n"; # debug
+      }
+
+   for (my $i=0; $i<scalar @{$self->{_e}}; $i++) {
+      next if ($self->{_e}->[$i]->{stt} == -1);
+      if (main::is_unk(main::int2word($self->{_e}->[$i]->{word_id}))) {
+         $self->{_e}->[$i]->{p2g} = $unk_hash{$self->{_e}->[$i]->{ph}};
+         }
       }
    }
 #-----------------------------
@@ -752,7 +780,7 @@ sub print_sorted {
                   $word = $main::rev_map_digits_N{$word} if (defined $main::rev_map_digits_N{$word});
                   $line .= $word;
                   }
-               elsif (main::int2word($edge->{word_id}) ne '<unk>') {
+               elsif (!main::is_unk(main::int2word($edge->{word_id}))) {
                   my $word = main::int2word($edge->{word_id});
                   # jei pasaliname jungiamuosius bruksnius tarp zodziu - redaktoriuje jie sulimpa
                   # pasaliname priedus 1-as 2-u
@@ -760,7 +788,9 @@ sub print_sorted {
                   $line .= $word;
                   }
                else {
-                  $line .= '<'.main::phones2letters($edge->{ph}).'>';
+                  my $word = $edge->{p2g}; # _N_ i kampinius skliaustus nededam
+                  $word = '<'.$word.'>' if (main::int2word($edge->{word_id}) eq '<unk>');
+                  $line .= $word;
                   }
                }
             if ($P[$j] eq 'D') { # digest / used for phone bondary shift
