@@ -39,7 +39,7 @@ VOLUME ["/apps"]
 VOLUME ["/models"]
 WORKDIR /app
 
-RUN cpan install LWP::UserAgent
+RUN cpan install LWP::UserAgent JSON
 
 COPY --from=cmdRunner /app/cmdWorkerService /app/
 COPY --from=builder /go/bin/send.metric /app/
