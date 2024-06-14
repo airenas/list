@@ -10,7 +10,8 @@ use JSON::Parse 'parse_json';
 # https://www.xmodulo.com/how-to-send-http-get-or-post-request-in-perl.html
 
 my $ua = LWP::UserAgent->new;
-my $server_endpoint = "http://127.0.0.1:3000/phones2word";
+# "http://127.0.0.1:3000/phones2word";
+my $server_endpoint = $ENV{'PHONES2WORD_SERVER_URL'};
 
 # set custom HTTP request header fields
 my $req_get = HTTP::Request->new(GET => $server_endpoint);
