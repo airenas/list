@@ -265,11 +265,18 @@ services:
       MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
       MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
       PR_URL: http://punctuation-service:8000/punctuationArray
-      METRICS_URL: http://metrics-collector:8000/metrics  
+      METRICS_URL: http://metrics-collector:8000/metrics
+      # PHONES2WORD_SERVER_URL: http://phones2word:3000/phones2word  
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
-      - modelsStorage:/models 
+      - modelsStorage:/models
+
+  # phones2word:
+  #   image: intelektikalt/asr-phoneme2word:0.0.1
+  #   container_name: phones2word
+  #   logging: *default-logging
+  #   restart: unless-stopped       
 
   inform-service:
     image: ${DOCKER_REPO}inform-service:${INFORM_SERVICE_VERSION}
