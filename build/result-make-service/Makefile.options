@@ -1,0 +1,6 @@
+OUTPUT_ROOT=/data/decoded
+INPUT_ROOT=/data/decoded
+APPS_ROOT=/apps/kaldi
+APP_DIR=/app
+#MODELS_ROOT=/models/
+RESULTS_ROOT=/data/results

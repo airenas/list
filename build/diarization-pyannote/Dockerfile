@@ -1,7 +1,7 @@
 #########################################################################################
 ## docker will invoke this file from ../.. dir in order to access code
 #########################################################################################
-FROM golang:1.19-alpine as builder
+FROM golang:1.21-alpine as builder
 
 ARG TOOLS_VERSION=0.1
 
@@ -21,7 +21,7 @@ ARG BUILD_VERSION=0.1
 
 LABEL org.opencontainers.image.version=$BUILD_VERSION \
       org.opencontainers.image.authors="airenass@gmail.com" \
-      name="result-make-service" \
+      name="pyannote-worker-service" \
       maintainer="airenass@gmail.com" \
       vendor="airenass@gmail.com" \
       version=$BUILD_VERSION \

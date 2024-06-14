@@ -1,0 +1,18 @@
+worker:
+    name: ResultMakeWorker
+    queue: ResultMake
+    command: make /data/results/{ID}/.done
+    workingDir: /cmd/
+    resultFile: /data/results/{ID}/resultFinal.txt
+    logFile: /data/logs/{ID}.log
+
+recognizerConfig:
+    path: /models/config/
+
+# logger:
+#     level: info
+#     formatter:
+#         name: text
+#         options: 
+#             full_timestamp: true
+#             timestamp_format: "2006-01-02T15:04:05.000"
