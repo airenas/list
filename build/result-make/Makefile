@@ -4,7 +4,7 @@ service=result-make-service
 version=dev
 #####################################################################################
 ########### DOCKER ##################################################################
-tag=$(service):$(version)
+tag=airenas/list-$(service):$(version)
 
 dbuild:
 	docker buildx build -t $(tag) --build-arg BUILD_VERSION=$(version) --build-arg TOOLS_VERSION=$(version) \
