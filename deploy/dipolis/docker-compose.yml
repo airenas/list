@@ -1,0 +1,435 @@
+version: '3.4'
+x-logging:
+  &default-logging
+  options:
+    max-size: '10m'
+    max-file: '3'
+  driver: json-file
+
+services:
+  proxy:
+    image: traefik:2.10.7 
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - ./traefik/traefik.toml:/traefik.toml:ro
+      - ./traefik/rules:/etc/traefik/rules:ro
+    ports:
+      - "${LIST_TRAEFIK_HTTP_EXT_PORT}:80"     # main proxy port
+    restart: unless-stopped
+    logging: *default-logging  
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.traefik.rule=PathPrefix(`/api`) || PathPrefix(`/dashboard`)"
+     - "traefik.http.routers.traefik.entrypoints=web,websecure"
+     - "traefik.http.routers.traefik.service=api@internal"
+    #  - "traefik.http.routers.traefik.middlewares=home-ipw"
+    #  - "traefik.http.middlewares.home-ipw.ipwhitelist.sourcerange=${HOME_IP}/32"  
+
+  web:
+    image: ${DOCKER_REPO}ear-app:${EAR_APP_VERSION}
+    restart: unless-stopped
+    environment:
+      BASE_HREF: /${URL}/
+    logging: *default-logging  
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.web.rule=PathPrefix(`/${URL}/`)"
+     - "traefik.http.routers.web.middlewares=web"
+     - "traefik.http.routers.web.entrypoints=web,websecure"
+     - "traefik.http.middlewares.web.stripprefix.prefixes=/${URL}/"
+     - "traefik.http.services.web.loadbalancer.server.port=8000"
+
+  editor:
+    image: ${DOCKER_REPO}editor-app:${EDITOR_VERSION}
+    restart: unless-stopped
+    logging: *default-logging  
+    labels:
+     - "traefik.enable=true" 
+     - "traefik.http.routers.editor2.rule=PathPrefix(`/${URL}/editor/`)"
+     - "traefik.http.routers.editor2.middlewares=editor2"
+     - "traefik.http.routers.editor2.entrypoints=web,websecure"
+     - "traefik.http.middlewares.editor2.stripprefix.prefixes=/${URL}/editor/"
+     - "traefik.http.services.editor2.loadbalancer.server.port=80"     
+
+  upload-service:
+    image: ${DOCKER_REPO}upload-service:${UPLOAD_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - fileStorage:/data
+      - modelsStorage:/models
+    depends_on: 
+      - rabbitmq  
+      - mongo
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.upload.rule=PathPrefix(`/${URL}/transcriber/`)"
+     - "traefik.http.routers.upload.middlewares=upload"
+     - "traefik.http.routers.upload.entrypoints=web,websecure"
+     - "traefik.http.middlewares.upload.stripprefix.prefixes=/${URL}/transcriber/"
+     - "traefik.http.services.upload.loadbalancer.server.port=8000"  
+  
+  result-service:
+    image: ${DOCKER_REPO}result-service:${RESULT_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - fileStorage:/data
+    depends_on: 
+      - mongo
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL}
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.result.rule=PathPrefix(`/${URL}/result.service/`)"
+     - "traefik.http.routers.result.middlewares=result"
+     - "traefik.http.routers.result.entrypoints=web,websecure"
+     - "traefik.http.middlewares.result.stripprefix.prefixes=/${URL}/result.service/"
+     - "traefik.http.services.result.loadbalancer.server.port=8000"    
+
+  status-service:
+    image: ${DOCKER_REPO}status-service:${STATUS_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - mongo
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}    
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.status.rule=PathPrefix(`/${URL}/status.service/`)"
+     - "traefik.http.routers.status.middlewares=status"
+     - "traefik.http.routers.status.entrypoints=web,websecure"
+     - "traefik.http.middlewares.status.stripprefix.prefixes=/${URL}/status.service/"
+     - "traefik.http.services.status.loadbalancer.server.port=8000"  
+  
+  manager-service:
+    image: ${DOCKER_REPO}manager-service:${MANAGER_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - mongo
+      - rabbitmq
+    volumes:
+      - fileStorage:/data    
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL} 
+      SENDINFORMMESSAGES: ${SENDINFORMMESSAGES} 
+
+  audio-prepare-service:
+    image: ${DOCKER_REPO}audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      METRICS_URL: http://metrics-collector:8000/metrics  
+    volumes:
+      - fileStorage:/data
+      - modelsStorage:/models 
+
+  diarization-service:
+    image: ${DOCKER_REPO}${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      METRICS_URL: http://metrics-collector:8000/metrics  
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models 
+
+  # diarization-pyannote-service:
+  #   image: airenas/list-diarization-pyannote-service:${DIARIZATION_PYANNOTE_SERVICE_VERSION}
+  #   restart: unless-stopped
+  #   logging: *default-logging
+  #   depends_on: 
+  #     - rabbitmq
+  #   environment:
+  #     MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+  #     MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+  #     MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+  #     METRICS_URL: http://metrics-collector:8000/metrics  
+  #     HF_API_TOKEN: ${HF_API_TOKEN}
+  #   volumes:
+  #     - fileStorage:/data    
+  #     - modelsStorage:/models
+  #   deploy:
+  #     resources:
+  #       reservations:
+  #         devices:
+  #           - driver: nvidia
+  #             count: 1
+  #             capabilities: [gpu]      
+
+  transcription-dispatcher-service:
+    image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: TranscriptionWorker_Registry
+      DISPATCHER_WORKQUEUE: Transcription
+      RECOGNIZERCONFIG_KEY: transcription-preload_key
+      LOGGER_LEVEL: debug 
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models      
+  
+  transcription-service:
+    image: ${DOCKER_REPO}transcription-service:${TRANSCRIPTION_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS} 
+      METRICS_URL: http://metrics-collector:8000/metrics  
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models
+  
+  rescore-dispatcher-service:
+    image: ${DOCKER_REPO}dispatcher-service:${DISPATCHER_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      DISPATCHER_REGISTRATIONQUEUE: RescoreWorker_Registry
+      DISPATCHER_WORKQUEUE: Rescore
+      RECOGNIZERCONFIG_KEY: rescore-preload_key
+      STRATEGY_MODELLOADDURATION: 3m
+      STRATEGY_REALTIMEFACTOR: 3
+    volumes:
+      - fileStorage:/data    
+      - modelsStorage:/models
+
+  rescore-service:
+    image: ${DOCKER_REPO}rescore-service:${TR_RESCORE_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS} 
+      METRICS_URL: http://metrics-collector:8000/metrics  
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models        
+  
+  result-make-service:
+    image: airenas/list-result-make-service:${TR_RESULT_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}  
+      PR_URL: http://punctuation-service:8000/punctuationArray
+      METRICS_URL: http://metrics-collector:8000/metrics
+      # PHONES2WORD_SERVER_URL: http://phones2word:3000/phones2word  
+    volumes:
+      - fileStorage:/data    
+      - appsStorage:/apps
+      - modelsStorage:/models
+
+  # phones2word:
+  #   image: intelektikalt/asr-phoneme2word:0.0.1
+  #   container_name: phones2word
+  #   logging: *default-logging
+  #   restart: unless-stopped       
+
+  inform-service:
+    image: ${DOCKER_REPO}inform-service:${INFORM_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    depends_on: 
+      - rabbitmq
+      - mongo
+    environment:
+      MESSAGESERVER_URL: ${LIST_RABBITMQ_URL}
+      MESSAGESERVER_USER: ${LIST_RABBITMQ_USER}
+      MESSAGESERVER_PASS: ${LIST_RABBITMQ_PASS}
+      MONGO_URL: ${LIST_MONGO_URL}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_TYPE: ${SMTP_TYPE}
+      MAIL_URL: ${MAIL_URL} 
+
+  tensorflow:
+    image: tensorflow/serving:1.14.0
+    environment:
+      MODEL_NAME: punctuation
+      MODEL_BASE_PATH: /models
+    volumes:
+      - ${LIST_VOLUMES_DIR}/models/punctuation/models:/models
+    restart: unless-stopped 
+    logging: *default-logging
+  
+  punctuation-service:
+    image: ${DOCKER_REPO}punctuation-service:${PUNCTUATION_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - ${LIST_VOLUMES_DIR}/models/punctuation/2.0:/model
+    environment:
+      TF_URL: tensorflow:8500
+  
+  clean-service:
+    image: ${DOCKER_REPO}clean-service:${CLEAN_SERVICE_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+    volumes:
+      - fileStorage:/data
+    environment:
+      MONGO_URL: ${LIST_MONGO_URL} 
+    labels:
+     - "traefik.enable=true"
+     - "traefik.http.routers.clean.rule=PathPrefix(`/${URL}/clean.service/`)"
+     - "traefik.http.routers.clean.middlewares=clean"
+     - "traefik.http.routers.clean.entrypoints=web,websecure"
+     - "traefik.http.middlewares.clean.stripprefix.prefixes=/${URL}/clean.service/"
+     - "traefik.http.services.clean.loadbalancer.server.port=8000"  
+
+  prometheus:
+    image: prom/prometheus:v2.17.2
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    - --web.external-url=${HOST_EXTERNAL_URL}/prometheus/
+    - --web.route-prefix=/
+    volumes:
+    - ${LIST_VOLUMES_DIR}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    - ${LIST_VOLUMES_DIR}/prometheus/prometheus_rules.yml:/etc/prometheus/prometheus_rules.yml:ro
+    depends_on:
+    - node-exporter
+    - metrics-collector
+    restart: unless-stopped
+    logging: *default-logging
+    labels:  
+     - "traefik.enable=true"
+     - "traefik.http.routers.prometheus.rule=PathPrefix(`/prometheus/`)"
+     - "traefik.http.routers.prometheus.middlewares=prometheus"
+     - "traefik.http.routers.prometheus.entrypoints=web,websecure"
+     - "traefik.http.middlewares.prometheus.stripprefix.prefixes=/prometheus/"
+     - "traefik.http.services.prometheus.loadbalancer.server.port=9090"  
+
+  metrics-collector:
+    image: ${DOCKER_REPO}metrics-collector:${METRICS_COLLECTOR_VERSION}
+    restart: unless-stopped
+    logging: *default-logging
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - --collector.filesystem.ignored-mount-points
+      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    restart: unless-stopped
+    logging: *default-logging 
+
+# ########### db & broker
+  mongo:
+    image: mongo:4.1.1
+    environment:
+      MONGO_DATA_DIR: "/data/db"
+      MONGO_LOG_DIR: "/dev/null"
+      MONGO_INITDB_ROOT_USERNAME: ${LIST_MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${LIST_MONGO_PASS}
+    volumes:
+      - mongo:/data/db
+    restart: unless-stopped
+    logging: *default-logging     
+    command: mongod --logpath=/dev/null # --quiet
+
+  rabbitmq:
+    image: "rabbitmq:3.7-management"
+    hostname: "rabbitmq"
+    environment:
+      RABBITMQ_ERLANG_COOKIE: "0eaf0f4e-7078-44b0-970d-1c3d1277f9f2"
+      RABBITMQ_DEFAULT_USER: ${LIST_RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${LIST_RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_VHOST: "/"
+    labels:
+      NAME: "rabbitmq"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    restart: unless-stopped
+    logging: *default-logging
+
+# ########### volumes 
+volumes:
+  fileStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/fileStorage
+      o: bind
+
+  appsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/apps
+      o: bind      
+
+  modelsStorage:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/models
+      o: bind
+
+  rabbitmq:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/rabbitmq
+      o: bind     
+
+  mongo:
+    driver_opts:
+      type: none
+      device: ${LIST_VOLUMES_DIR}/mongo
+      o: bind

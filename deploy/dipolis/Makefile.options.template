@@ -1,0 +1,40 @@
+## dir for service deployment
+## sample: deploy_dir=/home/user/list
+deploy_dir=
+
+## space separated list of models: ben-tel-2.0r1
+## sample: model=ben-tel-2.0r1
+models=ben-tel-2.0r1
+
+## model download pass
+share_pass=
+
+## pass for rabbimq
+rabbitmq_pass=
+
+## pass for rabbimq
+mongo_pass=
+
+## ports
+http_port=80
+
+## URL to acces from outside
+## host_external_url=https://list.airenas.eu:7080
+host_external_url=http//server
+
+## if used pyannote diarization it needs to be provided to access pyannote/speaker-diarization@2.1 model
+## more info https://huggingface.co/pyannote/speaker-diarization
+hf_api_token=
+
+## SMTP settings
+## for email sending
+smtp_host=smtp.gmail.com
+smtp_port=587
+smtp_username=
+smtp_password=
+
+## smtp authentication type. Possible values:
+## NO_AUTH    - no authentication required, but note 'smtp_username' must be set anyway - it will be a sending user
+## PLAIN_AUTH - plain authentication. Works for smtp.gmail.com
+## LOGIN      - for some other smtp services, if PLAIN_AUTH does not work
+smtp_type=PLAIN_AUTH

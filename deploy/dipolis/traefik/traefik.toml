@@ -1,0 +1,76 @@
+################################################################
+# Global configuration
+################################################################
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = true
+
+################################################################
+# Entrypoints configuration
+################################################################
+
+# Entrypoints definition
+#
+# Optional
+# Default:
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+
+################################################################
+# Traefik logs configuration
+################################################################
+
+# Traefik logs
+# Enabled by default and log to stdout
+#
+# Optional
+#
+[log]
+  level = "info"
+  
+[accessLog]
+  filePath = "/logs/traefik/access.log"
+  bufferingSize = 100
+  [accessLog.fields.headers.names]
+    "User-Agent" = "keep"
+    "Authorization" = "drop"
+################################################################
+# API and dashboard configuration
+################################################################
+
+# Enable API and dashboard
+[api]
+  insecure = true
+  dashboard = false
+  
+# Enable ping
+[ping]
+################################################################
+# Docker configuration backend
+################################################################
+
+# Enable Docker configuration backend
+[providers.docker]
+  exposedByDefault = false
+# dynamic files config
+[providers.file]
+    directory = "/etc/traefik/rules"
+    watch = true
+    filename = "rules.toml"
+    debugLogGeneratedTemplate = true
+  
+
+################################################################
+# ACME
+################################################################
+[certificatesResolvers.le-resolver.acme]
+  email = "${letsencrypt_email}"
+  storage = "acme.json"
+  # caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
+  [certificatesResolvers.le-resolver.acme.httpChallenge]
+    entryPoint = "web"
+
