@@ -100,3 +100,4 @@ src/decode/channels.split/fs/**
 src/tools/Makefile.options
 **/.idea/**
 src/decode/diarization-pyannote/test/**
+deploy/dipolis/Makefile.options
