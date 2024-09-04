@@ -147,8 +147,8 @@ services:
       - modelsStorage:/models 
 
   diarization-service:
-  image: ${DOCKER_REPO}${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
-  restart: unless-stopped
+    image: ${DOCKER_REPO}${DIARIZATION_SERVICE_NAME}-service:${DIARIZATION_SERVICE_VERSION}
+    restart: unless-stopped
     logging: *default-logging
     depends_on: 
       - rabbitmq
