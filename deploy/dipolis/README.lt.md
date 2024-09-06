@@ -1,4 +1,4 @@
-# Diegimas vienoje mašinoje naudojant *Docker*
+# Diegimas naudojant *Docker*
 
 DiPolis versija
 
@@ -59,7 +59,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
     `git checkout xxx`   
     
-    pateiks diegėjas
+    pateiks VDU
 
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
