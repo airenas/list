@@ -57,6 +57,7 @@ services:
     image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
+    user: "${ASR_UID}:${ASR_GID}"
     volumes:
       - fileStorage:/data
       - modelsStorage:/models
@@ -98,6 +99,7 @@ services:
     image: airenas/list-status-service:${STATUS_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
+    user: "${ASR_UID}:${ASR_GID}"
     depends_on: 
       - mongo
       - rabbitmq

@@ -38,3 +38,9 @@ smtp_password=
 ## PLAIN_AUTH - plain authentication. Works for smtp.gmail.com
 ## LOGIN      - for some other smtp services, if PLAIN_AUTH does not work
 smtp_type=PLAIN_AUTH
+
+## user id and group
+## can be get with cmd `id`
+## admin, or current user, or some dedicated user
+asr_uid=
+asr_uid=
