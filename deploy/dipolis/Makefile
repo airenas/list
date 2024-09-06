@@ -24,10 +24,12 @@ $(dwn_dir):
 $(install_dir):
 	mkdir -p $@		
 ########################################################################################################
-$(install_dir)/.init.done: validate | $(deploy_dir) $(install_dir)
+$(install_dir)/.init.done: validate $(deploy_dir)/.env | $(deploy_dir) $(install_dir)
 	cp docker-compose.yml $(deploy_dir)/docker-compose.yml
-	cp .env $(deploy_dir)/.env
 	touch $@
+########################################################################################################
+$(deploy_dir)/.env: .env.in | $(deploy_dir)
+	cat $< | envsubst > $@
 ########################################################################################################
 validate:
 	@$(if $(strip $(deploy_dir)),echo "deploy_dir = $(deploy_dir)",echo No deploy_dir set && exit 1)
@@ -42,7 +44,7 @@ ifneq ($(strip $(smtp_username)),)
 endif
 
 ########################################################################################################
-$(install_dir)/.env.done: $(install_dir)/.init.done validate
+$(install_dir)/.env.done: $(deploy_dir)/.env
 	printf "\n" >> $(deploy_dir)/.env
 	echo "LIST_TRAEFIK_HTTP_EXT_PORT=$(http_port)" >> $(deploy_dir)/.env 
 	echo "LIST_RABBITMQ_PASS=$(rabbitmq_pass)" >> $(deploy_dir)/.env 
@@ -135,3 +137,4 @@ clean-docker:
 	cd $(deploy_dir) && docker compose down --rmi all
 ########################################################################################################
 .PHONY: validate clean run init install
+.EXPORT_ALL_VARIABLES:

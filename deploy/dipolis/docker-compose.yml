@@ -1,4 +1,3 @@
-version: '3.4'
 x-logging:
   &default-logging
   options:
@@ -55,7 +54,7 @@ services:
      - "traefik.http.services.editor2.loadbalancer.server.port=80"     
 
   upload-service:
-    image: ${DOCKER_REPO}upload-service:${UPLOAD_SERVICE_VERSION}
+    image: airenas/list-upload-service:${UPLOAD_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
     volumes:
@@ -96,7 +95,7 @@ services:
      - "traefik.http.services.result.loadbalancer.server.port=8000"    
 
   status-service:
-    image: ${DOCKER_REPO}status-service:${STATUS_SERVICE_VERSION}
+    image: airenas/list-status-service:${STATUS_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
     depends_on: 
@@ -116,7 +115,7 @@ services:
      - "traefik.http.services.status.loadbalancer.server.port=8000"  
   
   manager-service:
-    image: ${DOCKER_REPO}manager-service:${MANAGER_SERVICE_VERSION}
+    image: airenas/list-manager-service:${MANAGER_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
     depends_on: 
@@ -132,7 +131,7 @@ services:
       SENDINFORMMESSAGES: ${SENDINFORMMESSAGES} 
 
   audio-prepare-service:
-    image: ${DOCKER_REPO}audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
+    image: airenas/list-audio-prepare-service:${AUDIO_PREPARE_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
     depends_on: 
@@ -267,16 +266,11 @@ services:
       PR_URL: http://punctuation-service:8000/punctuationArray
       METRICS_URL: http://metrics-collector:8000/metrics
       # PHONES2WORD_SERVER_URL: http://phones2word:3000/phones2word  
+      WEBVTT_HEADER: ${LIST_WEBVTT_HEADER}
     volumes:
       - fileStorage:/data    
       - appsStorage:/apps
       - modelsStorage:/models
-
-  # phones2word:
-  #   image: intelektikalt/asr-phoneme2word:0.0.1
-  #   container_name: phones2word
-  #   logging: *default-logging
-  #   restart: unless-stopped       
 
   inform-service:
     image: ${DOCKER_REPO}inform-service:${INFORM_SERVICE_VERSION}
@@ -317,7 +311,7 @@ services:
       TF_URL: tensorflow:8500
   
   clean-service:
-    image: ${DOCKER_REPO}clean-service:${CLEAN_SERVICE_VERSION}
+    image: airenas/list-clean-service:${CLEAN_SERVICE_VERSION}
     restart: unless-stopped
     logging: *default-logging
     volumes:
