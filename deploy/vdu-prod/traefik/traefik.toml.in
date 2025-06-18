@@ -1,0 +1,68 @@
+################################################################
+# Global configuration
+################################################################
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = true
+
+################################################################
+# Entrypoints configuration
+################################################################
+
+# Entrypoints definition
+#
+# Optional
+# Default:
+[entryPoints]
+  [entryPoints.web]
+    address = ":80"
+
+  [entryPoints.websecure]
+    address = ":443"
+    [entryPoints.websecure.http.tls]
+
+################################################################
+# Traefik logs configuration
+################################################################
+
+# Traefik logs
+# Enabled by default and log to stdout
+#
+# Optional
+#
+[log]
+  level = "debug"
+  
+[accessLog]
+  filePath = "/logs/traefik/access.log"
+  bufferingSize = 100
+  [accessLog.fields.headers.names]
+    "User-Agent" = "keep"
+    "Authorization" = "drop"
+################################################################
+# API and dashboard configuration
+################################################################
+
+# Enable API and dashboard
+[api]
+  insecure = false
+  dashboard = true
+  
+# Enable ping
+[ping]
+################################################################
+# Docker configuration backend
+################################################################
+
+# Enable Docker configuration backend
+[providers.docker]
+  exposedByDefault = false
+# dynamic files config
+[providers.file]
+    directory = "/etc/traefik/rules"
+    watch = true
+    filename = "rules.toml"
+    debugLogGeneratedTemplate = true
+  
+
+

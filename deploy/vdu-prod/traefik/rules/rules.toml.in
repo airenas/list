@@ -1,0 +1,37 @@
+[http]
+     
+  [http.services]
+    # noop service, the URL will be never called
+    [http.services.noop.loadBalancer]
+      [[http.services.noop.loadBalancer.servers]]
+        url = "http://192.168.0.1"     
+
+  [http.middlewares]
+    [http.middlewares.rate-limit.rateLimit]
+      average = 40
+      burst = 20
+  
+    [http.middlewares.ipwhitelist.ipAllowList]
+      sourceRange = [${traefik_ipwhitelist}]
+
+    [http.middlewares.ipwhitelist-admin.ipAllowList]
+      sourceRange = [${traefik_ipwhitelist_admin}]         
+
+    [http.middlewares.https-redirect.redirectScheme]
+      scheme = "https"  
+
+  [http.routers]
+    [http.routers.https-redirect]
+      entryPoints = ["web"]
+      middlewares = ["https-redirect"]
+      rule = "HostRegexp(`{host:.+}`)"
+      service = "noop"
+
+[[tls.certificates]]
+  certFile = "/certificates/transkribatorius_vdu_lt_all.cer"
+  keyFile = "/certificates/transkribatorius.vdu.lt.key"
+  stores = ["default"]
+
+
+    
+    
