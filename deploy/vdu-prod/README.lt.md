@@ -49,13 +49,13 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
 
     `git clone https://github.com/airenas/list.git`
 
-    `cd list/deploy/run-docker`
+    `cd list/deploy/vdu-prod`
 
     Docker diegimo skriptai yra direktorijoje yra *list/deploy/run-docker*.
 
 1. Pasirinkite diegimo versiją:
 
-    `git checkout v1.2`
+    `git checkout v....`
 
 1. Paruoškite konfigūracinį diegimo failą *Makefile.options*:
 
@@ -77,6 +77,11 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     | smtp_password | - | SMTP slaptažodis |  |
     | smtp_type     | - | SMTP serverio autentifikavimo tipas. Galimos reikšmės: NO_AUTH (kai SMTP serveris nereikalauja slaptažodžio), PLAIN_AUTH (veikia daugumai SMTP serverių, naudoja TLS, jei serveris palaiko), LOGIN (kai SMTP serveris reikalauja Login autentifikacijos) | PLAIN_AUTH |
     | hf_api_token | | jei naudojamas pyannote diarizatorius - https://huggingface.co/pyannote/speaker-diarization |
+    | traefik_ipwhitelist | + | `IP white list`. Formatas: atskirti kableliu, be tarpų, su '"' | "172.17.0.1/8","172.20.0.1/32" |
+    | traefik_ipwhitelist_admin | + | admin servisų `IP white list`. Formatas: atskirti kableliu, be tarpų, su '"' | "172.17.0.1/8","172.20.0.1/32" | 
+    | traefik_certificates_dir | + | Sertifikatų direktorija su `transkribatorius_vdu_lt_all.cer` ir `transkribatorius.vdu.lt.key` | /home/user/list-certs |
+
+
 
 1. *optional* Jei norite naudoti pyannote diarizatorių:
 
@@ -86,7 +91,7 @@ Patikrinkite ar visi reikalingi komponentai veikia mašinoje:
     - Užkomentuokite `diarization-service`, faile `docker-compose.yml`
     - Atkomentuokite `diarization-pyannote-service`, faile `docker-compose.yml`
 
-1. Instaliuokite
+2. Instaliuokite
 
     `make install -j4`
 
