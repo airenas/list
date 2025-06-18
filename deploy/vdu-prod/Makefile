@@ -35,10 +35,6 @@ validate:
 	@$(if $(strip $(mongo_pass)),echo "mongo_pass = ****",echo No mongo_pass set && exit 1)
 	@$(if $(strip $(http_port)),echo "http_port = $(http_port)",echo No http_port set && exit 1)
 	@$(if $(strip $(smtp_username)),echo "smtp_username = $(smtp_username)",echo No smtp_username set)
-ifneq ($(strip $(smtp_username)),)
-	@$(if $(strip $(smtp_password)),echo "smtp_password = ****",echo No smtp_password set && exit 1)
-	@$(if $(strip $(host_external_url)),echo "host_external_url = $(host_external_url)",echo No host_external_url set && exit 1)
-endif
 
 ########################################################################################################
 $(install_dir)/.env.done: $(install_dir)/.init.done validate
