@@ -75,7 +75,7 @@ $(install_dir)/.%.apps.extracted: $(install_dir)/.%.dwn | $(deploy_dir)/volumes/
 	touch $@
 ########################################################################################################
 $(install_dir)/.%.dwn: | $(dwn_dir)
-	wget --no-check-certificate -O $(dwn_dir)/$*.tar.gz $(dwn_url)/$*.tar.gz	
+	wget --tries=3 --no-check-certificate -O $(dwn_dir)/$*.tar.gz $(dwn_url)/$*.tar.gz	
 	touch $@
 
 $(install_dir)/.%.data.extracted: $(install_dir)/.%.dwn | $(deploy_dir)/volumes/models
