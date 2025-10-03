@@ -1,0 +1,9 @@
+# groups:
+# - name: diskUsage
+  # rules:
+  # - alert: LowDisk
+  #   expr: node_memory_MemAvailable_bytes < 4130572800
+  #   for: 1m
+  #   annotations:
+  #     summary: "Low disk {{ $labels.instance }}"
+  #     description: "{{ $labels.instance }} has a low disk (current value: {{ $value }}b)"
